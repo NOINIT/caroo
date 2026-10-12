@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { inloggen, magicLink } from '@/app/auth/actions'
 
 export default function LoginPage() {
@@ -9,6 +10,14 @@ export default function LoginPage() {
   const [fout, setFout] = useState<string | null>(null)
   const [succes, setSucces] = useState(false)
   const [laden, setLaden] = useState(false)
+  const [bevestigd, setBevestigd] = useState(false)
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (searchParams.get('bevestigd') === '1') {
+      setBevestigd(true)
+    }
+  }, [searchParams])
 
   async function handleInloggen(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -58,7 +67,18 @@ export default function LoginPage() {
         <p className="text-gray-500">Welkom terug bij Caroo</p>
       </div>
 
-      {/* Tabs */}
+      {bevestigd && (
+        <div className="bg-green-50 border border-green-200 text-green-700 rounded-caroo p-3 mb-4 text-sm">
+          ✅ Je account is bevestigd! Log hieronder in.
+        </div>
+      )}
+
+      {fout && (
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-caroo p-3 mb-4 text-sm">
+          {fout}
+        </div>
+      )}
+
       <div className="flex bg-caroo-grijs-licht rounded-caroo p-1 mb-6">
         <button
           onClick={() => setTabblad('wachtwoord')}
@@ -81,12 +101,6 @@ export default function LoginPage() {
           Inloglink (voor ouderen)
         </button>
       </div>
-
-      {fout && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-caroo p-3 mb-4 text-sm">
-          {fout}
-        </div>
-      )}
 
       {tabblad === 'wachtwoord' ? (
         <form onSubmit={handleInloggen} className="space-y-4">
@@ -134,7 +148,7 @@ export default function LoginPage() {
               type="email"
               autoComplete="email"
               required
-              className="input-field text-ou-base"
+              className="input-field"
               placeholder="naam@voorbeeld.nl"
             />
           </div>
