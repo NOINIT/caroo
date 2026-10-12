@@ -1,4 +1,4 @@
-'use server'
+﻿'use server'
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
@@ -41,3 +41,19 @@ export async function inloggen(formData: FormData) {
   const wachtwoord = formData.get('wachtwoord') as string
 
   const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password: wachtwoord,
+  })
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  redirect('/dashboard')
+}
+
+export async function uitloggen() {
+  const supabase = createClient()
+  await supabase.auth.signOut()
+  redirect('/login')
+}
