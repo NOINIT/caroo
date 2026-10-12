@@ -95,7 +95,7 @@ export default function GroepAanmakenPage() {
             <li>✅ Fotoalbum & tips delen</li>
             <li>✅ AVG-conform opgeslagen in Europa</li>
           </ul>
-          <p className="mt-3 font-bold text-caroo-groen">Eenmalig €4,99</p>
+          <p className="mt-3 font-bold text-caroo-groen">€19,99 per jaar</p>
         </div>
 
         <button

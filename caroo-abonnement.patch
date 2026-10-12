@@ -1,0 +1,376 @@
+From f6823dfa1a6741f178130c086f4d5a54e7b59263 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 12 Oct 2026 09:50:13 +0000
+Subject: [PATCH 1/2] =?UTF-8?q?Prijzen=20=E2=82=AC19,99/jaar=20en=20Stripe?=
+ =?UTF-8?q?=20subscription?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- Checkout route: mode subscription, recurring yearly, €19,99
+- Webhook: subscription_id opslaan + opzegging afhandelen
+- Alle UI-teksten bijgewerkt naar €19,99 per jaar
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01AGbRt18VqaZ9rptYL9MNw3
+---
+ caroo/app/(app)/betalen/page.tsx        | 10 ++++-----
+ caroo/app/(app)/dashboard/page.tsx      |  2 +-
+ caroo/app/(app)/groep/[id]/page.tsx     |  2 +-
+ caroo/app/(app)/groep/aanmaken/page.tsx |  2 +-
+ caroo/app/(auth)/registreer/page.tsx    |  2 +-
+ caroo/app/api/stripe/checkout/route.ts  | 11 ++++++----
+ caroo/app/api/stripe/webhook/route.ts   | 29 ++++++++++++++++++++-----
+ caroo/app/layout.tsx                    |  2 +-
+ caroo/app/page.tsx                      |  2 +-
+ 9 files changed, 41 insertions(+), 21 deletions(-)
+
+diff --git a/caroo/app/(app)/betalen/page.tsx b/caroo/app/(app)/betalen/page.tsx
+index 32a5d6b..7a4912f 100644
+--- a/caroo/app/(app)/betalen/page.tsx
++++ b/caroo/app/(app)/betalen/page.tsx
+@@ -45,7 +45,7 @@ export default function BetalenPage() {
+           Zorggroep activeren
+         </h1>
+         <p className="text-gray-500">
+-          Activeer <strong>{groepNaam}</strong> met een eenmalige betaling.
++          Activeer <strong>{groepNaam}</strong> met een jaarabonnement.
+         </p>
+       </div>
+ 
+@@ -53,15 +53,15 @@ export default function BetalenPage() {
+         <div className="flex items-center justify-between mb-4">
+           <div>
+             <p className="font-semibold text-caroo-donker">{groepNaam}</p>
+-            <p className="text-sm text-gray-500">Caroo zorggroep — levenslang toegang</p>
++            <p className="text-sm text-gray-500">Caroo zorggroep — jaarabonnement</p>
+           </div>
+-          <p className="text-2xl font-bold text-caroo-groen">€4,99</p>
++          <p className="text-2xl font-bold text-caroo-groen">€19,99</p>
+         </div>
+ 
+         <div className="border-t pt-4 text-sm text-gray-500">
+           <p>💳 Betalen met iDEAL, creditcard of debitcard</p>
+           <p className="mt-1">🔒 Veilig betalen via Stripe</p>
+-          <p className="mt-1">✅ Eenmalig — geen abonnement</p>
++          <p className="mt-1">🔄 Jaarabonnement — opzegbaar wanneer je wil</p>
+         </div>
+       </div>
+ 
+@@ -76,7 +76,7 @@ export default function BetalenPage() {
+         disabled={laden}
+         className="btn-primary w-full text-lg py-4"
+       >
+-        {laden ? 'Doorsturen naar betaling...' : '💳 Nu betalen — €4,99'}
++        {laden ? 'Doorsturen naar betaling...' : '💳 Nu betalen — €19,99/jaar'}
+       </button>
+ 
+       <p className="text-center text-xs text-gray-400 mt-4">
+diff --git a/caroo/app/(app)/dashboard/page.tsx b/caroo/app/(app)/dashboard/page.tsx
+index 88e77ef..e572abd 100644
+--- a/caroo/app/(app)/dashboard/page.tsx
++++ b/caroo/app/(app)/dashboard/page.tsx
+@@ -68,7 +68,7 @@ export default async function DashboardPage({
+           <div className="caroo-card bg-caroo-groen-licht border-caroo-groen border mb-6">
+             <h2 className="font-bold text-caroo-donker mb-2">Maak je eerste zorggroep aan</h2>
+             <p className="text-sm text-gray-600 mb-4">
+-              Nodig familie en mantelzorgers uit. Eenmalig €4,99 voor de hele groep.
++              Nodig familie en mantelzorgers uit. €19,99 per jaar voor de hele groep.
+             </p>
+             <Link href="/groep/aanmaken" className="btn-primary text-sm">
+               Zorggroep aanmaken →
+diff --git a/caroo/app/(app)/groep/[id]/page.tsx b/caroo/app/(app)/groep/[id]/page.tsx
+index 8ed4f00..5333441 100644
+--- a/caroo/app/(app)/groep/[id]/page.tsx
++++ b/caroo/app/(app)/groep/[id]/page.tsx
+@@ -95,7 +95,7 @@ export default async function GroepPage({
+           <p className="text-orange-800 text-sm font-medium">
+             ⚠️ Zorggroep nog niet geactiveerd —{' '}
+             <Link href={`/betalen?groep=${groep.id}&naam=${encodeURIComponent(groep.naam)}`} className="underline">
+-              Nu activeren (€4,99)
++              Nu activeren (€19,99/jaar)
+             </Link>
+           </p>
+         </div>
+diff --git a/caroo/app/(app)/groep/aanmaken/page.tsx b/caroo/app/(app)/groep/aanmaken/page.tsx
+index ebd06f6..48245c2 100644
+--- a/caroo/app/(app)/groep/aanmaken/page.tsx
++++ b/caroo/app/(app)/groep/aanmaken/page.tsx
+@@ -95,7 +95,7 @@ export default function GroepAanmakenPage() {
+             <li>✅ Fotoalbum & tips delen</li>
+             <li>✅ AVG-conform opgeslagen in Europa</li>
+           </ul>
+-          <p className="mt-3 font-bold text-caroo-groen">Eenmalig €4,99</p>
++          <p className="mt-3 font-bold text-caroo-groen">€19,99 per jaar</p>
+         </div>
+ 
+         <button
+diff --git a/caroo/app/(auth)/registreer/page.tsx b/caroo/app/(auth)/registreer/page.tsx
+index 1a0c6f2..cf658b4 100644
+--- a/caroo/app/(auth)/registreer/page.tsx
++++ b/caroo/app/(auth)/registreer/page.tsx
+@@ -27,7 +27,7 @@ export default function RegistreerPage() {
+       <div className="mb-8">
+         <h1 className="text-2xl font-bold text-caroo-donker mb-2">Account aanmaken</h1>
+         <p className="text-gray-500">
+-          Start jouw zorggroep. Eenmalig €4,99 — voor de hele groep.
++          Start jouw zorggroep. €19,99 per jaar — voor de hele groep.
+         </p>
+       </div>
+ 
+diff --git a/caroo/app/api/stripe/checkout/route.ts b/caroo/app/api/stripe/checkout/route.ts
+index 0cb8bb7..f5540af 100644
+--- a/caroo/app/api/stripe/checkout/route.ts
++++ b/caroo/app/api/stripe/checkout/route.ts
+@@ -40,17 +40,20 @@ export async function POST(request: Request) {
+         {
+           price_data: {
+             currency: 'eur',
+-            unit_amount: 499, // €4,99 in centen
++            unit_amount: 1999, // €19,99 in centen
++            recurring: {
++              interval: 'year',
++            },
+             product_data: {
+-              name: 'Caroo — Zorggroep activeren',
+-              description: `Eenmalige activering voor zorggroep "${groep.naam || groepNaam}"`,
++              name: 'Caroo — Zorggroep jaarabonnement',
++              description: `Jaarabonnement voor zorggroep "${groep.naam || groepNaam}"`,
+               images: [],
+             },
+           },
+           quantity: 1,
+         },
+       ],
+-      mode: 'payment',
++      mode: 'subscription',
+       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/betalen/succes?session_id={CHECKOUT_SESSION_ID}`,
+       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/betalen/annuleren?groep=${groepId}`,
+       customer_email: user.email,
+diff --git a/caroo/app/api/stripe/webhook/route.ts b/caroo/app/api/stripe/webhook/route.ts
+index c77f803..e259a7f 100644
+--- a/caroo/app/api/stripe/webhook/route.ts
++++ b/caroo/app/api/stripe/webhook/route.ts
+@@ -21,7 +21,9 @@ export async function POST(request: Request) {
+     return NextResponse.json({ error: 'Webhook verificatie mislukt' }, { status: 400 })
+   }
+ 
+-  // Verwerk alleen checkout.session.completed
++  const supabase = createServiceClient()
++
++  // Verwerk checkout.session.completed
+   if (event.type === 'checkout.session.completed') {
+     const session = event.data.object
+ 
+@@ -33,24 +35,39 @@ export async function POST(request: Request) {
+         return NextResponse.json({ error: 'Geen groep_id' }, { status: 400 })
+       }
+ 
+-      // Gebruik service client voor idempotente update (RLS bypass)
+-      const supabase = createServiceClient()
+-
+       const { error } = await supabase
+         .from('zorggroepen')
+         .update({
+           betaald: true,
+           stripe_session_id: session.id,
++          stripe_subscription_id: session.subscription ?? null,
+         })
+         .eq('id', groepId)
+-        .eq('betaald', false) // Idempotent: werkt niet als al betaald
++        .eq('betaald', false)
+ 
+       if (error) {
+         console.error('Update groep mislukt:', error)
+         return NextResponse.json({ error: 'Update mislukt' }, { status: 500 })
+       }
+ 
+-      console.log(`✅ Groep ${groepId} geactiveerd via Stripe sessie ${session.id}`)
++      console.log(`✅ Groep ${groepId} geactiveerd, abonnement ${session.subscription}`)
++    }
++  }
++
++  // Verwerk opzegging abonnement
++  if (event.type === 'customer.subscription.deleted') {
++    const subscription = event.data.object
++    const subscriptionId = subscription.id
++
++    const { error } = await supabase
++      .from('zorggroepen')
++      .update({ betaald: false })
++      .eq('stripe_subscription_id', subscriptionId)
++
++    if (error) {
++      console.error('Deactivering groep mislukt:', error)
++    } else {
++      console.log(`⚠️ Abonnement ${subscriptionId} beëindigd — groep gedeactiveerd`)
+     }
+   }
+ 
+diff --git a/caroo/app/layout.tsx b/caroo/app/layout.tsx
+index 2abb4a3..3e0b54d 100644
+--- a/caroo/app/layout.tsx
++++ b/caroo/app/layout.tsx
+@@ -8,7 +8,7 @@ export const metadata: Metadata = {
+   authors: [{ name: 'NOINIT', url: 'https://noinit.nl' }],
+   openGraph: {
+     title: 'Caroo — Zorg voor elkaar',
+-    description: 'Eén app voor de hele zorggroep. Eenmalig €4,99.',
++    description: 'Eén app voor de hele zorggroep. €19,99 per jaar.',
+     type: 'website',
+     locale: 'nl_NL',
+   },
+diff --git a/caroo/app/page.tsx b/caroo/app/page.tsx
+index 863ea0e..d40ddfc 100644
+--- a/caroo/app/page.tsx
++++ b/caroo/app/page.tsx
+@@ -49,7 +49,7 @@ export default function HomePage() {
+           <div className="flex items-center justify-between">
+             <div>
+               <p className="text-sm opacity-80 mb-1">Voor de hele zorggroep</p>
+-              <p className="text-xl font-bold">€9,99 per jaar</p>
++              <p className="text-xl font-bold">€19,99 per jaar</p>
+             </div>
+             <div className="text-3xl">💚</div>
+           </div>
+-- 
+2.43.0
+
+
+From 99c50d76f758093e4ddb897f13e06d7471b54ed7 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 12 Oct 2026 10:00:59 +0000
+Subject: [PATCH 2/2] =?UTF-8?q?Stripe=20Customer=20Portal=20=E2=80=94=20ab?=
+ =?UTF-8?q?onnement=20beheren=20en=20opzeggen?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- API route /api/stripe/portal aangemaakt
+- AbonnementKnop component voor eigenaar op groepspagina
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01AGbRt18VqaZ9rptYL9MNw3
+---
+ caroo/app/(app)/groep/[id]/AbonnementKnop.tsx | 34 +++++++++++++++
+ caroo/app/(app)/groep/[id]/page.tsx           |  7 ++++
+ caroo/app/api/stripe/portal/route.ts          | 41 +++++++++++++++++++
+ 3 files changed, 82 insertions(+)
+ create mode 100644 caroo/app/(app)/groep/[id]/AbonnementKnop.tsx
+ create mode 100644 caroo/app/api/stripe/portal/route.ts
+
+diff --git a/caroo/app/(app)/groep/[id]/AbonnementKnop.tsx b/caroo/app/(app)/groep/[id]/AbonnementKnop.tsx
+new file mode 100644
+index 0000000..2d83ffe
+--- /dev/null
++++ b/caroo/app/(app)/groep/[id]/AbonnementKnop.tsx
+@@ -0,0 +1,34 @@
++'use client'
++
++import { useState } from 'react'
++
++export default function AbonnementKnop({ groepId }: { groepId: string }) {
++  const [laden, setLaden] = useState(false)
++
++  async function openPortal() {
++    setLaden(true)
++    try {
++      const res = await fetch('/api/stripe/portal', {
++        method: 'POST',
++        headers: { 'Content-Type': 'application/json' },
++        body: JSON.stringify({ groepId }),
++      })
++      const data = await res.json()
++      if (data.url) {
++        window.location.href = data.url
++      }
++    } catch {
++      setLaden(false)
++    }
++  }
++
++  return (
++    <button
++      onClick={openPortal}
++      disabled={laden}
++      className="text-sm text-gray-400 hover:text-gray-600 underline"
++    >
++      {laden ? 'Doorsturen...' : 'Abonnement beheren of opzeggen'}
++    </button>
++  )
++}
+diff --git a/caroo/app/(app)/groep/[id]/page.tsx b/caroo/app/(app)/groep/[id]/page.tsx
+index 5333441..c2c1876 100644
+--- a/caroo/app/(app)/groep/[id]/page.tsx
++++ b/caroo/app/(app)/groep/[id]/page.tsx
+@@ -3,6 +3,7 @@ import { heeftRecht } from '@/lib/rechten'
+ import { redirect } from 'next/navigation'
+ import Link from 'next/link'
+ import { uitloggen } from '@/app/auth/actions'
++import AbonnementKnop from './AbonnementKnop'
+ 
+ export default async function GroepPage({
+   params
+@@ -203,6 +204,12 @@ export default async function GroepPage({
+               ＋ Lid uitnodigen
+             </Link>
+           )}
++
++          {isEigenaar && groep.betaald && (
++            <div className="mt-4 pt-4 border-t border-gray-100">
++              <AbonnementKnop groepId={params.id} />
++            </div>
++          )}
+         </div>
+       </div>
+     </div>
+diff --git a/caroo/app/api/stripe/portal/route.ts b/caroo/app/api/stripe/portal/route.ts
+new file mode 100644
+index 0000000..b424a03
+--- /dev/null
++++ b/caroo/app/api/stripe/portal/route.ts
+@@ -0,0 +1,41 @@
++import { createClient } from '@/lib/supabase/server'
++import { NextResponse } from 'next/server'
++import Stripe from 'stripe'
++
++export async function POST(request: Request) {
++  const stripe = new (Stripe as any)(process.env.STRIPE_SECRET_KEY!)
++  const supabase = createClient()
++  const { data: { user } } = await supabase.auth.getUser()
++
++  if (!user) {
++    return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
++  }
++
++  const { groepId } = await request.json()
++
++  if (!groepId) {
++    return NextResponse.json({ error: 'Geen groep opgegeven' }, { status: 400 })
++  }
++
++  // Haal de groep op met subscription ID
++  const { data: groep } = await supabase
++    .from('zorggroepen')
++    .select('id, stripe_subscription_id')
++    .eq('id', groepId)
++    .eq('eigenaar_id', user.id)
++    .single()
++
++  if (!groep || !groep.stripe_subscription_id) {
++    return NextResponse.json({ error: 'Geen actief abonnement gevonden' }, { status: 404 })
++  }
++
++  // Haal de Stripe subscription op om de customer ID te krijgen
++  const subscription = await stripe.subscriptions.retrieve(groep.stripe_subscription_id)
++
++  const session = await stripe.billingPortal.sessions.create({
++    customer: subscription.customer as string,
++    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/groep/${groepId}`,
++  })
++
++  return NextResponse.json({ url: session.url })
++}
+-- 
+2.43.0
+

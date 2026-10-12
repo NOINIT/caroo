@@ -21,7 +21,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Webhook verificatie mislukt' }, { status: 400 })
   }
 
-  // Verwerk alleen checkout.session.completed
+  const supabase = createServiceClient()
+
+  // Verwerk checkout.session.completed
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object
 
@@ -33,24 +35,39 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Geen groep_id' }, { status: 400 })
       }
 
-      // Gebruik service client voor idempotente update (RLS bypass)
-      const supabase = createServiceClient()
-
       const { error } = await supabase
         .from('zorggroepen')
         .update({
           betaald: true,
           stripe_session_id: session.id,
+          stripe_subscription_id: session.subscription ?? null,
         })
         .eq('id', groepId)
-        .eq('betaald', false) // Idempotent: werkt niet als al betaald
+        .eq('betaald', false)
 
       if (error) {
         console.error('Update groep mislukt:', error)
         return NextResponse.json({ error: 'Update mislukt' }, { status: 500 })
       }
 
-      console.log(`✅ Groep ${groepId} geactiveerd via Stripe sessie ${session.id}`)
+      console.log(`✅ Groep ${groepId} geactiveerd, abonnement ${session.subscription}`)
+    }
+  }
+
+  // Verwerk opzegging abonnement
+  if (event.type === 'customer.subscription.deleted') {
+    const subscription = event.data.object
+    const subscriptionId = subscription.id
+
+    const { error } = await supabase
+      .from('zorggroepen')
+      .update({ betaald: false })
+      .eq('stripe_subscription_id', subscriptionId)
+
+    if (error) {
+      console.error('Deactivering groep mislukt:', error)
+    } else {
+      console.log(`⚠️ Abonnement ${subscriptionId} beëindigd — groep gedeactiveerd`)
     }
   }
 

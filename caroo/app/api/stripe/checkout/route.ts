@@ -40,17 +40,20 @@ export async function POST(request: Request) {
         {
           price_data: {
             currency: 'eur',
-            unit_amount: 499, // €4,99 in centen
+            unit_amount: 1999, // €19,99 in centen
+            recurring: {
+              interval: 'year',
+            },
             product_data: {
-              name: 'Caroo — Zorggroep activeren',
-              description: `Eenmalige activering voor zorggroep "${groep.naam || groepNaam}"`,
+              name: 'Caroo — Zorggroep jaarabonnement',
+              description: `Jaarabonnement voor zorggroep "${groep.naam || groepNaam}"`,
               images: [],
             },
           },
           quantity: 1,
         },
       ],
-      mode: 'payment',
+      mode: 'subscription',
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/betalen/succes?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/betalen/annuleren?groep=${groepId}`,
       customer_email: user.email,

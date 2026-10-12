@@ -68,7 +68,7 @@ export default async function DashboardPage({
           <div className="caroo-card bg-caroo-groen-licht border-caroo-groen border mb-6">
             <h2 className="font-bold text-caroo-donker mb-2">Maak je eerste zorggroep aan</h2>
             <p className="text-sm text-gray-600 mb-4">
-              Nodig familie en mantelzorgers uit. Eenmalig €4,99 voor de hele groep.
+              Nodig familie en mantelzorgers uit. €19,99 per jaar voor de hele groep.
             </p>
             <Link href="/groep/aanmaken" className="btn-primary text-sm">
               Zorggroep aanmaken →

@@ -27,7 +27,7 @@ export default function RegistreerPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-caroo-donker mb-2">Account aanmaken</h1>
         <p className="text-gray-500">
-          Start jouw zorggroep. Eenmalig €4,99 — voor de hele groep.
+          Start jouw zorggroep. €19,99 per jaar — voor de hele groep.
         </p>
       </div>
 

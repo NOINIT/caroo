@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'NOINIT', url: 'https://noinit.nl' }],
   openGraph: {
     title: 'Caroo — Zorg voor elkaar',
-    description: 'Eén app voor de hele zorggroep. Eenmalig €4,99.',
+    description: 'Eén app voor de hele zorggroep. €19,99 per jaar.',
     type: 'website',
     locale: 'nl_NL',
   },

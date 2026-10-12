@@ -49,7 +49,7 @@ export default function HomePage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm opacity-80 mb-1">Voor de hele zorggroep</p>
-              <p className="text-xl font-bold">€9,99 per jaar</p>
+              <p className="text-xl font-bold">€19,99 per jaar</p>
             </div>
             <div className="text-3xl">💚</div>
           </div>

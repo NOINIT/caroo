@@ -3,6 +3,7 @@ import { heeftRecht } from '@/lib/rechten'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { uitloggen } from '@/app/auth/actions'
+import AbonnementKnop from './AbonnementKnop'
 
 export default async function GroepPage({
   params
@@ -95,7 +96,7 @@ export default async function GroepPage({
           <p className="text-orange-800 text-sm font-medium">
             ⚠️ Zorggroep nog niet geactiveerd —{' '}
             <Link href={`/betalen?groep=${groep.id}&naam=${encodeURIComponent(groep.naam)}`} className="underline">
-              Nu activeren (€4,99)
+              Nu activeren (€19,99/jaar)
             </Link>
           </p>
         </div>
@@ -202,6 +203,12 @@ export default async function GroepPage({
             >
               ＋ Lid uitnodigen
             </Link>
+          )}
+
+          {isEigenaar && groep.betaald && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <AbonnementKnop groepId={params.id} />
+            </div>
           )}
         </div>
       </div>
