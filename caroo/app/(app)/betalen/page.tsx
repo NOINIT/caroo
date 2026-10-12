@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 
 export default function BetalenPage() {
   const searchParams = useSearchParams()
@@ -9,6 +10,14 @@ export default function BetalenPage() {
   const groepNaam = searchParams.get('naam') || 'Jouw zorggroep'
   const [laden, setLaden] = useState(false)
   const [fout, setFout] = useState<string | null>(null)
+  const [userId, setUserId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => {
+      setUserId(data.user?.id ?? null)
+    })
+  }, [])
 
   async function startBetaling() {
     if (!groepId) return
@@ -19,7 +28,7 @@ export default function BetalenPage() {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ groepId, groepNaam }),
+        body: JSON.stringify({ groepId, groepNaam, userId }),
       })
 
       const data = await res.json()
@@ -30,7 +39,6 @@ export default function BetalenPage() {
         return
       }
 
-      // Redirect naar Stripe Checkout
       window.location.href = data.url
     } catch {
       setFout('Er is iets misgegaan. Probeer het opnieuw.')
