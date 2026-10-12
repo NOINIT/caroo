@@ -1,14 +1,14 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
 export async function POST(request: Request) {
-  // Initialiseer Stripe binnen de handler zodat de build niet faalt zonder env var
   const stripe = new (Stripe as any)(process.env.STRIPE_SECRET_KEY!)
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
 
   if (!user) {
+    console.error('Stripe checkout: geen gebruiker gevonden', authError)
     return NextResponse.json({ error: 'Niet ingelogd' }, { status: 401 })
   }
 
@@ -18,8 +18,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Geen groep opgegeven' }, { status: 400 })
   }
 
-  // Controleer of de groep bestaat en de user eigenaar is
-  const { data: groep } = await supabase
+  const serviceClient = createServiceClient()
+  const { data: groep, error: groepError } = await serviceClient
     .from('zorggroepen')
     .select('id, naam, betaald, eigenaar_id')
     .eq('id', groepId)
@@ -27,6 +27,7 @@ export async function POST(request: Request) {
     .single()
 
   if (!groep) {
+    console.error('Stripe checkout: groep niet gevonden', { groepId, userId: user.id, groepError })
     return NextResponse.json({ error: 'Groep niet gevonden' }, { status: 404 })
   }
 
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
         {
           price_data: {
             currency: 'eur',
-            unit_amount: 1999, // €19,99 in centen
+            unit_amount: 1999,
             recurring: {
               interval: 'year',
             },
@@ -63,8 +64,7 @@ export async function POST(request: Request) {
       },
     })
 
-    // Sla de sessie ID op in de groep
-    await supabase
+    await serviceClient
       .from('zorggroepen')
       .update({ stripe_session_id: session.id })
       .eq('id', groepId)
