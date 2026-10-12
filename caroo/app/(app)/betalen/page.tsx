@@ -11,16 +11,18 @@ export default function BetalenPage() {
   const [laden, setLaden] = useState(false)
   const [fout, setFout] = useState<string | null>(null)
   const [userId, setUserId] = useState<string | null>(null)
+  const [userEmail, setUserEmail] = useState<string | null>(null)
 
   useEffect(() => {
     const supabase = createClient()
     supabase.auth.getUser().then(({ data }) => {
       setUserId(data.user?.id ?? null)
+      setUserEmail(data.user?.email ?? null)
     })
   }, [])
 
   async function startBetaling() {
-    if (!groepId) return
+    if (!groepId || !userId) return
     setLaden(true)
     setFout(null)
 
@@ -28,7 +30,7 @@ export default function BetalenPage() {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ groepId, groepNaam, userId }),
+        body: JSON.stringify({ groepId, groepNaam, userId, userEmail }),
       })
 
       const data = await res.json()
@@ -81,7 +83,7 @@ export default function BetalenPage() {
 
       <button
         onClick={startBetaling}
-        disabled={laden}
+        disabled={laden || !userId}
         className="btn-primary w-full text-lg py-4"
       >
         {laden ? 'Doorsturen naar betaling...' : '💳 Nu betalen — €19,99/jaar'}

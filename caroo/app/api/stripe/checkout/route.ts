@@ -3,8 +3,11 @@ import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
 export async function POST(request: Request) {
-  const stripe = new (Stripe as any)(process.env.STRIPE_SECRET_KEY!)
-  const { groepId, groepNaam, userId } = await request.json()
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: '2024-06-20',
+  })
+
+  const { groepId, groepNaam, userId, userEmail } = await request.json()
 
   if (!groepId || !userId) {
     return NextResponse.json({ error: 'Ontbrekende gegevens' }, { status: 400 })
@@ -27,9 +30,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Groep is al betaald' }, { status: 400 })
   }
 
-  const { data: { user } } = await serviceClient.auth.admin.getUserById(userId)
-  const userEmail = user?.email
-
   try {
     const session = await stripe.checkout.sessions.create({
       line_items: [
@@ -37,7 +37,9 @@ export async function POST(request: Request) {
           price_data: {
             currency: 'eur',
             unit_amount: 1999,
-            recurring: { interval: 'year' },
+            recurring: {
+              interval: 'year',
+            },
             product_data: {
               name: 'Caroo — Zorggroep jaarabonnement',
               description: `Jaarabonnement voor zorggroep "${groep.naam || groepNaam}"`,
@@ -50,7 +52,7 @@ export async function POST(request: Request) {
       mode: 'subscription',
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/betalen/succes?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/betalen/annuleren?groep=${groepId}`,
-      customer_email: userEmail,
+      customer_email: userEmail || undefined,
       metadata: {
         groep_id: groepId,
         user_id: userId,
