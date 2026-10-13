@@ -8,6 +8,7 @@ const PUBLIC_ROUTES = [
   '/uitnodiging',
   '/auth/callback',
   '/auth/magic-link',
+  '/api/stripe/webhook',
 ]
 
 export async function middleware(request: NextRequest) {
