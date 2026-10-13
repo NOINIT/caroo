@@ -1,13 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import type { Rol } from '@/types/database'
 import crypto from 'crypto'
 
 export const MAX_UITNODIGINGEN_PER_DAG = 10
 export const UITNODIGING_VERVALT_DAGEN = 7
 
-/**
- * Controleer of een gebruiker de dagelijkse uitnodiginglimiet heeft bereikt
- */
 export async function checkRateLimit(userId: string): Promise<boolean> {
   const supabase = createClient()
   const vandaag = new Date().toISOString().split('T')[0]
@@ -22,9 +19,6 @@ export async function checkRateLimit(userId: string): Promise<boolean> {
   return !data || data.aantal < MAX_UITNODIGINGEN_PER_DAG
 }
 
-/**
- * Verhoog de uitnodigingsteller voor vandaag
- */
 async function verhoogTeller(userId: string): Promise<void> {
   const supabase = createClient()
   const vandaag = new Date().toISOString().split('T')[0]
@@ -37,16 +31,12 @@ async function verhoogTeller(userId: string): Promise<void> {
     }
   )
 
-  // Verhoog teller met 1 (upsert verhoogt niet automatisch)
   await supabase.rpc('increment_uitnodiging_teller', {
     p_user_id: userId,
     p_datum: vandaag,
   })
 }
 
-/**
- * Maak een nieuwe uitnodiging aan
- */
 export async function maakUitnodiging(params: {
   groepId: string
   uitgenodigdDoor: string
@@ -56,13 +46,11 @@ export async function maakUitnodiging(params: {
   const { groepId, uitgenodigdDoor, email, rol } = params
   const supabase = createClient()
 
-  // Rate limiting check
   const magNogUitnodigen = await checkRateLimit(uitgenodigdDoor)
   if (!magNogUitnodigen) {
     return { error: `Je kunt maximaal ${MAX_UITNODIGINGEN_PER_DAG} uitnodigingen per dag versturen.` }
   }
 
-  // Check of e-mail al uitgenodigd is voor deze groep
   const { data: bestaand } = await supabase
     .from('uitnodigingen')
     .select('id, gebruikt')
@@ -76,7 +64,6 @@ export async function maakUitnodiging(params: {
     return { error: 'Dit e-mailadres heeft al een openstaande uitnodiging.' }
   }
 
-  // Genereer veilig token
   const token = crypto.randomBytes(32).toString('hex')
   const verlooptOp = new Date()
   verlooptOp.setDate(verlooptOp.getDate() + UITNODIGING_VERVALT_DAGEN)
@@ -94,17 +81,13 @@ export async function maakUitnodiging(params: {
     return { error: 'Kon uitnodiging niet aanmaken.' }
   }
 
-  // Verhoog teller
   await verhoogTeller(uitgenodigdDoor)
 
   return { token, uitnodiging }
 }
 
-/**
- * Valideer een uitnodigingstoken (gebruikt service role — geen RLS bypass nodig voor public token check)
- */
 export async function valideerToken(token: string) {
-  const supabase = createClient()
+  const supabase = createServiceClient()
 
   const { data, error } = await supabase
     .from('uitnodigingen')
@@ -135,9 +118,6 @@ export async function valideerToken(token: string) {
   return { uitnodiging: data }
 }
 
-/**
- * Accepteer een uitnodiging — voeg gebruiker toe aan groep
- */
 export async function accepteerUitnodiging(token: string, userId: string) {
   const supabase = createClient()
 
@@ -146,7 +126,6 @@ export async function accepteerUitnodiging(token: string, userId: string) {
 
   const { uitnodiging } = validatie
 
-  // Voeg toe als groepslid
   const { error: lidError } = await supabase.from('groepsleden').insert({
     groep_id: uitnodiging.groep_id,
     user_id: userId,
@@ -154,14 +133,12 @@ export async function accepteerUitnodiging(token: string, userId: string) {
   })
 
   if (lidError) {
-    // Mogelijk al lid van de groep
     if (lidError.code === '23505') {
       return { error: 'Je bent al lid van deze zorggroep.' }
     }
     return { error: 'Kon uitnodiging niet verwerken.' }
   }
 
-  // Markeer als gebruikt
   await supabase
     .from('uitnodigingen')
     .update({ gebruikt: true })
