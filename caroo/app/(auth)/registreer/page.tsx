@@ -1,12 +1,22 @@
 'use client'
 
 import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { registreer } from '@/app/auth/actions'
 
 export default function RegistreerPage() {
   const [fout, setFout] = useState<string | null>(null)
   const [laden, setLaden] = useState(false)
+
+  const searchParams = useSearchParams()
+  const redirectNaar = searchParams.get('redirect')
+  const token = searchParams.get('token')
+  const volledigeRedirect = redirectNaar && token
+    ? `${redirectNaar}?token=${token}`
+    : redirectNaar || '/dashboard'
+
+  const viaUitnodiging = !!redirectNaar
 
   async function handleRegistreer(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -19,7 +29,6 @@ export default function RegistreerPage() {
       setFout(resultaat.error)
       setLaden(false)
     }
-    // Bij succes: redirect naar /registreer/bevestig
   }
 
   return (
@@ -27,7 +36,9 @@ export default function RegistreerPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-caroo-donker mb-2">Account aanmaken</h1>
         <p className="text-gray-500">
-          Start jouw zorggroep. €19,99 per jaar — voor de hele groep.
+          {viaUitnodiging
+            ? 'Maak een account aan om de uitnodiging te accepteren.'
+            : 'Start jouw zorggroep. €19,99 per jaar — voor de hele groep.'}
         </p>
       </div>
 
@@ -38,6 +49,8 @@ export default function RegistreerPage() {
       )}
 
       <form onSubmit={handleRegistreer} className="space-y-4">
+        <input type="hidden" name="redirectNaar" value={volledigeRedirect} />
+
         <div>
           <label className="input-label" htmlFor="naam">Jouw naam</label>
           <input
@@ -76,10 +89,12 @@ export default function RegistreerPage() {
           />
         </div>
 
-        <div className="bg-caroo-groen-licht rounded-caroo p-3 text-sm text-caroo-donker">
-          <p>✅ Gratis beginnen, betaal later bij het aanmaken van je zorggroep</p>
-          <p className="mt-1">✅ AVG-conform opgeslagen in Europa</p>
-        </div>
+        {!viaUitnodiging && (
+          <div className="bg-caroo-groen-licht rounded-caroo p-3 text-sm text-caroo-donker">
+            <p>✅ Gratis beginnen, betaal later bij het aanmaken van je zorggroep</p>
+            <p className="mt-1">✅ AVG-conform opgeslagen in Europa</p>
+          </div>
+        )}
 
         <button
           type="submit"
@@ -92,7 +107,10 @@ export default function RegistreerPage() {
 
       <p className="text-center text-sm text-gray-500 mt-6">
         Al een account?{' '}
-        <Link href="/login" className="text-caroo-groen font-medium hover:underline">
+        <Link
+          href={viaUitnodiging ? `/login?redirect=${redirectNaar}&token=${token}` : '/login'}
+          className="text-caroo-groen font-medium hover:underline"
+        >
           Log in
         </Link>
       </p>
