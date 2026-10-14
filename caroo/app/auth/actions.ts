@@ -9,6 +9,7 @@ export async function registreer(formData: FormData) {
   const email = formData.get('email') as string
   const wachtwoord = formData.get('wachtwoord') as string
   const naam = formData.get('naam') as string
+  const redirectNaar = formData.get('redirectNaar') as string | null
 
   if (!email || !wachtwoord || !naam) {
     return { error: 'Vul alle velden in.' }
@@ -39,6 +40,7 @@ export async function inloggen(formData: FormData) {
 
   const email = formData.get('email') as string
   const wachtwoord = formData.get('wachtwoord') as string
+  const redirectNaar = formData.get('redirectNaar') as string | null
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -49,7 +51,13 @@ export async function inloggen(formData: FormData) {
     return { error: error.message }
   }
 
-  redirect('/dashboard')
+  redirect(redirectNaar || '/dashboard')
+}
+
+export async function uitloggen() {
+  const supabase = createClient()
+  await supabase.auth.signOut()
+  redirect('/login')
 }
 
 export async function magicLink(formData: FormData) {
@@ -64,7 +72,7 @@ export async function magicLink(formData: FormData) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
     },
   })
 
@@ -73,10 +81,4 @@ export async function magicLink(formData: FormData) {
   }
 
   return { success: true }
-}
-
-export async function uitloggen() {
-  const supabase = createClient()
-  await supabase.auth.signOut()
-  redirect('/login')
 }
