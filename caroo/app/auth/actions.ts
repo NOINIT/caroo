@@ -19,12 +19,15 @@ export async function registreer(formData: FormData) {
     return { error: 'Wachtwoord moet minimaal 8 tekens zijn.' }
   }
 
+  const next = redirectNaar || '/dashboard'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
   const { error } = await supabase.auth.signUp({
     email,
     password: wachtwoord,
     options: {
       data: { naam },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+      emailRedirectTo: `${baseUrl}/auth/callback?next=${encodeURIComponent(next)}`,
     },
   })
 
@@ -54,12 +57,6 @@ export async function inloggen(formData: FormData) {
   redirect(redirectNaar || '/dashboard')
 }
 
-export async function uitloggen() {
-  const supabase = createClient()
-  await supabase.auth.signOut()
-  redirect('/login')
-}
-
 export async function magicLink(formData: FormData) {
   const supabase = createClient()
 
@@ -72,7 +69,7 @@ export async function magicLink(formData: FormData) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/callback`,
     },
   })
 
@@ -81,4 +78,10 @@ export async function magicLink(formData: FormData) {
   }
 
   return { success: true }
+}
+
+export async function uitloggen() {
+  const supabase = createClient()
+  await supabase.auth.signOut()
+  redirect('/login')
 }
