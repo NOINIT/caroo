@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { inloggen, magicLink } from '@/app/auth/actions'
 
-export default function LoginPage() {
+function LoginForm() {
   const [tabblad, setTabblad] = useState<'wachtwoord' | 'magic'>('wachtwoord')
   const [fout, setFout] = useState<string | null>(null)
   const [succes, setSucces] = useState(false)
@@ -170,5 +170,13 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   )
 }
