@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { registreer } from '@/app/auth/actions'
 
-export default function RegistreerPage() {
+function RegistreerForm() {
   const [fout, setFout] = useState<string | null>(null)
   const [laden, setLaden] = useState(false)
 
@@ -115,5 +115,13 @@ export default function RegistreerPage() {
         </Link>
       </p>
     </div>
+  )
+}
+
+export default function RegistreerPage() {
+  return (
+    <Suspense>
+      <RegistreerForm />
+    </Suspense>
   )
 }
