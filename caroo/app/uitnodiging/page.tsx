@@ -27,10 +27,19 @@ export default async function UitnodigingPage({
   // Al ingelogd: direct accepteren en doorsturen
   if (user) {
     const resultaat = await accepteerUitnodiging(token, user.id)
-    if ('groepId' in resultaat && resultaat.groepId) {
+    if ('groepId' in resultaat) {
+      if (resultaat.alLid) {
+        // Deze uitnodiging is voor iemand anders: niet verbruiken, wel uitleggen
+        return (
+          <FoutPagina
+            titel="Je bent al lid van deze groep"
+            bericht={`Je bent ingelogd als ${user.email}. Deze uitnodiging is voor iemand anders bedoeld en blijft gewoon geldig. Wil je hem zelf testen? Log dan eerst uit of open de link in een privévenster.`}
+          />
+        )
+      }
       redirect(`/groep/${resultaat.groepId}?welkom=true`)
     }
-    return <FoutPagina bericht={('error' in resultaat && resultaat.error) || 'Onbekende fout'} />
+    return <FoutPagina bericht={resultaat.error} />
   }
 
   const validatie = await valideerToken(token)
@@ -85,7 +94,7 @@ export default async function UitnodigingPage({
   )
 }
 
-function FoutPagina({ bericht }: { bericht: string }) {
+function FoutPagina({ bericht, titel = 'Uitnodiging ongeldig' }: { bericht: string; titel?: string }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-caroo-groen-licht to-white flex flex-col">
       <header className="px-6 pt-8 pb-4">
@@ -95,7 +104,7 @@ function FoutPagina({ bericht }: { bericht: string }) {
         <div className="caroo-card text-center py-8 max-w-md w-full">
           <div className="text-5xl mb-4">⚠️</div>
           <h1 className="text-xl font-bold text-caroo-donker mb-2">
-            Uitnodiging ongeldig
+            {titel}
           </h1>
           <p className="text-gray-600 mb-6">{bericht}</p>
           <Link href="/" className="text-caroo-groen font-medium hover:underline text-sm">

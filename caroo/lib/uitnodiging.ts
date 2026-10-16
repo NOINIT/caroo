@@ -118,13 +118,15 @@ export async function valideerToken(token: string) {
 
 /**
  * Voeg een gebruiker toe aan de groep van een uitnodiging.
- * Idempotent: als de gebruiker al lid is, telt dat als geslaagd.
+ * Is de gebruiker al lid, dan blijft de uitnodiging open: hij was dan
+ * kennelijk voor iemand anders bedoeld (bijv. link geopend terwijl de
+ * beheerder zelf nog ingelogd was).
  * Service client: de token is al gecontroleerd, RLS mag dit niet blokkeren.
  */
 async function voegToeAanGroep(
   uitnodiging: { id: string; groep_id: string; rol: string },
   userId: string
-): Promise<boolean> {
+): Promise<'nieuw' | 'al_lid' | 'fout'> {
   const supabase = createServiceClient()
 
   const { error } = await supabase.from('groepsleden').insert({
@@ -134,17 +136,25 @@ async function voegToeAanGroep(
   })
 
   // 23505 = al lid van deze groep
-  if (error && error.code !== '23505') return false
+  if (error?.code === '23505') return 'al_lid'
+  if (error) return 'fout'
 
   await supabase
     .from('uitnodigingen')
     .update({ gebruikt: true })
     .eq('id', uitnodiging.id)
 
-  return true
+  return 'nieuw'
 }
 
-export async function accepteerUitnodiging(token: string, userId: string) {
+type AcceptatieResultaat =
+  | { error: string }
+  | { succes: true; groepId: string; rol: string; alLid: boolean }
+
+export async function accepteerUitnodiging(
+  token: string,
+  userId: string
+): Promise<AcceptatieResultaat> {
   const supabase = createServiceClient()
 
   const { data: uitnodiging } = await supabase
@@ -164,7 +174,7 @@ export async function accepteerUitnodiging(token: string, userId: string) {
       .eq('user_id', userId)
       .maybeSingle()
 
-    if (lid) return { succes: true, groepId: uitnodiging.groep_id, rol: uitnodiging.rol }
+    if (lid) return { succes: true, groepId: uitnodiging.groep_id, rol: uitnodiging.rol, alLid: true }
     return { error: 'Deze uitnodiging is al gebruikt.' }
   }
 
@@ -172,10 +182,15 @@ export async function accepteerUitnodiging(token: string, userId: string) {
     return { error: 'Deze uitnodiging is verlopen.' }
   }
 
-  const gelukt = await voegToeAanGroep(uitnodiging, userId)
-  if (!gelukt) return { error: 'Kon uitnodiging niet verwerken.' }
+  const uitkomst = await voegToeAanGroep(uitnodiging, userId)
+  if (uitkomst === 'fout') return { error: 'Kon uitnodiging niet verwerken.' }
 
-  return { succes: true, groepId: uitnodiging.groep_id, rol: uitnodiging.rol }
+  return {
+    succes: true,
+    groepId: uitnodiging.groep_id,
+    rol: uitnodiging.rol,
+    alLid: uitkomst === 'al_lid',
+  }
 }
 
 /**
@@ -196,7 +211,7 @@ export async function verwerkOpenUitnodigingen(user: {
   const token = user.user_metadata?.uitnodiging_token as string | undefined
   if (token) {
     const resultaat = await accepteerUitnodiging(token, user.id)
-    if ('groepId' in resultaat && resultaat.groepId) eersteGroep = resultaat.groepId
+    if ('groepId' in resultaat && !resultaat.alLid) eersteGroep = resultaat.groepId
 
     // Token opruimen zodat dit maar één keer gebeurt
     await supabase.auth.admin.updateUserById(user.id, {
@@ -213,8 +228,8 @@ export async function verwerkOpenUitnodigingen(user: {
       .gt('verloopt_op', new Date().toISOString())
 
     for (const uitnodiging of open || []) {
-      const gelukt = await voegToeAanGroep(uitnodiging, user.id)
-      if (gelukt && !eersteGroep) eersteGroep = uitnodiging.groep_id
+      const uitkomst = await voegToeAanGroep(uitnodiging, user.id)
+      if (uitkomst === 'nieuw' && !eersteGroep) eersteGroep = uitnodiging.groep_id
     }
   }
 
