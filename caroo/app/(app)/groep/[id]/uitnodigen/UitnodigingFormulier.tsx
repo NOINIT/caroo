@@ -49,7 +49,8 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
       setFout(data.error || 'Er ging iets mis')
     } else {
       setLink(data.link)
-      setUitnodigingen(prev => [data.uitnodiging, ...prev])
+      // Een nieuwe uitnodiging vervangt een openstaande naar hetzelfde adres
+      setUitnodigingen(prev => [data.uitnodiging, ...prev.filter(u => u.email.toLowerCase() !== data.uitnodiging.email.toLowerCase())])
       setEmail('')
     }
 
@@ -61,6 +62,7 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
   }
 
   const isVerlopen = (datum: string) => new Date(datum) < new Date()
+  const openstaand = uitnodigingen.filter(u => !u.gebruikt && !isVerlopen(u.verloopt_op))
 
   return (
     <div className="px-4 py-4">
@@ -135,26 +137,22 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
         </div>
       )}
 
-      {uitnodigingen.length > 0 && (
+      {openstaand.length > 0 && (
         <div>
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
-            Eerdere uitnodigingen
+          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-1">
+            Wacht op reactie
           </h2>
+          <p className="text-xs text-gray-400 mb-2">
+            Wie de uitnodiging heeft geaccepteerd, zie je bij Beheer in de ledenlijst.
+          </p>
           <div className="space-y-2">
-            {uitnodigingen.map(u => (
+            {openstaand.map(u => (
               <div key={u.id} className="caroo-card flex items-center gap-3">
-                <span className="text-lg">
-                  {u.gebruikt ? '✅' : isVerlopen(u.verloopt_op) ? '⏰' : '📨'}
-                </span>
+                <span className="text-lg">📨</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-caroo-donker truncate">{u.email}</p>
                   <p className="text-xs text-gray-500">
-                    {rolLabels[u.rol]} ·{' '}
-                    {u.gebruikt
-                      ? 'Geaccepteerd'
-                      : isVerlopen(u.verloopt_op)
-                      ? 'Verlopen'
-                      : `Geldig t/m ${new Date(u.verloopt_op).toLocaleDateString('nl-NL')}`}
+                    {rolLabels[u.rol]} · Geldig t/m {new Date(u.verloopt_op).toLocaleDateString('nl-NL')}
                   </p>
                 </div>
               </div>

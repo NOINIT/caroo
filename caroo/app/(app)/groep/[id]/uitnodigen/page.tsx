@@ -20,11 +20,13 @@ export default async function UitnodigingPage({ params }: { params: { id: string
 
   if (!groep?.betaald) redirect(`/betalen?groep=${params.id}`)
 
-  // Recente uitnodigingen (voor overzicht)
+  // Openstaande uitnodigingen
   const { data: uitnodigingen } = await supabase
     .from('uitnodigingen')
     .select('id, email, rol, gebruikt, verloopt_op, aangemaakt_op')
     .eq('groep_id', params.id)
+    .eq('gebruikt', false)
+    .gt('verloopt_op', new Date().toISOString())
     .order('aangemaakt_op', { ascending: false })
     .limit(10)
 
