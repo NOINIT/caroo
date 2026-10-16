@@ -20,7 +20,7 @@ export default async function BeheerPage({ params }: { params: { id: string } })
 
   if (!groep?.betaald) redirect(`/betalen?groep=${params.id}`)
 
-  const [{ data: leden, error: ledenFout }, { data: categorieen }] = await Promise.all([
+  const [{ data: leden }, { data: categorieen }] = await Promise.all([
     supabase
       .from('groepsleden')
       .select('id, rol, toegevoegd_op, users (id, naam, email)')
@@ -42,9 +42,6 @@ export default async function BeheerPage({ params }: { params: { id: string } })
           <h1 className="font-bold text-caroo-donker">Beheer — {groep.naam}</h1>
         </div>
       </header>
-      {ledenFout && (
-        <p className="mx-4 mt-3 text-xs text-red-600 break-all">Leden laden mislukt: {ledenFout.code} {ledenFout.message} {ledenFout.hint ?? ''}</p>
-      )}
       <BeheerClient
         groepId={params.id}
         huidigGebruikerId={user.id}
