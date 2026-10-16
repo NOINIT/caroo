@@ -21,9 +21,19 @@ export default async function UitnodigingPage({
     return <FoutPagina bericht="Geen uitnodigingstoken gevonden in de link." />
   }
 
-  const tokenStr = token
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
 
-  const validatie = await valideerToken(tokenStr)
+  // Al ingelogd: direct accepteren en doorsturen
+  if (user) {
+    const resultaat = await accepteerUitnodiging(token, user.id)
+    if ('groepId' in resultaat && resultaat.groepId) {
+      redirect(`/groep/${resultaat.groepId}?welkom=true`)
+    }
+    return <FoutPagina bericht={('error' in resultaat && resultaat.error) || 'Onbekende fout'} />
+  }
+
+  const validatie = await valideerToken(token)
 
   if ('error' in validatie) {
     return <FoutPagina bericht={validatie.error ?? 'Onbekende fout'} />
@@ -31,20 +41,6 @@ export default async function UitnodigingPage({
 
   const { uitnodiging } = validatie
   const groepNaam = (uitnodiging.zorggroepen as any)?.naam || 'Onbekende groep'
-
-  // Controleer of de gebruiker al is ingelogd
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (user) {
-    // Accepteer automatisch als de gebruiker al is ingelogd
-    const resultaat = await accepteerUitnodiging(tokenStr, user.id)
-    if ('error' in resultaat) {
-      return <FoutPagina bericht={resultaat.error ?? 'Onbekende fout'} />
-    }
-    const groepId = 'groepId' in resultaat ? resultaat.groepId : ''
-    redirect(`/dashboard?groep=${groepId}&welkom=true`)
-  }
 
   // Niet ingelogd: toon uitnodigingspagina met login/registreer opties
   return (

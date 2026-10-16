@@ -6,9 +6,11 @@ import { uitloggen } from '@/app/auth/actions'
 import AbonnementKnop from './AbonnementKnop'
 
 export default async function GroepPage({
-  params
+  params,
+  searchParams,
 }: {
   params: { id: string }
+  searchParams: { welkom?: string }
 }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -74,6 +76,7 @@ export default async function GroepPage({
 
   const isBeheerder = mijnLidschap?.rol === 'groepsbeheerder'
   const isEigenaar = groep.eigenaar_id === user.id
+  const welkom = searchParams.welkom === 'true'
 
   return (
     <div className="max-w-md mx-auto min-h-screen pb-24">
@@ -89,6 +92,15 @@ export default async function GroepPage({
           </form>
         </div>
       </header>
+
+      {/* Welkomstbanner na het accepteren van een uitnodiging */}
+      {welkom && (
+        <div className="bg-caroo-groen-licht border-b border-caroo-groen px-4 py-3">
+          <p className="text-caroo-donker text-sm font-medium">
+            🎉 Welkom bij {groep.naam}! Je bent nu lid van deze zorggroep.
+          </p>
+        </div>
+      )}
 
       {/* Niet betaald banner */}
       {!groep.betaald && (

@@ -118,31 +118,107 @@ export async function valideerToken(token: string) {
   return { uitnodiging: data }
 }
 
-export async function accepteerUitnodiging(token: string, userId: string) {
-  const supabase = createClient()
+/**
+ * Voeg een gebruiker toe aan de groep van een uitnodiging.
+ * Idempotent: als de gebruiker al lid is, telt dat als geslaagd.
+ * Service client: de token is al gecontroleerd, RLS mag dit niet blokkeren.
+ */
+async function voegToeAanGroep(
+  uitnodiging: { id: string; groep_id: string; rol: string },
+  userId: string
+): Promise<boolean> {
+  const supabase = createServiceClient()
 
-  const validatie = await valideerToken(token)
-  if ('error' in validatie) return validatie
-
-  const { uitnodiging } = validatie
-
-  const { error: lidError } = await supabase.from('groepsleden').insert({
+  const { error } = await supabase.from('groepsleden').insert({
     groep_id: uitnodiging.groep_id,
     user_id: userId,
     rol: uitnodiging.rol,
   })
 
-  if (lidError) {
-    if (lidError.code === '23505') {
-      return { error: 'Je bent al lid van deze zorggroep.' }
-    }
-    return { error: 'Kon uitnodiging niet verwerken.' }
-  }
+  // 23505 = al lid van deze groep
+  if (error && error.code !== '23505') return false
 
   await supabase
     .from('uitnodigingen')
     .update({ gebruikt: true })
+    .eq('id', uitnodiging.id)
+
+  return true
+}
+
+export async function accepteerUitnodiging(token: string, userId: string) {
+  const supabase = createServiceClient()
+
+  const { data: uitnodiging } = await supabase
+    .from('uitnodigingen')
+    .select('id, groep_id, rol, gebruikt, verloopt_op')
     .eq('token', token)
+    .single()
+
+  if (!uitnodiging) return { error: 'Uitnodiging niet gevonden.' }
+
+  // Al gebruikt? Als deze gebruiker al lid is, is dat gewoon goed.
+  if (uitnodiging.gebruikt) {
+    const { data: lid } = await supabase
+      .from('groepsleden')
+      .select('groep_id')
+      .eq('groep_id', uitnodiging.groep_id)
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    if (lid) return { succes: true, groepId: uitnodiging.groep_id, rol: uitnodiging.rol }
+    return { error: 'Deze uitnodiging is al gebruikt.' }
+  }
+
+  if (new Date(uitnodiging.verloopt_op) < new Date()) {
+    return { error: 'Deze uitnodiging is verlopen.' }
+  }
+
+  const gelukt = await voegToeAanGroep(uitnodiging, userId)
+  if (!gelukt) return { error: 'Kon uitnodiging niet verwerken.' }
 
   return { succes: true, groepId: uitnodiging.groep_id, rol: uitnodiging.rol }
+}
+
+/**
+ * Verwerk alle openstaande uitnodigingen voor een ingelogde gebruiker.
+ * Kijkt naar (1) de token die bij registratie in het account is opgeslagen
+ * en (2) open uitnodigingen op het (bevestigde) e-mailadres van de gebruiker.
+ * Werkt dus ongeacht via welke pagina of browser iemand binnenkomt.
+ * Geeft de groep-id terug van de eerste nieuw geaccepteerde uitnodiging.
+ */
+export async function verwerkOpenUitnodigingen(user: {
+  id: string
+  email?: string | null
+  user_metadata?: Record<string, any>
+}): Promise<string | null> {
+  const supabase = createServiceClient()
+  let eersteGroep: string | null = null
+
+  const token = user.user_metadata?.uitnodiging_token as string | undefined
+  if (token) {
+    const resultaat = await accepteerUitnodiging(token, user.id)
+    if ('groepId' in resultaat && resultaat.groepId) eersteGroep = resultaat.groepId
+
+    // Token opruimen zodat dit maar één keer gebeurt
+    await supabase.auth.admin.updateUserById(user.id, {
+      user_metadata: { ...user.user_metadata, uitnodiging_token: null },
+    })
+  }
+
+  if (user.email) {
+    const { data: open } = await supabase
+      .from('uitnodigingen')
+      .select('id, groep_id, rol')
+      .ilike('email', user.email)
+      .eq('gebruikt', false)
+      .gt('verloopt_op', new Date().toISOString())
+
+    for (const uitnodiging of open || []) {
+      const gelukt = await voegToeAanGroep(uitnodiging, user.id)
+      if (gelukt && !eersteGroep) eersteGroep = uitnodiging.groep_id
+    }
+  }
+
+  return eersteGroep
 }

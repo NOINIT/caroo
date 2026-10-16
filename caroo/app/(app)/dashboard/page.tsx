@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getMijnGroepen } from '@/lib/rechten'
+import { verwerkOpenUitnodigingen } from '@/lib/uitnodiging'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { CarooLogo } from '@/components/ui/CarooLogo'
@@ -8,12 +9,17 @@ import { uitloggen } from '@/app/auth/actions'
 export default async function DashboardPage({
   searchParams
 }: {
-  searchParams: { welkom?: string; groep?: string }
+  searchParams: { welkom?: string; groep?: string; uitnodiging?: string }
 }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
+
+  // Vangnet: openstaande uitnodigingen alsnog verwerken (bijv. na inloggen
+  // in een andere browser dan waar de bevestigingsmail werd geopend)
+  const nieuweGroep = await verwerkOpenUitnodigingen(user)
+  if (nieuweGroep) redirect(`/groep/${nieuweGroep}?welkom=true`)
 
   // Haal gebruikersprofiel op
   const { data: profiel } = await supabase
@@ -35,6 +41,7 @@ export default async function DashboardPage({
 
   const heeftGeenGroepen = groepen.length === 0
   const welkomTerug = searchParams.welkom === 'true'
+  const uitnodigingOngeldig = searchParams.uitnodiging === 'ongeldig'
 
   return (
     <div className="max-w-md mx-auto min-h-screen pb-20">
@@ -60,6 +67,11 @@ export default async function DashboardPage({
             <p className="text-caroo-groen text-sm mt-1">
               Welkom in jouw zorggroep! Je kunt nu beginnen.
             </p>
+          )}
+          {uitnodigingOngeldig && (
+            <div className="bg-orange-50 border border-orange-200 text-orange-700 rounded-caroo p-3 mt-3 text-sm">
+              Deze uitnodigingslink is verlopen of al gebruikt. Vraag de beheerder van de groep om een nieuwe link.
+            </div>
           )}
         </div>
 

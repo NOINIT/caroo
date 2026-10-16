@@ -20,13 +20,16 @@ export async function registreer(formData: FormData) {
   }
 
   const next = redirectNaar || '/dashboard'
+  const tokenMatch = next.match(/[?&]token=([a-f0-9]+)/)
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
   const { error } = await supabase.auth.signUp({
     email,
     password: wachtwoord,
     options: {
-      data: { naam },
+      // De uitnodigingstoken gaat mee in het account zelf, zodat hij niet
+      // verloren kan gaan in redirects of als de mail in een andere browser opent
+      data: { naam, ...(tokenMatch ? { uitnodiging_token: tokenMatch[1] } : {}) },
       emailRedirectTo: `${baseUrl}/auth/callback?next=${encodeURIComponent(next)}`,
     },
   })
