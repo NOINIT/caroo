@@ -3,13 +3,15 @@
 import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { inloggen, magicLink } from '@/app/auth/actions'
+import { inloggen, magicLink, stuurBevestigingOpnieuw } from '@/app/auth/actions'
 
 function LoginForm() {
   const [tabblad, setTabblad] = useState<'wachtwoord' | 'magic'>('wachtwoord')
   const [fout, setFout] = useState<string | null>(null)
   const [succes, setSucces] = useState(false)
   const [laden, setLaden] = useState(false)
+  const [onbevestigdEmail, setOnbevestigdEmail] = useState<string | null>(null)
+  const [opnieuwVerstuurd, setOpnieuwVerstuurd] = useState(false)
 
   const searchParams = useSearchParams()
   const redirectNaar = searchParams.get('redirect')
@@ -24,9 +26,27 @@ function LoginForm() {
     e.preventDefault()
     setLaden(true)
     setFout(null)
+    setOnbevestigdEmail(null)
+    setOpnieuwVerstuurd(false)
     const formData = new FormData(e.currentTarget)
     const resultaat = await inloggen(formData)
     if (resultaat?.error) setFout(resultaat.error)
+    if (resultaat && 'onbevestigd' in resultaat && resultaat.onbevestigd) {
+      setOnbevestigdEmail(formData.get('email') as string)
+    }
+    setLaden(false)
+  }
+
+  async function handleOpnieuwSturen() {
+    if (!onbevestigdEmail) return
+    setLaden(true)
+    const resultaat = await stuurBevestigingOpnieuw(onbevestigdEmail, volledigeRedirect)
+    if (resultaat?.error) {
+      setFout(resultaat.error)
+    } else {
+      setFout(null)
+      setOpnieuwVerstuurd(true)
+    }
     setLaden(false)
   }
 
@@ -96,6 +116,23 @@ function LoginForm() {
       {fout && (
         <div className="bg-red-50 border border-red-200 text-red-700 rounded-caroo p-3 mb-4 text-sm">
           {fout}
+        </div>
+      )}
+
+      {onbevestigdEmail && !opnieuwVerstuurd && (
+        <button
+          type="button"
+          onClick={handleOpnieuwSturen}
+          disabled={laden}
+          className="btn-secondary w-full mb-4"
+        >
+          Stuur bevestigingsmail opnieuw
+        </button>
+      )}
+
+      {opnieuwVerstuurd && (
+        <div className="bg-caroo-groen-licht border border-caroo-groen text-caroo-donker rounded-caroo p-3 mb-4 text-sm">
+          We hebben een nieuwe bevestigingsmail gestuurd naar {onbevestigdEmail}. Klik op de link in die mail, dan kom je direct in de groep. Check ook je spamfolder.
         </div>
       )}
 

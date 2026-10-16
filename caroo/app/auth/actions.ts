@@ -61,10 +61,44 @@ export async function inloggen(formData: FormData) {
   })
 
   if (error) {
+    if (error.code === 'email_not_confirmed' || /not confirmed/i.test(error.message)) {
+      return {
+        error: 'Je e-mailadres is nog niet bevestigd. Klik op de link in de bevestigingsmail, of laat hieronder een nieuwe sturen.',
+        onbevestigd: true,
+      }
+    }
+    if (error.code === 'invalid_credentials' || /invalid login/i.test(error.message)) {
+      return { error: 'E-mailadres of wachtwoord klopt niet.' }
+    }
     return { error: error.message }
   }
 
   redirect(redirectNaar || '/dashboard')
+}
+
+export async function stuurBevestigingOpnieuw(email: string, redirectNaar?: string | null) {
+  const supabase = createClient()
+  const next = redirectNaar || '/dashboard'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
+  if (!email) return { error: 'Vul eerst je e-mailadres in.' }
+
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email,
+    options: {
+      emailRedirectTo: `${baseUrl}/auth/callback?next=${encodeURIComponent(next)}`,
+    },
+  })
+
+  if (error) {
+    if (/rate limit|security purposes|seconds/i.test(error.message)) {
+      return { error: 'Er is net al een mail gestuurd. Wacht een minuut en probeer het dan opnieuw.' }
+    }
+    return { error: error.message }
+  }
+
+  return { success: true }
 }
 
 export async function magicLink(formData: FormData) {
