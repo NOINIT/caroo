@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { MijnVerhaal } from './MijnVerhaal'
+import { BoodschappenLijst } from '@/components/boodschappen/BoodschappenLijst'
 import { uitloggen } from '@/app/auth/actions'
 
-type Tab = 'thuis' | 'mijn_dag' | 'fotos' | 'mijn_verhaal' | 'mijn_tip' | 'instellingen'
+type Tab = 'thuis' | 'mijn_dag' | 'boodschappen' | 'fotos' | 'mijn_verhaal' | 'mijn_tip' | 'instellingen'
 
 interface Props {
   groepId: string
@@ -26,9 +27,21 @@ export function OudereInterface({ groepId, naam, groepNaam, dagAfspraken, medici
     <div className="max-w-md mx-auto min-h-screen bg-white flex flex-col">
       {/* Header */}
       <header className="bg-caroo-groen text-white px-4 py-4">
-        <p className="text-white/80 text-ou-sm">{begroeting},</p>
-        <h1 className="text-ou-2xl font-bold">{voornaam}</h1>
-        <p className="text-white/70 text-xs mt-0.5">{groepNaam}</p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-white/80 text-ou-sm">{begroeting},</p>
+            <h1 className="text-ou-2xl font-bold">{voornaam}</h1>
+            <p className="text-white/70 text-xs mt-0.5">{groepNaam}</p>
+          </div>
+          <button
+            onClick={() => setActieveTab('instellingen')}
+            className="flex flex-col items-center text-white/80 hover:text-white pt-1"
+            aria-label="Instellingen"
+          >
+            <span className="text-2xl">⚙️</span>
+            <span className="text-[11px]">Instellingen</span>
+          </button>
+        </div>
       </header>
 
       {/* Content */}
@@ -42,6 +55,12 @@ export function OudereInterface({ groepId, naam, groepNaam, dagAfspraken, medici
         )}
         {actieveTab === 'mijn_dag' && (
           <TabMijnDag dagAfspraken={dagAfspraken} />
+        )}
+        {actieveTab === 'boodschappen' && (
+          <div className="px-4 py-6">
+            <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">Boodschappen</h2>
+            <BoodschappenLijst groepId={groepId} groot />
+          </div>
         )}
         {actieveTab === 'fotos' && (
           <TabFotos fotos={fotos} />
@@ -63,10 +82,11 @@ export function OudereInterface({ groepId, naam, groepNaam, dagAfspraken, medici
           {[
             { tab: 'thuis' as Tab, emoji: '🏠', label: 'Thuis' },
             { tab: 'mijn_dag' as Tab, emoji: '📅', label: 'Mijn dag' },
+            { tab: 'boodschappen' as Tab, emoji: '🛒', label: 'Boodschap' },
             { tab: 'fotos' as Tab, emoji: '📸', label: "Foto's" },
             { tab: 'mijn_verhaal' as Tab, emoji: '🎤', label: 'Verhaal' },
             { tab: 'mijn_tip' as Tab, emoji: '💡', label: 'Tip' },
-            { tab: 'instellingen' as Tab, emoji: '⚙️', label: 'Stel in' },
+
           ].map(item => (
             <button
               key={item.tab}

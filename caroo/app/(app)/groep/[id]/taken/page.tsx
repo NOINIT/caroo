@@ -25,19 +25,19 @@ export default async function TakenPage({ params }: { params: { id: string } }) 
       .from('taken')
       .select(`
         id, titel, beschrijving, deadline, voltooid, aangemaakt_op, toegewezen_aan,
-        groepsleden (users (naam))
+        toegewezen:users!taken_toegewezen_aan_fkey (naam)
       `)
       .eq('groep_id', params.id)
       .order('aangemaakt_op', { ascending: false }),
 
     supabase
       .from('groepsleden')
-      .select('id, users (id, naam)')
+      .select('user_id, users (id, naam)')
       .eq('groep_id', params.id),
   ])
 
   const ledenLijst = (leden || []).map((l: any) => ({
-    id: l.id,
+    id: l.user_id,
     naam: l.users?.naam || 'Onbekend',
   }))
 

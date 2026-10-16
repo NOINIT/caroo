@@ -123,6 +123,7 @@ export default async function GroepPage({
           {[
             { href: `/groep/${params.id}/agenda`, emoji: '📅', label: 'Agenda' },
             { href: `/groep/${params.id}/taken`, emoji: '✅', label: 'Taken' },
+            { href: `/groep/${params.id}/boodschappen`, emoji: '🛒', label: 'Boodschappen' },
             { href: `/groep/${params.id}/medicijnen`, emoji: '💊', label: 'Medicijnen' },
             { href: `/groep/${params.id}/dagboek`, emoji: '📔', label: 'Dagboek' },
             { href: `/groep/${params.id}/fotos`, emoji: '📸', label: "Foto's" },

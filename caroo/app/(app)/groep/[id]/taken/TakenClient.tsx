@@ -16,7 +16,7 @@ interface Taak {
   voltooid: boolean
   aangemaakt_op: string
   toegewezen_aan: string | null
-  groepsleden: { users: { naam: string } } | null
+  toegewezen: { naam: string } | null
 }
 
 interface Props {
@@ -55,7 +55,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
       aangemaakt_door: user.id,
     }).select(`
       id, titel, beschrijving, deadline, voltooid, aangemaakt_op, toegewezen_aan,
-      groepsleden (users (naam))
+      toegewezen:users!taken_toegewezen_aan_fkey (naam)
     `).single()
 
     if (data) {
@@ -123,7 +123,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
               onChange={e => setNieuw(p => ({ ...p, titel: e.target.value }))}
               required
               className="input-field"
-              placeholder="bijv. Boodschappen doen"
+              placeholder="bijv. Oma naar de kapper brengen"
             />
           </div>
           <div>
@@ -133,7 +133,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
               value={nieuw.beschrijving}
               onChange={e => setNieuw(p => ({ ...p, beschrijving: e.target.value }))}
               className="input-field"
-              placeholder="bijv. Melk, brood en groente"
+              placeholder="bijv. Vrijdag om 10 uur"
             />
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -209,9 +209,9 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
                         📅 {new Date(taak.deadline).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}
                       </span>
                     )}
-                    {taak.groepsleden?.users?.naam && (
+                    {taak.toegewezen?.naam && (
                       <span className="text-xs px-1.5 py-0.5 rounded bg-caroo-groen-licht text-caroo-donker">
-                        👤 {taak.groepsleden.users.naam}
+                        👤 {taak.toegewezen.naam}
                       </span>
                     )}
                   </div>
