@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { heeftRecht } from '@/lib/rechten'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { rolLabel } from '@/lib/rollen'
 import { uitloggen } from '@/app/auth/actions'
 import AbonnementKnop from './AbonnementKnop'
 
@@ -208,7 +209,7 @@ export default async function GroepPage({
                   <p className="text-xs text-gray-400">{lid.users.email}</p>
                 </div>
                 <span className="text-xs bg-caroo-groen-licht text-caroo-groen px-2 py-0.5 rounded-full">
-                  {lid.rol}
+                  {rolLabel(lid.rol)}
                 </span>
               </div>
             ))}

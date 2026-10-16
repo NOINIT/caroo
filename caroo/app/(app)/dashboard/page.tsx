@@ -108,7 +108,7 @@ export default async function DashboardPage({
                       <p className="font-semibold text-caroo-donker">{groep.naam}</p>
                       <p className="text-xs text-gray-500 mt-0.5">
                         {lid.rol === 'groepsbeheerder' ? '👑 Beheerder' :
-                         lid.rol === 'mantelzorger' ? '🤝 Mantelzorger' : '👴 Oudere'}
+                         lid.rol === 'mantelzorger' ? '🤝 Mantelzorger' : '⭐ Hoofdpersoon'}
                         {!groep.betaald && (
                           <span className="ml-2 text-orange-500">⚠️ Niet betaald</span>
                         )}

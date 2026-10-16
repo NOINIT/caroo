@@ -26,7 +26,7 @@ interface Props {
 
 const rolLabels: Record<string, string> = {
   mantelzorger: 'Mantelzorger',
-  oudere: 'Oudere',
+  oudere: 'Hoofdpersoon',
   groepsbeheerder: 'Beheerder',
 }
 

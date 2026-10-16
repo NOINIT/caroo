@@ -109,7 +109,7 @@ function LoginForm() {
               : 'text-gray-500'
           }`}
         >
-          Inloglink (voor ouderen)
+          Inloglink (zonder wachtwoord)
         </button>
       </div>
 

@@ -7,7 +7,7 @@ import { OudereUitnodiging } from '@/components/uitnodiging/OudereUitnodiging'
 
 const rolNamen = {
   mantelzorger: 'Mantelzorger',
-  oudere: 'Oudere',
+  oudere: 'Hoofdpersoon',
   groepsbeheerder: 'Groepsbeheerder',
 }
 

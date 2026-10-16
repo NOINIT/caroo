@@ -19,7 +19,7 @@ interface Props {
 
 const rolLabels: Record<string, string> = {
   mantelzorger: 'Mantelzorger',
-  oudere: 'Oudere',
+  oudere: 'Hoofdpersoon',
   groepsbeheerder: 'Groepsbeheerder',
 }
 
@@ -90,7 +90,7 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
             className="input-field"
           >
             <option value="mantelzorger">Mantelzorger</option>
-            <option value="oudere">Oudere (inloggen zonder wachtwoord)</option>
+            <option value="oudere">Hoofdpersoon (inloggen zonder wachtwoord)</option>
             <option value="groepsbeheerder">Groepsbeheerder</option>
           </select>
         </div>
