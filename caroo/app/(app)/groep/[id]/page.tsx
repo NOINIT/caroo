@@ -126,7 +126,9 @@ export default async function GroepPage({
             { href: `/groep/${params.id}/medicijnen`, emoji: '💊', label: 'Medicijnen' },
             { href: `/groep/${params.id}/dagboek`, emoji: '📔', label: 'Dagboek' },
             { href: `/groep/${params.id}/fotos`, emoji: '📸', label: "Foto's" },
-            { href: `/groep/${params.id}/beheer`, emoji: '⚙️', label: 'Beheer' },
+            ...(isBeheerder
+              ? [{ href: `/groep/${params.id}/beheer`, emoji: '⚙️', label: 'Beheer' }]
+              : []),
           ].map(item => (
             <Link
               key={item.href}
