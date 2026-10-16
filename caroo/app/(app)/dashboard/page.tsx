@@ -63,6 +63,7 @@ export default async function DashboardPage({
           <h1 className="text-xl font-bold text-caroo-donker">
             Hallo, {profiel?.naam?.split(' ')[0] || 'daar'} 👋
           </h1>
+          <p className="text-xs text-gray-400 mt-0.5">Ingelogd als {user.email}</p>
           {welkomTerug && (
             <p className="text-caroo-groen text-sm mt-1">
               Welkom in jouw zorggroep! Je kunt nu beginnen.

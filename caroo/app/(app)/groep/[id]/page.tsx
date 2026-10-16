@@ -87,9 +87,12 @@ export default async function GroepPage({
             <Link href="/dashboard" className="text-white/70 text-xs">← Dashboard</Link>
             <h1 className="font-bold">{groep.naam}</h1>
           </div>
-          <form action={uitloggen}>
-            <button type="submit" className="text-white/70 text-sm">Uitloggen</button>
-          </form>
+          <div className="text-right">
+            <form action={uitloggen}>
+              <button type="submit" className="text-white/70 text-sm">Uitloggen</button>
+            </form>
+            <p className="text-white/60 text-[11px] max-w-[160px] truncate">{user.email}</p>
+          </div>
         </div>
       </header>
 
