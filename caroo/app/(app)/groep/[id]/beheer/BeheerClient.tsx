@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { verwijderLidUitGroep } from './actions'
 
 interface Lid {
   id: string
   rol: string
-  lid_sinds: string
+  toegevoegd_op: string
   users: { id: string; naam: string; email: string } | null
 }
 
@@ -42,8 +43,11 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
 
   async function verwijderLid(lidId: string) {
     if (!confirm('Weet je zeker dat je dit lid wilt verwijderen?')) return
-    const supabase = createClient()
-    await supabase.from('groepsleden').delete().eq('id', lidId)
+    const resultaat = await verwijderLidUitGroep(groepId, lidId)
+    if ('error' in resultaat && resultaat.error) {
+      alert(resultaat.error)
+      return
+    }
     setLeden(prev => prev.filter(l => l.id !== lidId))
   }
 

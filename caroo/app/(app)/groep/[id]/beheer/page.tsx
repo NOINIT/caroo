@@ -23,9 +23,9 @@ export default async function BeheerPage({ params }: { params: { id: string } })
   const [{ data: leden }, { data: categorieen }] = await Promise.all([
     supabase
       .from('groepsleden')
-      .select('id, rol, lid_sinds, users (id, naam, email)')
+      .select('id, rol, toegevoegd_op, users (id, naam, email)')
       .eq('groep_id', params.id)
-      .order('lid_sinds', { ascending: true }),
+      .order('toegevoegd_op', { ascending: true }),
 
     supabase
       .from('agenda_categorieen')
