@@ -4,17 +4,19 @@ import { useState } from 'react'
 import { LETTERGROOTTES, lettergroottePx, type Lettergrootte } from '@/lib/voorkeuren'
 import { speelGeluid, zetGeluid } from '@/lib/geluid'
 import { slaVoorkeurenOp } from '@/app/(app)/instellingen/actions'
+import { MeldingenInstellingen } from './MeldingenInstellingen'
 
 interface Props {
   naam: string
   email: string
   lettergrootte: string
   geluid: boolean
+  meldingEmail?: boolean
   /** Extra grote knoppen voor de hoofdpersoon */
   groot?: boolean
 }
 
-export function InstellingenFormulier({ naam: startNaam, email, lettergrootte: startGrootte, geluid: startGeluid, groot = false }: Props) {
+export function InstellingenFormulier({ naam: startNaam, email, lettergrootte: startGrootte, geluid: startGeluid, meldingEmail = true, groot = false }: Props) {
   const [naam, setNaam] = useState(startNaam)
   const [grootte, setGrootte] = useState<Lettergrootte>((startGrootte as Lettergrootte) || 'normaal')
   const [geluid, setGeluid] = useState(startGeluid)
@@ -106,6 +108,14 @@ export function InstellingenFormulier({ naam: startNaam, email, lettergrootte: s
             </button>
           ))}
         </div>
+      </section>
+
+      <section>
+        <h2 className={kop}>Meldingen</h2>
+        <p className="text-xs text-gray-500 mb-3">
+          Bijvoorbeeld als iemand om bezoek vraagt, of als iemand laat weten dat hij langskomt.
+        </p>
+        <MeldingenInstellingen email={meldingEmail} groot={groot} />
       </section>
 
       {status === 'fout' && (

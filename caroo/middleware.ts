@@ -10,6 +10,9 @@ const PUBLIC_ROUTES = [
   '/auth/bevestig',
   '/auth/magic-link',
   '/api/stripe/webhook',
+  '/sw.js',
+  '/manifest.webmanifest',
+  '/icons',
 ]
 
 export async function middleware(request: NextRequest) {

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { STEMMINGEN, stemmingInfo, vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
 import { speelGeluid } from '@/lib/geluid'
+import { vraagBezoekAan } from '@/lib/acties/bezoek'
 
 export interface Bezoekverzoek {
   id: string
@@ -82,13 +83,8 @@ export function Thuis({
     if (bezig) return
     setBezig(true)
     speelGeluid('succes')
-    const supabase = createClient()
-    const { data } = await supabase
-      .from('bezoekverzoeken')
-      .insert({ groep_id: groepId, aangevraagd_door: userId, aangevraagd_naam: naam })
-      .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer')
-      .single()
-    if (data) setBezoek(data)
+    const r = await vraagBezoekAan(groepId)
+    if ('verzoek' in r && r.verzoek) setBezoek(r.verzoek)
     setBezig(false)
   }
 

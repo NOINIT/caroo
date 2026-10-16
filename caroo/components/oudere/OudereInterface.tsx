@@ -23,11 +23,12 @@ interface Props {
   aantalBoodschappen: number
   lettergrootte: string
   geluid: boolean
+  meldingEmail: boolean
 }
 
 export function OudereInterface({
   groepId, userId, email, naam, groepNaam, dagAfspraken, medicijnen, fotos,
-  stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid,
+  stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid, meldingEmail,
 }: Props) {
   const [actieveTab, setActieveTab] = useState<Tab>('thuis')
 
@@ -91,7 +92,7 @@ export function OudereInterface({
           <TabMijnTip groepId={groepId} />
         )}
         {actieveTab === 'instellingen' && (
-          <TabInstellingen naam={naam} email={email} lettergrootte={lettergrootte} geluid={geluid} />
+          <TabInstellingen naam={naam} email={email} lettergrootte={lettergrootte} geluid={geluid} meldingEmail={meldingEmail} />
         )}
       </main>
 
@@ -260,11 +261,11 @@ function TabMijnTip({ groepId }: any) {
   )
 }
 
-function TabInstellingen({ naam, email, lettergrootte, geluid }: { naam: string; email: string; lettergrootte: string; geluid: boolean }) {
+function TabInstellingen({ naam, email, lettergrootte, geluid, meldingEmail }: { naam: string; email: string; lettergrootte: string; geluid: boolean; meldingEmail: boolean }) {
   return (
     <div className="px-4 py-6">
       <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">Instellingen</h2>
-      <InstellingenFormulier naam={naam} email={email} lettergrootte={lettergrootte} geluid={geluid} groot />
+      <InstellingenFormulier naam={naam} email={email} lettergrootte={lettergrootte} geluid={geluid} meldingEmail={meldingEmail} groot />
       <form action={uitloggen} className="mt-8">
         <button
           type="submit"

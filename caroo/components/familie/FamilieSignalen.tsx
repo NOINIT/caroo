@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { stemmingInfo } from '@/lib/stemming'
 import { speelGeluid } from '@/lib/geluid'
+import { reageerOpBezoek } from '@/lib/acties/bezoek'
 
 interface Stemming { naam: string | null; stemming: number; bijgewerkt_op: string }
 interface Verzoek {
@@ -46,17 +46,11 @@ export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start
     setKiesVoor(null)
     setTijd('')
     setVerzoeken(prev => prev.map(v => (v.id === id ? { ...v, reactie_naam: mijnNaam, reactie_wanneer: wanneer } : v)))
-    const supabase = createClient()
-    await supabase
-      .from('bezoekverzoeken')
-      .update({
-        reactie_door: mijnId,
-        reactie_naam: mijnNaam,
-        reactie_wanneer: wanneer,
-        reactie_op: new Date().toISOString(),
-      })
-      .eq('id', id)
-      .is('reactie_door', null)
+    const r = await reageerOpBezoek(id, wanneer)
+    if ('error' in r && r.error) {
+      alert(r.error)
+      setVerzoeken(prev => prev.map(v => (v.id === id ? { ...v, reactie_naam: null, reactie_wanneer: null } : v)))
+    }
   }
 
   if (stemmingen.length === 0 && verzoeken.length === 0) return null

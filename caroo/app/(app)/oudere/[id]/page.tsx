@@ -28,7 +28,7 @@ export default async function OuderePage({ params }: { params: { id: string } })
     { data: bezoek },
     { count: aantalBoodschappen },
   ] = await Promise.all([
-    supabase.from('users').select('naam, lettergrootte, geluid').eq('id', user.id).single(),
+    supabase.from('users').select('naam, lettergrootte, geluid, melding_email').eq('id', user.id).single(),
     supabase.from('zorggroepen').select('id, naam').eq('id', params.id).single(),
     supabase
       .from('afspraken')
@@ -90,6 +90,7 @@ export default async function OuderePage({ params }: { params: { id: string } })
       aantalBoodschappen={aantalBoodschappen ?? 0}
       lettergrootte={profiel?.lettergrootte || 'normaal'}
       geluid={profiel?.geluid ?? true}
+      meldingEmail={profiel?.melding_email ?? true}
     />
   )
 }

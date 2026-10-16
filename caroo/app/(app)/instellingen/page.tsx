@@ -11,7 +11,7 @@ export default async function InstellingenPage() {
 
   const { data: profiel } = await supabase
     .from('users')
-    .select('naam, lettergrootte, geluid')
+    .select('naam, lettergrootte, geluid, melding_email')
     .eq('id', user.id)
     .single()
 
@@ -29,6 +29,7 @@ export default async function InstellingenPage() {
           email={user.email || ''}
           lettergrootte={profiel?.lettergrootte || 'normaal'}
           geluid={profiel?.geluid ?? true}
+          meldingEmail={profiel?.melding_email ?? true}
         />
         <form action={uitloggen} className="mt-8">
           <button type="submit" className="w-full py-3 text-sm text-red-500 border border-red-200 rounded-caroo hover:bg-red-50">
