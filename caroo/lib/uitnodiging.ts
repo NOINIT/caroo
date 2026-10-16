@@ -51,18 +51,16 @@ export async function maakUitnodiging(params: {
     return { error: `Je kunt maximaal ${MAX_UITNODIGINGEN_PER_DAG} uitnodigingen per dag versturen.` }
   }
 
-  const { data: bestaand } = await supabase
+  // Staat er al een open uitnodiging voor dit adres in deze groep?
+  // Dan laten we die vervallen: alleen de nieuwste link werkt nog.
+  // (Rechten van de uitnodiger zijn al gecontroleerd in de API-route.)
+  await createServiceClient()
     .from('uitnodigingen')
-    .select('id, gebruikt')
+    .update({ verloopt_op: new Date().toISOString() })
     .eq('groep_id', groepId)
-    .eq('email', email)
+    .ilike('email', email)
     .eq('gebruikt', false)
     .gt('verloopt_op', new Date().toISOString())
-    .single()
-
-  if (bestaand) {
-    return { error: 'Dit e-mailadres heeft al een openstaande uitnodiging.' }
-  }
 
   const token = crypto.randomBytes(32).toString('hex')
   const verlooptOp = new Date()
