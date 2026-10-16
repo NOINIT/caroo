@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 export async function registreer(formData: FormData) {
@@ -113,7 +113,7 @@ export async function magicLink(formData: FormData) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/callback?next=%2Fdashboard`,
     },
   })
 
@@ -122,6 +122,66 @@ export async function magicLink(formData: FormData) {
   }
 
   return { success: true }
+}
+
+/** Maskeer een e-mailadres voor weergave: oma.jansen@gmail.com -> o***@gmail.com */
+function maskeerEmail(email: string) {
+  const [naam, domein] = email.split('@')
+  if (!domein) return '***'
+  return `${naam.slice(0, 1)}***@${domein}`
+}
+
+/**
+ * Inloglink voor een oudere die is uitgenodigd.
+ * Veiligheid: de link gaat ALLEEN naar het e-mailadres van de uitnodiging.
+ * Wie de uitnodigingslink in handen krijgt, kan dus geen eigen adres invullen.
+ */
+export async function stuurOudereInloglink(token: string, naam: string) {
+  if (!token || !/^[a-f0-9]{64}$/.test(token)) {
+    return { error: 'Deze uitnodiging is niet geldig.' }
+  }
+
+  const service = createServiceClient()
+  const { data: uitnodiging } = await service
+    .from('uitnodigingen')
+    .select('email, rol, gebruikt, verloopt_op')
+    .eq('token', token)
+    .single()
+
+  if (!uitnodiging || uitnodiging.rol !== 'oudere') {
+    return { error: 'Deze uitnodiging is niet geldig.' }
+  }
+  if (uitnodiging.gebruikt) {
+    return { error: 'Deze uitnodiging is al gebruikt. Log in via de inlogpagina.' }
+  }
+  if (new Date(uitnodiging.verloopt_op) < new Date()) {
+    return { error: 'Deze uitnodiging is verlopen. Vraag de familie om een nieuwe.' }
+  }
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const supabase = createClient()
+  const schoneNaam = (naam || '').trim().slice(0, 60)
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email: uitnodiging.email,
+    options: {
+      shouldCreateUser: true,
+      data: {
+        ...(schoneNaam ? { naam: schoneNaam } : {}),
+        uitnodiging_token: token,
+      },
+      emailRedirectTo: `${baseUrl}/auth/callback?next=%2Fdashboard`,
+    },
+  })
+
+  if (error) {
+    if (/rate limit|security purposes|seconds/i.test(error.message)) {
+      return { error: 'Er is net al een link gestuurd. Wacht een minuut en probeer het dan opnieuw.' }
+    }
+    return { error: 'Het versturen lukte niet. Probeer het over een paar minuten nog eens.' }
+  }
+
+  return { success: true, email: maskeerEmail(uitnodiging.email) }
 }
 
 export async function uitloggen() {

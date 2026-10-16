@@ -15,7 +15,7 @@ export default function BetalingSuccesPage() {
         <h2 className="font-semibold text-caroo-donker mb-3">Volgende stappen:</h2>
         <ol className="text-sm text-gray-700 space-y-2">
           <li>1️⃣ Nodig familieleden uit als mantelzorger</li>
-          <li>2️⃣ Stuur een uitnodigingslink naar de oudere (magic link)</li>
+          <li>2️⃣ Stuur een uitnodigingslink naar de oudere (die logt in zonder wachtwoord)</li>
           <li>3️⃣ Voeg medicijnen toe aan de agenda</li>
           <li>4️⃣ Plan de eerste afspraken in de kleurenagenda</li>
         </ol>

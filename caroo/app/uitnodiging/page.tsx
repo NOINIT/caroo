@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { valideerToken, accepteerUitnodiging } from '@/lib/uitnodiging'
 import Link from 'next/link'
 import { CarooLogo } from '@/components/ui/CarooLogo'
+import { OudereUitnodiging } from '@/components/uitnodiging/OudereUitnodiging'
 
 const rolNamen = {
   mantelzorger: 'Mantelzorger',
@@ -50,6 +51,24 @@ export default async function UitnodigingPage({
 
   const { uitnodiging } = validatie
   const groepNaam = (uitnodiging.zorggroepen as any)?.naam || 'Onbekende groep'
+
+  // Oudere: geen wachtwoord, alleen een inloglink naar het adres van de uitnodiging
+  if (uitnodiging.rol === 'oudere') {
+    const [naamDeel, domein] = (uitnodiging.email || '').split('@')
+    const gemaskeerd = domein ? `${naamDeel.slice(0, 1)}***@${domein}` : 'uw e-mailadres'
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-caroo-groen-licht to-white flex flex-col">
+        <header className="px-6 pt-8 pb-4">
+          <CarooLogo size="md" />
+        </header>
+        <main className="flex-1 flex items-center justify-center px-4 pb-8">
+          <div className="w-full max-w-md">
+            <OudereUitnodiging token={token} groepNaam={groepNaam} gemaskeerdEmail={gemaskeerd} />
+          </div>
+        </main>
+      </div>
+    )
+  }
 
   // Niet ingelogd: toon uitnodigingspagina met login/registreer opties
   return (

@@ -2,29 +2,37 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { verwerkOpenUitnodigingen } from '@/lib/uitnodiging'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import type { EmailOtpType } from '@supabase/supabase-js'
+
+const TOEGESTANE_TYPES: EmailOtpType[] = ['signup', 'magiclink', 'email', 'invite', 'recovery', 'email_change']
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  const tokenHash = searchParams.get('token_hash')
+  const type = searchParams.get('type') as EmailOtpType | null
   const next = searchParams.get('next') || '/dashboard'
   // Alleen interne paden toestaan
   const veiligNext = next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard'
 
-  if (!code) {
-    return NextResponse.redirect(`${origin}/login?error=link_ongeldig`)
+  const supabase = createClient()
+  let user = null
+
+  if (tokenHash && type && TOEGESTANE_TYPES.includes(type)) {
+    // Werkt op elk apparaat: de link zelf bevat alles wat nodig is
+    const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
+    if (!error) user = data.user
+  } else if (code) {
+    // Werkt alleen in dezelfde browser als waar de link is aangevraagd
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    if (!error) user = data.user
   }
 
-  const supabase = createClient()
-  const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-
-  if (error || !data.user) {
-    // Gebeurt o.a. als de bevestigingsmail in een andere browser wordt geopend.
-    // Het e-mailadres is dan wel bevestigd: laat de gebruiker gewoon inloggen.
-    // De uitnodiging wordt na het inloggen alsnog verwerkt.
+  if (!user) {
+    // Bijv. link verlopen, al gebruikt, of geopend in een andere browser.
     return NextResponse.redirect(`${origin}/login?bevestigd=1`)
   }
 
-  const user = data.user
   const serviceClient = createServiceClient()
 
   // Profiel aanmaken als het nog niet bestaat
@@ -47,10 +55,10 @@ export async function GET(request: NextRequest) {
   // Uitnodiging direct verwerken
   const groepId = await verwerkOpenUitnodigingen(user)
   if (groepId) {
+    // De groepspagina stuurt ouderen zelf door naar hun eigen weergave
     return NextResponse.redirect(`${origin}/groep/${groepId}?welkom=true`)
   }
 
-  // Was dit een uitnodigingslink die niet (meer) geldig is?
   if (veiligNext.startsWith('/uitnodiging')) {
     return NextResponse.redirect(`${origin}/dashboard?uitnodiging=ongeldig`)
   }

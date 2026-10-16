@@ -90,7 +90,7 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
             className="input-field"
           >
             <option value="mantelzorger">Mantelzorger</option>
-            <option value="oudere">Oudere (gebruikt magische link)</option>
+            <option value="oudere">Oudere (inloggen zonder wachtwoord)</option>
             <option value="groepsbeheerder">Groepsbeheerder</option>
           </select>
         </div>
