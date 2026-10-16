@@ -23,7 +23,7 @@ export async function registreer(formData: FormData) {
   const tokenMatch = next.match(/[?&]token=([a-f0-9]+)/)
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password: wachtwoord,
     options: {
@@ -36,6 +36,13 @@ export async function registreer(formData: FormData) {
 
   if (error) {
     return { error: error.message }
+  }
+
+  // Bestaat dit e-mailadres al? Supabase stuurt dan bewust geen mail en geeft
+  // een account zonder identities terug. Zeg het eerlijk in plaats van te wachten
+  // op een mail die nooit komt.
+  if (data.user && (data.user.identities?.length ?? 0) === 0) {
+    return { error: 'Er bestaat al een account met dit e-mailadres. Log in om verder te gaan.' }
   }
 
   redirect('/registreer/bevestig')
