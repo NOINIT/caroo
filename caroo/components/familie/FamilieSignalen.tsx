@@ -23,11 +23,17 @@ interface Props {
   verzoeken: Verzoek[]
 }
 
-function wanneer(iso: string) {
+function hoeLangGeleden(iso: string) {
   const d = new Date(iso)
+  const minuten = Math.round((Date.now() - d.getTime()) / 60000)
+  if (minuten < 2) return 'Net gevraagd'
+  if (minuten < 60) return `${minuten} minuten geleden gevraagd`
+  const uren = Math.round(minuten / 60)
   const vandaag = new Date().toDateString() === d.toDateString()
-  const tijd = d.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })
-  return vandaag ? `vandaag om ${tijd}` : `${d.toLocaleDateString('nl-NL', { weekday: 'long' })} om ${tijd}`
+  if (vandaag) return uren === 1 ? 'Een uur geleden gevraagd' : `${uren} uur geleden gevraagd`
+  const gisteren = new Date(Date.now() - 86400000).toDateString() === d.toDateString()
+  if (gisteren) return 'Gisteren gevraagd'
+  return `${d.toLocaleDateString('nl-NL', { weekday: 'long' })} gevraagd`
 }
 
 export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start }: Props) {
@@ -62,7 +68,7 @@ export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start
           <p className="font-bold text-caroo-donker">
             🏠 {v.aangevraagd_naam || 'De hoofdpersoon'} wil graag bezoek
           </p>
-          <p className="text-sm text-gray-600 mb-3">Gevraagd {wanneer(v.aangemaakt_op)}</p>
+          <p className="text-sm text-gray-600 mb-3">{hoeLangGeleden(v.aangemaakt_op)}</p>
           {v.reactie_naam ? (
             <p className="text-sm font-medium text-caroo-groen">
               ✓ {v.reactie_naam} gaat langs{v.reactie_wanneer ? `, ${v.reactie_wanneer}` : ''}
