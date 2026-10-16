@@ -11,6 +11,7 @@ interface Foto {
   aangemaakt_op: string
   url: string
   users: { naam: string } | null
+  auteur_naam?: string | null
 }
 
 interface Props {
@@ -73,7 +74,7 @@ export function FotosClient({ groepId, fotos: initieel }: Props) {
       opslag_pad: pad,
       beschrijving: beschrijving || null,
       geupload_door: user.id,
-    }).select('id, opslag_pad, beschrijving, aangemaakt_op, users (naam)').single()
+    }).select('id, opslag_pad, beschrijving, aangemaakt_op, auteur_naam, auteur_naam, users (naam)').single()
 
     if (nieuweFoto) {
       setFotos(prev => [{ ...nieuweFoto as any, url: signedData?.signedUrl || '' }, ...prev])
@@ -172,14 +173,14 @@ export function FotosClient({ groepId, fotos: initieel }: Props) {
                 className="w-full rounded-caroo object-contain max-h-[70vh]"
               />
             )}
-            {(groteFoto.beschrijving || groteFoto.users?.naam) && (
+            {(groteFoto.beschrijving || groteFoto.users?.naam || groteFoto.auteur_naam) && (
               <div className="bg-white rounded-b-caroo px-4 py-3">
                 {groteFoto.beschrijving && (
                   <p className="text-caroo-donker font-medium">{groteFoto.beschrijving}</p>
                 )}
-                {groteFoto.users?.naam && (
+                {(groteFoto.users?.naam || groteFoto.auteur_naam) && (
                   <p className="text-sm text-gray-500">
-                    Geplaatst door {groteFoto.users.naam} ·{' '}
+                    Geplaatst door {groteFoto.users?.naam || groteFoto.auteur_naam} ·{' '}
                     {new Date(groteFoto.aangemaakt_op).toLocaleDateString('nl-NL')}
                   </p>
                 )}

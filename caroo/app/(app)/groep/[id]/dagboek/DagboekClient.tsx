@@ -10,6 +10,7 @@ interface Entry {
   gesproken: boolean
   aangemaakt_op: string
   users: { naam: string } | null
+  auteur_naam?: string | null
 }
 
 interface Props {
@@ -45,7 +46,7 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
       stemming,
       gesproken: false,
       geschreven_door: user.id,
-    }).select('id, inhoud, stemming, gesproken, aangemaakt_op, users (naam)').single()
+    }).select('id, inhoud, stemming, gesproken, aangemaakt_op, auteur_naam, auteur_naam, users (naam)').single()
 
     if (data) {
       setEntries(prev => [data as any, ...prev])
@@ -139,7 +140,7 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
                             weekday: 'long', day: 'numeric', month: 'short',
                             hour: '2-digit', minute: '2-digit'
                           })}
-                          {entry.users?.naam && ` · ${entry.users.naam}`}
+                          {(entry.users?.naam || entry.auteur_naam) && ` · ${entry.users?.naam || entry.auteur_naam}`}
                         </p>
                       </div>
                       <div className="flex items-center gap-1 flex-shrink-0">

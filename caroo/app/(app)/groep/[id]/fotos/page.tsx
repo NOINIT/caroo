@@ -22,7 +22,7 @@ export default async function FotosPage({ params }: { params: { id: string } }) 
 
   const { data: fotos } = await supabase
     .from('fotos')
-    .select('id, opslag_pad, beschrijving, aangemaakt_op, users (naam)')
+    .select('id, opslag_pad, beschrijving, aangemaakt_op, auteur_naam, users (naam)')
     .eq('groep_id', params.id)
     .order('aangemaakt_op', { ascending: false })
 
