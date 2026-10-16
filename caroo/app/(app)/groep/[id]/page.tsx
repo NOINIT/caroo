@@ -208,7 +208,7 @@ export default async function GroepPage({
             ))}
           </div>
 
-          {(isBeheerder || isEigenaar) && groep.betaald && (
+          {isBeheerder && groep.betaald && (
             <Link
               href={`/groep/${params.id}/uitnodigen`}
               className="mt-3 text-caroo-groen text-sm font-medium flex items-center gap-1 hover:underline"

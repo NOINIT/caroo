@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Velden ontbreken' }, { status: 400 })
   }
 
-  const toegestaan = await heeftRecht(groepId, ['mantelzorger', 'groepsbeheerder'])
+  const toegestaan = await heeftRecht(groepId, ['groepsbeheerder'])
   if (!toegestaan) {
     return NextResponse.json({ error: 'Geen toegang' }, { status: 403 })
   }

@@ -9,7 +9,7 @@ export default async function UitnodigingPage({ params }: { params: { id: string
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const heeftToegang = await heeftRecht(params.id, ['mantelzorger', 'groepsbeheerder'])
+  const heeftToegang = await heeftRecht(params.id, ['groepsbeheerder'])
   if (!heeftToegang) redirect('/dashboard')
 
   const { data: groep } = await supabase
