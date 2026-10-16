@@ -56,7 +56,8 @@ export function BoodschappenLijst({ groepId, initieel = [], groot = false }: Pro
       .update({ op_lijst, bijgewerkt_op: nu })
       .eq('id', id)
     if (error) {
-      setFout('Dat lukte niet. Probeer het nog eens.')
+      console.error('Boodschap bijwerken mislukt', error)
+      setFout(`Dat lukte niet. Probeer het nog eens. (${error.code ?? ''} ${error.message})`)
       laad()
     }
   }
@@ -89,7 +90,8 @@ export function BoodschappenLijst({ groepId, initieel = [], groot = false }: Pro
       if (error.code === '23505') {
         await laad()
       } else {
-        setFout('Toevoegen lukte niet. Probeer het nog eens.')
+        console.error('Boodschap toevoegen mislukt', error)
+        setFout(`Toevoegen lukte niet. Probeer het nog eens. (${error.code ?? ''} ${error.message})`)
       }
     } else if (data) {
       setItems(prev => [data, ...prev])
