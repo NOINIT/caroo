@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { VoorkeurenToepasser } from '@/components/VoorkeurenToepasser'
 
 export default async function AppLayout({
   children,
@@ -13,8 +14,18 @@ export default async function AppLayout({
     redirect('/login')
   }
 
+  const { data: voorkeuren } = await supabase
+    .from('users')
+    .select('lettergrootte, geluid')
+    .eq('id', user.id)
+    .maybeSingle()
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <VoorkeurenToepasser
+        lettergrootte={voorkeuren?.lettergrootte || 'normaal'}
+        geluid={voorkeuren?.geluid ?? true}
+      />
       {children}
     </div>
   )

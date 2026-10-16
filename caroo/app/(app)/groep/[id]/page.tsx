@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { rolLabel } from '@/lib/rollen'
 import { uitloggen } from '@/app/auth/actions'
 import AbonnementKnop from './AbonnementKnop'
+import { FamilieSignalen } from '@/components/familie/FamilieSignalen'
+import { vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
 
 export default async function GroepPage({
   params,
@@ -54,6 +56,22 @@ export default async function GroepPage({
     `)
     .eq('groep_id', params.id)
 
+  // Stemming van vandaag en openstaande bezoekverzoeken
+  const [{ data: stemmingenVandaag }, { data: bezoekverzoeken }, { data: mijnProfiel }] = await Promise.all([
+    supabase
+      .from('stemmingen')
+      .select('naam, stemming, bijgewerkt_op')
+      .eq('groep_id', params.id)
+      .eq('datum', vandaagNL()),
+    supabase
+      .from('bezoekverzoeken')
+      .select('id, aangevraagd_naam, aangemaakt_op, reactie_naam')
+      .eq('groep_id', params.id)
+      .gt('aangemaakt_op', new Date(Date.now() - BEZOEK_GELDIG_UUR * 3600 * 1000).toISOString())
+      .order('aangemaakt_op', { ascending: false }),
+    supabase.from('users').select('naam').eq('id', user.id).single(),
+  ])
+
   // Haal aankomende taken op
   const { data: openTaken } = await supabase
     .from('taken')
@@ -89,9 +107,12 @@ export default async function GroepPage({
             <h1 className="font-bold">{groep.naam}</h1>
           </div>
           <div className="text-right">
-            <form action={uitloggen}>
-              <button type="submit" className="text-white/70 text-sm">Uitloggen</button>
-            </form>
+            <div className="flex items-center justify-end gap-3">
+              <Link href="/instellingen" className="text-white/80 text-lg" aria-label="Instellingen">⚙️</Link>
+              <form action={uitloggen}>
+                <button type="submit" className="text-white/70 text-sm">Uitloggen</button>
+              </form>
+            </div>
             <p className="text-white/60 text-[11px] max-w-[160px] truncate">{user.email}</p>
           </div>
         </div>
@@ -119,6 +140,13 @@ export default async function GroepPage({
       )}
 
       <div className="px-4 py-4 space-y-4">
+        <FamilieSignalen
+          mijnNaam={mijnProfiel?.naam || 'Iemand'}
+          mijnId={user.id}
+          stemmingen={stemmingenVandaag || []}
+          verzoeken={bezoekverzoeken || []}
+        />
+
         {/* Snelkoppelingen */}
         <div className="grid grid-cols-3 gap-2">
           {[

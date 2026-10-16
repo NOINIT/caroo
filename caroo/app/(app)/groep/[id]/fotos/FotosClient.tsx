@@ -74,7 +74,7 @@ export function FotosClient({ groepId, fotos: initieel }: Props) {
       opslag_pad: pad,
       beschrijving: beschrijving || null,
       geupload_door: user.id,
-    }).select('id, opslag_pad, beschrijving, aangemaakt_op, auteur_naam, auteur_naam, users (naam)').single()
+    }).select('id, opslag_pad, beschrijving, aangemaakt_op, auteur_naam, users (naam)').single()
 
     if (nieuweFoto) {
       setFotos(prev => [{ ...nieuweFoto as any, url: signedData?.signedUrl || '' }, ...prev])

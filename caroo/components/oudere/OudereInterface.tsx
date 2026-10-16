@@ -3,20 +3,32 @@
 import { useState } from 'react'
 import { MijnVerhaal } from './MijnVerhaal'
 import { BoodschappenLijst } from '@/components/boodschappen/BoodschappenLijst'
+import { Thuis, type Bezoekverzoek } from './Thuis'
+import { InstellingenFormulier } from '@/components/instellingen/InstellingenFormulier'
 import { uitloggen } from '@/app/auth/actions'
 
 type Tab = 'thuis' | 'mijn_dag' | 'boodschappen' | 'fotos' | 'mijn_verhaal' | 'mijn_tip' | 'instellingen'
 
 interface Props {
   groepId: string
+  userId: string
+  email: string
   naam: string
   groepNaam: string
   dagAfspraken: any[]
   medicijnen: any[]
   fotos: any[]
+  stemmingVandaag: number | null
+  bezoek: Bezoekverzoek | null
+  aantalBoodschappen: number
+  lettergrootte: string
+  geluid: boolean
 }
 
-export function OudereInterface({ groepId, naam, groepNaam, dagAfspraken, medicijnen, fotos }: Props) {
+export function OudereInterface({
+  groepId, userId, email, naam, groepNaam, dagAfspraken, medicijnen, fotos,
+  stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid,
+}: Props) {
   const [actieveTab, setActieveTab] = useState<Tab>('thuis')
 
   const voornaam = naam.split(' ')[0]
@@ -47,10 +59,17 @@ export function OudereInterface({ groepId, naam, groepNaam, dagAfspraken, medici
       {/* Content */}
       <main className="flex-1 overflow-y-auto pb-24">
         {actieveTab === 'thuis' && (
-          <TabThuis
+          <Thuis
+            groepId={groepId}
+            userId={userId}
+            naam={naam}
             dagAfspraken={dagAfspraken}
             medicijnen={medicijnen}
-            groepId={groepId}
+            stemmingVandaag={stemmingVandaag}
+            bezoek={bezoek}
+            aantalBoodschappen={aantalBoodschappen}
+            nieuwsteFoto={fotos[0] ? { url: fotos[0].url, beschrijving: fotos[0].beschrijving, door: fotos[0].door } : null}
+            gaNaar={tab => setActieveTab(tab)}
           />
         )}
         {actieveTab === 'mijn_dag' && (
@@ -72,7 +91,7 @@ export function OudereInterface({ groepId, naam, groepNaam, dagAfspraken, medici
           <TabMijnTip groepId={groepId} />
         )}
         {actieveTab === 'instellingen' && (
-          <TabInstellingen naam={naam} />
+          <TabInstellingen naam={naam} email={email} lettergrootte={lettergrootte} geluid={geluid} />
         )}
       </main>
 
@@ -103,66 +122,6 @@ export function OudereInterface({ groepId, naam, groepNaam, dagAfspraken, medici
           ))}
         </div>
       </nav>
-    </div>
-  )
-}
-
-function TabThuis({ dagAfspraken, medicijnen, groepId }: any) {
-  const vandaagTekst = new Date().toLocaleDateString('nl-NL', {
-    weekday: 'long', day: 'numeric', month: 'long'
-  })
-
-  return (
-    <div className="px-4 py-6 space-y-5">
-      <p className="text-ou-sm text-gray-500 capitalize">{vandaagTekst}</p>
-
-      {/* Vandaag */}
-      {dagAfspraken.length > 0 ? (
-        <div>
-          <h2 className="text-ou-xl font-bold text-caroo-donker mb-3">Vandaag</h2>
-          <div className="space-y-3">
-            {dagAfspraken.map((af: any) => (
-              <div key={af.id} className="flex gap-3 items-start">
-                <div
-                  className="w-1.5 rounded-full mt-1 h-12 flex-shrink-0"
-                  style={{ backgroundColor: af.agenda_categorieen?.kleur || '#1A7A6E' }}
-                />
-                <div>
-                  <p className="text-ou-base font-semibold text-caroo-donker">{af.titel}</p>
-                  <p className="text-ou-sm text-gray-500">
-                    {new Date(af.start_tijd).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })} uur
-                  </p>
-                  {af.beschrijving && (
-                    <p className="text-ou-sm text-gray-400 mt-0.5">{af.beschrijving}</p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="caroo-card text-center py-6">
-          <p className="text-3xl mb-2">☀️</p>
-          <p className="text-ou-base text-gray-600">Vandaag geen afspraken</p>
-        </div>
-      )}
-
-      {/* Medicijnen herinnering */}
-      {medicijnen.length > 0 && (
-        <div className="caroo-card border-l-4 border-caroo-oranje">
-          <p className="text-ou-base font-semibold text-caroo-donker mb-2">💊 Medicijnen vandaag</p>
-          {medicijnen.map((med: any) => (
-            <div key={med.id} className="mb-1">
-              <p className="text-ou-sm text-gray-700">
-                {med.naam} — {med.dosering}
-              </p>
-              <p className="text-xs text-gray-400">
-                {med.tijdstippen.join(', ')} uur
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   )
 }
@@ -219,12 +178,12 @@ function TabFotos({ fotos }: any) {
         {fotos.map((foto: any) => (
           <div key={foto.id} className="aspect-square rounded-caroo overflow-hidden bg-gray-100">
             <img
-              src={foto.opslag_pad}
-              alt={foto.onderschrift || 'Foto'}
+              src={foto.url}
+              alt={foto.beschrijving || 'Foto'}
               className="w-full h-full object-cover"
             />
-            {foto.onderschrift && (
-              <p className="text-xs text-gray-600 p-1 truncate">{foto.onderschrift}</p>
+            {foto.beschrijving && (
+              <p className="text-xs text-gray-600 p-1 truncate">{foto.beschrijving}</p>
             )}
           </div>
         ))}
@@ -301,24 +260,12 @@ function TabMijnTip({ groepId }: any) {
   )
 }
 
-function TabInstellingen({ naam }: any) {
+function TabInstellingen({ naam, email, lettergrootte, geluid }: { naam: string; email: string; lettergrootte: string; geluid: boolean }) {
   return (
     <div className="px-4 py-6">
       <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">Instellingen</h2>
-
-      <div className="space-y-3">
-        <div className="caroo-card">
-          <p className="text-ou-sm text-gray-500 mb-1">Mijn naam</p>
-          <p className="text-ou-base font-semibold">{naam}</p>
-        </div>
-
-        <div className="caroo-card">
-          <p className="text-ou-sm text-gray-500 mb-1">Lettergrootte</p>
-          <p className="text-ou-sm text-gray-400">Standaard groot (WCAG AA)</p>
-        </div>
-      </div>
-
-      <form action={uitloggen} className="mt-6">
+      <InstellingenFormulier naam={naam} email={email} lettergrootte={lettergrootte} geluid={geluid} groot />
+      <form action={uitloggen} className="mt-8">
         <button
           type="submit"
           className="w-full py-4 text-ou-base text-red-500 border border-red-200 rounded-caroo hover:bg-red-50 transition-colors"

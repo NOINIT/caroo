@@ -1,0 +1,79 @@
+'use client'
+
+import { useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { stemmingInfo } from '@/lib/stemming'
+import { speelGeluid } from '@/lib/geluid'
+
+interface Stemming { naam: string | null; stemming: number; bijgewerkt_op: string }
+interface Verzoek {
+  id: string
+  aangevraagd_naam: string | null
+  aangemaakt_op: string
+  reactie_naam: string | null
+}
+
+interface Props {
+  mijnNaam: string
+  mijnId: string
+  stemmingen: Stemming[]
+  verzoeken: Verzoek[]
+}
+
+function wanneer(iso: string) {
+  const d = new Date(iso)
+  const vandaag = new Date().toDateString() === d.toDateString()
+  const tijd = d.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })
+  return vandaag ? `vandaag om ${tijd}` : `${d.toLocaleDateString('nl-NL', { weekday: 'long' })} om ${tijd}`
+}
+
+export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start }: Props) {
+  const [verzoeken, setVerzoeken] = useState(start)
+
+  async function ikKom(id: string) {
+    speelGeluid('succes')
+    setVerzoeken(prev => prev.map(v => (v.id === id ? { ...v, reactie_naam: mijnNaam } : v)))
+    const supabase = createClient()
+    await supabase
+      .from('bezoekverzoeken')
+      .update({ reactie_door: mijnId, reactie_naam: mijnNaam, reactie_op: new Date().toISOString() })
+      .eq('id', id)
+      .is('reactie_door', null)
+  }
+
+  if (stemmingen.length === 0 && verzoeken.length === 0) return null
+
+  return (
+    <div className="space-y-3">
+      {verzoeken.map(v => (
+        <div key={v.id} className="rounded-caroo border-2 border-caroo-oranje bg-caroo-oranje-licht p-4">
+          <p className="font-bold text-caroo-donker">
+            🏠 {v.aangevraagd_naam || 'De hoofdpersoon'} wil graag bezoek
+          </p>
+          <p className="text-sm text-gray-600 mb-3">Gevraagd {wanneer(v.aangemaakt_op)}</p>
+          {v.reactie_naam ? (
+            <p className="text-sm font-medium text-caroo-groen">✓ {v.reactie_naam} gaat langs</p>
+          ) : (
+            <button onClick={() => ikKom(v.id)} className="btn-primary w-full">
+              Ik kom langs
+            </button>
+          )}
+        </div>
+      ))}
+
+      {stemmingen.map((s, i) => {
+        const info = stemmingInfo(s.stemming)
+        if (!info) return null
+        return (
+          <div key={i} className="caroo-card flex items-center gap-3">
+            <span className="text-4xl leading-none">{info.emoji}</span>
+            <div>
+              <p className="text-sm text-gray-500">{s.naam || 'De hoofdpersoon'} voelt zich vandaag</p>
+              <p className="font-bold text-caroo-donker">{info.label}</p>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}

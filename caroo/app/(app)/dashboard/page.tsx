@@ -49,11 +49,14 @@ export default async function DashboardPage({
       <header className="bg-white border-b sticky top-0 z-10">
         <div className="flex items-center justify-between px-4 py-3">
           <CarooLogo size="sm" />
-          <form action={uitloggen}>
-            <button type="submit" className="text-sm text-gray-500 hover:text-red-500 transition-colors">
-              Uitloggen
-            </button>
-          </form>
+          <div className="flex items-center gap-4">
+            <Link href="/instellingen" className="text-lg" aria-label="Instellingen">⚙️</Link>
+            <form action={uitloggen}>
+              <button type="submit" className="text-sm text-gray-500 hover:text-red-500 transition-colors">
+                Uitloggen
+              </button>
+            </form>
+          </div>
         </div>
       </header>
 

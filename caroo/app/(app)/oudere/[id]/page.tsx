@@ -2,66 +2,94 @@ import { createClient } from '@/lib/supabase/server'
 import { heeftRecht } from '@/lib/rechten'
 import { redirect } from 'next/navigation'
 import { OudereInterface } from '@/components/oudere/OudereInterface'
+import { vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
 
-export default async function OuderePage({
-  params
-}: {
-  params: { id: string }
-}) {
+export default async function OuderePage({ params }: { params: { id: string } }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
-
   if (!user) redirect('/login')
 
   const heeftToegang = await heeftRecht(params.id, ['oudere', 'mantelzorger', 'groepsbeheerder'])
   if (!heeftToegang) redirect('/dashboard')
 
-  // Haal profiel en groepinfo op
-  const [{ data: profiel }, { data: groep }] = await Promise.all([
-    supabase.from('users').select('naam').eq('id', user.id).single(),
-    supabase.from('zorggroepen').select('id, naam').eq('id', params.id).single(),
-  ])
-
-  // Haal aankomende afspraken van vandaag op
   const vandaag = new Date()
   vandaag.setHours(0, 0, 0, 0)
   const morgen = new Date(vandaag)
   morgen.setDate(morgen.getDate() + 1)
+  const bezoekSinds = new Date(Date.now() - BEZOEK_GELDIG_UUR * 3600 * 1000).toISOString()
 
-  const { data: dagAfspraken } = await supabase
-    .from('afspraken')
-    .select(`
-      id, titel, start_tijd, beschrijving,
-      agenda_categorieen (naam, kleur)
-    `)
-    .eq('groep_id', params.id)
-    .gte('start_tijd', vandaag.toISOString())
-    .lt('start_tijd', morgen.toISOString())
-    .order('start_tijd', { ascending: true })
+  const [
+    { data: profiel },
+    { data: groep },
+    { data: dagAfspraken },
+    { data: medicijnen },
+    { data: fotos },
+    { data: stemming },
+    { data: bezoek },
+    { count: aantalBoodschappen },
+  ] = await Promise.all([
+    supabase.from('users').select('naam, lettergrootte, geluid').eq('id', user.id).single(),
+    supabase.from('zorggroepen').select('id, naam').eq('id', params.id).single(),
+    supabase
+      .from('afspraken')
+      .select('id, titel, start_tijd, beschrijving, agenda_categorieen (naam, kleur)')
+      .eq('groep_id', params.id)
+      .gte('start_tijd', vandaag.toISOString())
+      .lt('start_tijd', morgen.toISOString())
+      .order('start_tijd', { ascending: true }),
+    supabase.from('medicijnen').select('id, naam, dosering, tijdstippen').eq('groep_id', params.id).eq('actief', true),
+    supabase
+      .from('fotos')
+      .select('id, opslag_pad, beschrijving, aangemaakt_op, auteur_naam, users (naam)')
+      .eq('groep_id', params.id)
+      .order('aangemaakt_op', { ascending: false })
+      .limit(6),
+    supabase
+      .from('stemmingen')
+      .select('stemming')
+      .eq('groep_id', params.id)
+      .eq('user_id', user.id)
+      .eq('datum', vandaagNL())
+      .maybeSingle(),
+    supabase
+      .from('bezoekverzoeken')
+      .select('id, aangemaakt_op, reactie_naam, reactie_op')
+      .eq('groep_id', params.id)
+      .eq('aangevraagd_door', user.id)
+      .gt('aangemaakt_op', bezoekSinds)
+      .order('aangemaakt_op', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from('boodschappen')
+      .select('id', { count: 'exact', head: true })
+      .eq('groep_id', params.id)
+      .eq('op_lijst', true),
+  ])
 
-  // Haal medicijnen van vandaag op
-  const { data: medicijnen } = await supabase
-    .from('medicijnen')
-    .select('id, naam, dosering, tijdstippen')
-    .eq('groep_id', params.id)
-    .eq('actief', true)
-
-  // Haal recente foto's op
-  const { data: fotos } = await supabase
-    .from('fotos')
-    .select('id, opslag_pad, onderschrift, aangemaakt_op')
-    .eq('groep_id', params.id)
-    .order('aangemaakt_op', { ascending: false })
-    .limit(6)
+  // Foto's staan in een afgeschermde opslag: tijdelijke links maken
+  const fotosMetUrl = await Promise.all(
+    (fotos || []).map(async (foto: any) => {
+      const { data } = await supabase.storage.from('fotos').createSignedUrl(foto.opslag_pad, 3600)
+      return { ...foto, url: data?.signedUrl || '', door: foto.users?.naam || foto.auteur_naam || null }
+    })
+  )
 
   return (
     <OudereInterface
       groepId={params.id}
+      userId={user.id}
+      email={user.email || ''}
       naam={profiel?.naam || 'Lieve gebruiker'}
       groepNaam={groep?.naam || ''}
       dagAfspraken={dagAfspraken || []}
       medicijnen={medicijnen || []}
-      fotos={fotos || []}
+      fotos={fotosMetUrl}
+      stemmingVandaag={stemming?.stemming ?? null}
+      bezoek={bezoek ?? null}
+      aantalBoodschappen={aantalBoodschappen ?? 0}
+      lettergrootte={profiel?.lettergrootte || 'normaal'}
+      geluid={profiel?.geluid ?? true}
     />
   )
 }

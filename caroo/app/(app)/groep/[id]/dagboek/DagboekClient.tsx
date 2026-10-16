@@ -46,7 +46,7 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
       stemming,
       gesproken: false,
       geschreven_door: user.id,
-    }).select('id, inhoud, stemming, gesproken, aangemaakt_op, auteur_naam, auteur_naam, users (naam)').single()
+    }).select('id, inhoud, stemming, gesproken, aangemaakt_op, auteur_naam, users (naam)').single()
 
     if (data) {
       setEntries(prev => [data as any, ...prev])
