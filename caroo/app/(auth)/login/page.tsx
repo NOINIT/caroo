@@ -21,6 +21,7 @@ function LoginForm() {
     : redirectNaar || '/dashboard'
 
   const viaUitnodiging = !!redirectNaar
+  const netBevestigd = searchParams.get('bevestigd') === '1'
 
   async function handleInloggen(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -112,6 +113,12 @@ function LoginForm() {
           Inloglink (zonder wachtwoord)
         </button>
       </div>
+
+      {netBevestigd && !fout && (
+        <div className="bg-caroo-groen-licht border border-caroo-groen text-caroo-donker rounded-caroo p-3 mb-4 text-sm">
+          Je e-mailadres is bevestigd. Log hieronder in om verder te gaan.
+        </div>
+      )}
 
       {fout && (
         <div className="bg-red-50 border border-red-200 text-red-700 rounded-caroo p-3 mb-4 text-sm">

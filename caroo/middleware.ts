@@ -7,6 +7,7 @@ const PUBLIC_ROUTES = [
   '/registreer',
   '/uitnodiging',
   '/auth/callback',
+  '/auth/bevestig',
   '/auth/magic-link',
   '/api/stripe/webhook',
 ]
