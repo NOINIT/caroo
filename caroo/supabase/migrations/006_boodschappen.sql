@@ -35,3 +35,7 @@ CREATE POLICY "boodschappen_bijwerken" ON boodschappen
 DROP POLICY IF EXISTS "boodschappen_verwijderen" ON boodschappen;
 CREATE POLICY "boodschappen_verwijderen" ON boodschappen
   FOR DELETE USING (is_groepslid(groep_id, auth.uid()));
+
+-- Nieuwe tabellen zijn niet altijd automatisch beschikbaar voor de app
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.boodschappen TO authenticated;
+NOTIFY pgrst, 'reload schema';
