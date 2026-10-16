@@ -53,7 +53,7 @@ export default async function OuderePage({ params }: { params: { id: string } })
       .maybeSingle(),
     supabase
       .from('bezoekverzoeken')
-      .select('id, aangemaakt_op, reactie_naam, reactie_op')
+      .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer')
       .eq('groep_id', params.id)
       .eq('aangevraagd_door', user.id)
       .gt('aangemaakt_op', bezoekSinds)

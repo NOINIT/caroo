@@ -20,8 +20,10 @@ CREATE TABLE IF NOT EXISTS bezoekverzoeken (
   aangemaakt_op TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   reactie_door UUID REFERENCES users(id) ON DELETE SET NULL,
   reactie_naam TEXT,
-  reactie_op TIMESTAMPTZ
+  reactie_op TIMESTAMPTZ,
+  reactie_wanneer TEXT
 );
+ALTER TABLE bezoekverzoeken ADD COLUMN IF NOT EXISTS reactie_wanneer TEXT;
 CREATE INDEX IF NOT EXISTS idx_bezoek_groep ON bezoekverzoeken(groep_id, aangemaakt_op DESC);
 
 ALTER TABLE stemmingen      ENABLE ROW LEVEL SECURITY;

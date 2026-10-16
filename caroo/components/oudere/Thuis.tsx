@@ -10,6 +10,7 @@ export interface Bezoekverzoek {
   aangemaakt_op: string
   reactie_naam: string | null
   reactie_op: string | null
+  reactie_wanneer: string | null
 }
 
 interface Props {
@@ -42,7 +43,7 @@ export function Thuis({
     const sinds = new Date(Date.now() - BEZOEK_GELDIG_UUR * 3600 * 1000).toISOString()
     const { data } = await supabase
       .from('bezoekverzoeken')
-      .select('id, aangemaakt_op, reactie_naam, reactie_op')
+      .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer')
       .eq('groep_id', groepId)
       .eq('aangevraagd_door', userId)
       .gt('aangemaakt_op', sinds)
@@ -85,7 +86,7 @@ export function Thuis({
     const { data } = await supabase
       .from('bezoekverzoeken')
       .insert({ groep_id: groepId, aangevraagd_door: userId, aangevraagd_naam: naam })
-      .select('id, aangemaakt_op, reactie_naam, reactie_op')
+      .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer')
       .single()
     if (data) setBezoek(data)
     setBezig(false)
@@ -158,6 +159,11 @@ export function Thuis({
         <section className="rounded-caroo-lg bg-caroo-oranje-licht border-2 border-caroo-oranje p-5 text-center">
           <p className="text-5xl mb-2">🎉</p>
           <p className="text-ou-xl font-bold text-caroo-donker">{bezoek.reactie_naam} komt langs!</p>
+          {bezoek.reactie_wanneer && (
+            <p className="text-ou-lg text-caroo-donker mt-1">
+              🕒 <span className="font-semibold">{bezoek.reactie_wanneer.charAt(0).toUpperCase() + bezoek.reactie_wanneer.slice(1)}</span>
+            </p>
+          )}
           <button onClick={trekIn} className="text-ou-sm text-gray-500 underline mt-3">
             Klaar, nieuw verzoek kunnen doen
           </button>

@@ -11,7 +11,10 @@ interface Verzoek {
   aangevraagd_naam: string | null
   aangemaakt_op: string
   reactie_naam: string | null
+  reactie_wanneer: string | null
 }
+
+const SNELKEUZES = ['binnen een uur', 'vanmiddag', 'vanavond', 'morgen']
 
 interface Props {
   mijnNaam: string
@@ -29,14 +32,23 @@ function wanneer(iso: string) {
 
 export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start }: Props) {
   const [verzoeken, setVerzoeken] = useState(start)
+  const [kiesVoor, setKiesVoor] = useState<string | null>(null)
+  const [tijd, setTijd] = useState('')
 
-  async function ikKom(id: string) {
+  async function ikKom(id: string, wanneer: string) {
     speelGeluid('succes')
-    setVerzoeken(prev => prev.map(v => (v.id === id ? { ...v, reactie_naam: mijnNaam } : v)))
+    setKiesVoor(null)
+    setTijd('')
+    setVerzoeken(prev => prev.map(v => (v.id === id ? { ...v, reactie_naam: mijnNaam, reactie_wanneer: wanneer } : v)))
     const supabase = createClient()
     await supabase
       .from('bezoekverzoeken')
-      .update({ reactie_door: mijnId, reactie_naam: mijnNaam, reactie_op: new Date().toISOString() })
+      .update({
+        reactie_door: mijnId,
+        reactie_naam: mijnNaam,
+        reactie_wanneer: wanneer,
+        reactie_op: new Date().toISOString(),
+      })
       .eq('id', id)
       .is('reactie_door', null)
   }
@@ -52,9 +64,45 @@ export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start
           </p>
           <p className="text-sm text-gray-600 mb-3">Gevraagd {wanneer(v.aangemaakt_op)}</p>
           {v.reactie_naam ? (
-            <p className="text-sm font-medium text-caroo-groen">✓ {v.reactie_naam} gaat langs</p>
+            <p className="text-sm font-medium text-caroo-groen">
+              ✓ {v.reactie_naam} gaat langs{v.reactie_wanneer ? `, ${v.reactie_wanneer}` : ''}
+            </p>
+          ) : kiesVoor === v.id ? (
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-caroo-donker">Wanneer kom je ongeveer?</p>
+              <div className="grid grid-cols-2 gap-2">
+                {SNELKEUZES.map(k => (
+                  <button
+                    key={k}
+                    onClick={() => ikKom(v.id, k)}
+                    className="rounded-caroo border border-caroo-groen bg-white py-2 text-sm font-medium text-caroo-donker capitalize"
+                  >
+                    {k}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="time"
+                  value={tijd}
+                  onChange={e => setTijd(e.target.value)}
+                  className="input-field flex-1 text-sm"
+                  aria-label="Tijd vandaag"
+                />
+                <button
+                  onClick={() => ikKom(v.id, `vandaag rond ${tijd}`)}
+                  disabled={!tijd}
+                  className="btn-primary px-4 text-sm"
+                >
+                  Vandaag rond {tijd || '...'}
+                </button>
+              </div>
+              <button onClick={() => setKiesVoor(null)} className="text-xs text-gray-500 underline">
+                Annuleren
+              </button>
+            </div>
           ) : (
-            <button onClick={() => ikKom(v.id)} className="btn-primary w-full">
+            <button onClick={() => setKiesVoor(v.id)} className="btn-primary w-full">
               Ik kom langs
             </button>
           )}
