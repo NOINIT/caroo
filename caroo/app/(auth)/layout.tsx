@@ -16,7 +16,7 @@ export default function AuthLayout({
         </div>
       </main>
       <footer className="text-center text-xs text-gray-400 py-4">
-        © 2024 NOINIT · Caroo
+        © 2024 NOINIT · Clanoo
       </footer>
     </div>
   )

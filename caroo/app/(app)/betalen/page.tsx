@@ -63,7 +63,7 @@ export default function BetalenPage() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="font-semibold text-caroo-donker">{groepNaam}</p>
-            <p className="text-sm text-gray-500">Caroo zorggroep — jaarabonnement</p>
+            <p className="text-sm text-gray-500">Clanoo zorggroep — jaarabonnement</p>
           </div>
           <p className="text-2xl font-bold text-caroo-groen">€19,99</p>
         </div>

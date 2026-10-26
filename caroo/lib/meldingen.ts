@@ -36,14 +36,14 @@ async function stuurMail(naar: string, m: Melding) {
     <div style="font-family:Arial,sans-serif;max-width:480px">
       <h2 style="color:#1A2F5A">${escape(m.titel)}</h2>
       <p style="font-size:17px;color:#333">${escape(m.tekst)}</p>
-      <p><a href="${link}" style="display:inline-block;padding:14px 28px;background:#1A7A6E;color:#fff;border-radius:10px;text-decoration:none;font-size:17px;font-weight:bold">Open Caroo</a></p>
-      <p style="font-size:13px;color:#888">Je krijgt deze mail omdat meldingen per e-mail aanstaan. Dit kun je in Caroo uitzetten bij Instellingen.</p>
+      <p><a href="${link}" style="display:inline-block;padding:14px 28px;background:#1A7A6E;color:#fff;border-radius:10px;text-decoration:none;font-size:17px;font-weight:bold">Open Clanoo</a></p>
+      <p style="font-size:13px;color:#888">Je krijgt deze mail omdat meldingen per e-mail aanstaan. Dit kun je in Clanoo uitzetten bij Instellingen.</p>
     </div>`
   await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      from: process.env.MELDING_AFZENDER || 'Caroo <caroo@noinit.nl>',
+      from: process.env.MELDING_AFZENDER || 'Clanoo <clanoo@noinit.nl>',
       to: [naar],
       subject: m.titel,
       html,

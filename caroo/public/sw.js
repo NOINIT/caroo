@@ -1,11 +1,11 @@
-// Caroo service worker: alleen voor pushmeldingen
+// Clanoo service worker: alleen voor pushmeldingen
 self.addEventListener('install', () => self.skipWaiting())
 self.addEventListener('activate', event => event.waitUntil(self.clients.claim()))
 
 self.addEventListener('push', event => {
   let data = {}
   try { data = event.data ? event.data.json() : {} } catch (e) {}
-  const titel = data.titel || 'Caroo'
+  const titel = data.titel || 'Clanoo'
   event.waitUntil(
     self.registration.showNotification(titel, {
       body: data.tekst || '',

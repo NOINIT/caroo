@@ -17,18 +17,18 @@ const atkinson = localFont({
 })
 
 export const metadata: Metadata = {
-  title: 'Caroo — Zorg voor elkaar',
+  title: 'Clanoo — Zorg voor elkaar',
   description: 'De app voor mantelzorgers en ouderen. Coördineer zorg, bijhoud medicijnen en deel herinneringen.',
   keywords: ['mantelzorg', 'ouderen', 'zorgapp', 'medicijnen', 'agenda'],
   authors: [{ name: 'NOINIT', url: 'https://noinit.nl' }],
   manifest: '/manifest.webmanifest',
-  appleWebApp: { capable: true, title: 'Caroo', statusBarStyle: 'default' },
+  appleWebApp: { capable: true, title: 'Clanoo', statusBarStyle: 'default' },
   icons: {
     icon: '/icons/icon-192.png',
     apple: '/icons/apple-touch-icon.png',
   },
   openGraph: {
-    title: 'Caroo — Zorg voor elkaar',
+    title: 'Clanoo — Zorg voor elkaar',
     description: 'Eén app voor de hele zorggroep. €19,99 per jaar.',
     type: 'website',
     locale: 'nl_NL',

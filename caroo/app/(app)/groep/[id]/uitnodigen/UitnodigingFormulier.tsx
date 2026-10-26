@@ -118,7 +118,7 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
           </button>
           <div className="flex gap-2 mt-2">
             <a
-              href={`https://wa.me/?text=${encodeURIComponent(`Je bent uitgenodigd voor de zorggroep ${groepNaam} op Caroo. Gebruik deze link om mee te doen: ${link}`)}`}
+              href={`https://wa.me/?text=${encodeURIComponent(`Je bent uitgenodigd voor de zorggroep ${groepNaam} op Clanoo. Gebruik deze link om mee te doen: ${link}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] text-white rounded-caroo py-2 text-sm font-medium"
@@ -127,7 +127,7 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
               WhatsApp
             </a>
             <a
-              href={`mailto:${email}?subject=${encodeURIComponent(`Uitnodiging voor zorggroep ${groepNaam}`)}&body=${encodeURIComponent(`Hallo,\n\nJe bent uitgenodigd voor de zorggroep ${groepNaam} op Caroo.\n\nKlik op de link om mee te doen:\n${link}\n\nDeze link is 7 dagen geldig.`)}`}
+              href={`mailto:${email}?subject=${encodeURIComponent(`Uitnodiging voor zorggroep ${groepNaam}`)}&body=${encodeURIComponent(`Hallo,\n\nJe bent uitgenodigd voor de zorggroep ${groepNaam} op Clanoo.\n\nKlik op de link om mee te doen:\n${link}\n\nDeze link is 7 dagen geldig.`)}`}
               className="flex-1 flex items-center justify-center gap-2 bg-caroo-groen text-white rounded-caroo py-2 text-sm font-medium"
             >
               <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>

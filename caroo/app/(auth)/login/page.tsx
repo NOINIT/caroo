@@ -87,7 +87,7 @@ function LoginForm() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-caroo-donker mb-2">Inloggen</h1>
         <p className="text-gray-500">
-          {viaUitnodiging ? 'Log in om de uitnodiging te accepteren.' : 'Welkom terug bij Caroo'}
+          {viaUitnodiging ? 'Log in om de uitnodiging te accepteren.' : 'Welkom terug bij Clanoo'}
         </p>
       </div>
 

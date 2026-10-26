@@ -7,7 +7,7 @@ export function CarooLogo({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
 
   return (
     <div className={`font-bold ${sizes[size]}`}>
-      <span className="text-caroo-groen">Car</span>
+      <span className="text-caroo-groen">Clan</span>
       <span className="text-caroo-oranje">oo</span>
     </div>
   )

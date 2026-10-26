@@ -93,15 +93,15 @@ export function MeldingenInstellingen({ email: startEmail, groot = false }: { em
         <p className={`${tekst} font-medium text-caroo-donker mb-2`}>📱 Pop-up op deze telefoon</p>
         {push === 'iphone-beginscherm' ? (
           <div className={`rounded-caroo bg-caroo-oranje-licht p-3 ${tekst} text-gray-700`}>
-            Op een iPhone werkt dit als Caroo op je beginscherm staat. Tik in Safari onderin op het deelknopje
+            Op een iPhone werkt dit als Clanoo op je beginscherm staat. Tik in Safari onderin op het deelknopje
             <span className="whitespace-nowrap"> (vierkantje met pijl)</span> en kies <strong>Zet op beginscherm</strong>.
-            Open Caroo daarna via het nieuwe icoontje en zet hier de meldingen aan.
+            Open Clanoo daarna via het nieuwe icoontje en zet hier de meldingen aan.
           </div>
         ) : push === 'niet-mogelijk' ? (
           <p className={`${tekst} text-gray-500`}>Deze browser ondersteunt geen pop-ups. Kies dan voor e-mail.</p>
         ) : push === 'geblokkeerd' ? (
           <p className={`${tekst} text-gray-600`}>
-            Meldingen zijn geblokkeerd voor Caroo. Zet ze aan in de instellingen van je telefoon of browser en kom dan terug.
+            Meldingen zijn geblokkeerd voor Clanoo. Zet ze aan in de instellingen van je telefoon of browser en kom dan terug.
           </p>
         ) : (
           <div className="grid grid-cols-2 gap-2">

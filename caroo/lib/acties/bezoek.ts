@@ -23,7 +23,7 @@ export async function vraagBezoekAan(groepId: string) {
   const familie = await groepsledenBehalve(groepId, user.id)
   await stuurMelding(familie, {
     titel: `🏠 ${naam} wil graag bezoek`,
-    tekst: 'Open Caroo om te laten weten wanneer je langskomt.',
+    tekst: 'Open Clanoo om te laten weten wanneer je langskomt.',
     url: `/groep/${groepId}`,
     tag: `bezoek-${data.id}`,
   })

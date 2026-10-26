@@ -39,7 +39,7 @@ export async function POST(request: Request) {
               interval: 'year',
             },
             product_data: {
-              name: 'Caroo — Zorggroep jaarabonnement',
+              name: 'Clanoo — Zorggroep jaarabonnement',
               description: `Jaarabonnement voor zorggroep "${groep.naam || groepNaam}"`,
               images: [],
             },

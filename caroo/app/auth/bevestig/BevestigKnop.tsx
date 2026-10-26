@@ -36,7 +36,7 @@ export function BevestigKnop({ tokenHash, type, next }: { tokenHash: string; typ
       <input type="hidden" name="type" value={type} />
       <input type="hidden" name="next" value={next} />
       <button type="submit" disabled={laden} className="btn-primary w-full text-ou-base py-5">
-        {laden ? 'Even geduld...' : 'Inloggen bij Caroo'}
+        {laden ? 'Even geduld...' : 'Inloggen bij Clanoo'}
       </button>
     </form>
   )

@@ -48,7 +48,7 @@ export async function stuurTestMelding() {
   const { stuurMelding } = await import('@/lib/meldingen')
   await stuurMelding([user.id], {
     titel: '🔔 Meldingen staan aan',
-    tekst: 'Zo ziet een melding van Caroo eruit.',
+    tekst: 'Zo ziet een melding van Clanoo eruit.',
     url: '/dashboard',
     tag: 'test',
   })
