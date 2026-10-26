@@ -1,6 +1,6 @@
 // Eén plek voor de merknaam. Verandert de naam, dan alleen hier aanpassen.
 export const MERK = {
-  naam: 'Caroo',
+  naam: 'Clanoo',
   tagline: 'Zorg voor elkaar, samen georganiseerd',
   moederbedrijf: 'NOINIT',
   plaats: 'Dordrecht',

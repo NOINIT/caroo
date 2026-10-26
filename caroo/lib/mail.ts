@@ -9,7 +9,7 @@ export async function stuurMail(opts: { naar: string; onderwerp: string; html: s
       method: 'POST',
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: process.env.MELDING_AFZENDER || 'Caroo <caroo@noinit.nl>',
+        from: process.env.MELDING_AFZENDER || 'Clanoo <clanoo@noinit.nl>',
         to: [opts.naar],
         subject: opts.onderwerp,
         html: opts.html,
