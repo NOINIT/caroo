@@ -6,6 +6,8 @@ import { BoodschappenLijst } from '@/components/boodschappen/BoodschappenLijst'
 import { Thuis, type Bezoekverzoek } from './Thuis'
 import { InstellingenFormulier } from '@/components/instellingen/InstellingenFormulier'
 import { uitloggen } from '@/app/auth/actions'
+import { useT } from '@/lib/i18n/client'
+import { categorieTekst } from '@/lib/i18n/vertaal'
 
 type Tab = 'thuis' | 'mijn_dag' | 'boodschappen' | 'fotos' | 'mijn_verhaal' | 'mijn_tip' | 'instellingen'
 
@@ -31,10 +33,11 @@ export function OudereInterface({
   stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid, meldingEmail,
 }: Props) {
   const [actieveTab, setActieveTab] = useState<Tab>('thuis')
+  const { t } = useT()
 
   const voornaam = naam.split(' ')[0]
   const uur = new Date().getHours()
-  const begroeting = uur < 12 ? 'Goedemorgen' : uur < 18 ? 'Goedemiddag' : 'Goedenavond'
+  const begroeting = uur < 12 ? t('oudere.goedemorgen') : uur < 18 ? t('oudere.goedemiddag') : t('oudere.goedenavond')
 
   return (
     <div className="max-w-md mx-auto min-h-screen bg-white flex flex-col">
@@ -49,10 +52,10 @@ export function OudereInterface({
           <button
             onClick={() => setActieveTab('instellingen')}
             className="flex flex-col items-center text-white/80 hover:text-white pt-1"
-            aria-label="Instellingen"
+            aria-label={t('algemeen.instellingen')}
           >
             <span className="text-2xl">⚙️</span>
-            <span className="text-[11px]">Instellingen</span>
+            <span className="text-[11px]">{t('algemeen.instellingen')}</span>
           </button>
         </div>
       </header>
@@ -78,7 +81,7 @@ export function OudereInterface({
         )}
         {actieveTab === 'boodschappen' && (
           <div className="px-4 py-6">
-            <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">Boodschappen</h2>
+            <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">{t('oudere.boodschappenTitel')}</h2>
             <BoodschappenLijst groepId={groepId} groot />
           </div>
         )}
@@ -97,15 +100,15 @@ export function OudereInterface({
       </main>
 
       {/* Onderste navigatie — grote knoppen voor ouderen */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 max-w-md mx-auto">
+      <nav className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 max-w-md mx-auto">
         <div className="grid grid-cols-6">
           {[
-            { tab: 'thuis' as Tab, emoji: '🏠', label: 'Thuis' },
-            { tab: 'mijn_dag' as Tab, emoji: '📅', label: 'Mijn dag' },
-            { tab: 'boodschappen' as Tab, emoji: '🛒', label: 'Boodschap' },
-            { tab: 'fotos' as Tab, emoji: '📸', label: "Foto's" },
-            { tab: 'mijn_verhaal' as Tab, emoji: '🎤', label: 'Verhaal' },
-            { tab: 'mijn_tip' as Tab, emoji: '💡', label: 'Tip' },
+            { tab: 'thuis' as Tab, emoji: '🏠', label: t('oudere.nav.thuis') },
+            { tab: 'mijn_dag' as Tab, emoji: '📅', label: t('oudere.nav.mijnDag') },
+            { tab: 'boodschappen' as Tab, emoji: '🛒', label: t('oudere.nav.boodschap') },
+            { tab: 'fotos' as Tab, emoji: '📸', label: t('oudere.nav.fotos') },
+            { tab: 'mijn_verhaal' as Tab, emoji: '🎤', label: t('oudere.nav.verhaal') },
+            { tab: 'mijn_tip' as Tab, emoji: '💡', label: t('oudere.nav.tip') },
 
           ].map(item => (
             <button
@@ -128,13 +131,14 @@ export function OudereInterface({
 }
 
 function TabMijnDag({ dagAfspraken }: any) {
+  const { t, tijd } = useT()
   return (
     <div className="px-4 py-6">
-      <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">Mijn dag</h2>
+      <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">{t('oudere.mijnDag.titel')}</h2>
       {dagAfspraken.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-4xl mb-3">☀️</p>
-          <p className="text-ou-lg text-gray-500">Vandaag geen afspraken</p>
+          <p className="text-ou-lg text-gray-500">{t('oudere.mijnDag.geenAfspraken')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -144,11 +148,11 @@ function TabMijnDag({ dagAfspraken }: any) {
                 className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full text-white mb-2"
                 style={{ backgroundColor: af.agenda_categorieen?.kleur || '#1A7A6E' }}
               >
-                {af.agenda_categorieen?.naam || 'Afspraak'}
+                {categorieTekst(t, af.agenda_categorieen?.naam) || t('oudere.mijnDag.afspraak')}
               </div>
               <p className="text-ou-lg font-bold text-caroo-donker">{af.titel}</p>
               <p className="text-ou-base text-gray-600 mt-1">
-                {new Date(af.start_tijd).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })} uur
+                {t('oudere.mijnDag.tijdUur', { tijd: tijd(af.start_tijd) })}
               </p>
               {af.beschrijving && (
                 <p className="text-ou-sm text-gray-500 mt-2">{af.beschrijving}</p>
@@ -162,25 +166,26 @@ function TabMijnDag({ dagAfspraken }: any) {
 }
 
 function TabFotos({ fotos }: any) {
+  const { t } = useT()
   if (fotos.length === 0) {
     return (
       <div className="px-4 py-8 text-center">
         <p className="text-5xl mb-3">📸</p>
-        <p className="text-ou-lg text-gray-500">Nog geen foto's</p>
-        <p className="text-ou-sm text-gray-400 mt-1">Familie kan foto's toevoegen</p>
+        <p className="text-ou-lg text-gray-500">{t('oudere.fotos.geen')}</p>
+        <p className="text-ou-sm text-gray-400 mt-1">{t('oudere.fotos.familieKan')}</p>
       </div>
     )
   }
 
   return (
     <div className="px-4 py-4">
-      <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">Onze foto's</h2>
+      <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">{t('oudere.fotos.titel')}</h2>
       <div className="grid grid-cols-2 gap-3">
         {fotos.map((foto: any) => (
           <div key={foto.id} className="aspect-square rounded-caroo overflow-hidden bg-gray-100">
             <img
               src={foto.url}
-              alt={foto.onderschrift || 'Foto'}
+              alt={foto.onderschrift || t('oudere.fotos.foto')}
               className="w-full h-full object-cover"
             />
             {foto.onderschrift && (
@@ -196,6 +201,7 @@ function TabFotos({ fotos }: any) {
 function TabMijnTip({ groepId }: any) {
   const [tip, setTip] = useState('')
   const [verstuurd, setVerstuurd] = useState(false)
+  const { t } = useT()
 
   async function stuurTip() {
     if (!tip.trim()) return
@@ -219,21 +225,21 @@ function TabMijnTip({ groepId }: any) {
 
   return (
     <div className="px-4 py-6">
-      <h2 className="text-ou-xl font-bold text-caroo-donker mb-2">Mijn tip</h2>
+      <h2 className="text-ou-xl font-bold text-caroo-donker mb-2">{t('oudere.tip.titel')}</h2>
       <p className="text-ou-sm text-gray-500 mb-4">
-        Deel een tip of levensles. Je familie ziet hem bij jullie groep.
+        {t('oudere.tip.uitleg')}
       </p>
 
       {verstuurd && (
         <div className="bg-caroo-groen-licht border border-caroo-groen rounded-caroo p-3 mb-4">
-          <p className="text-caroo-groen text-ou-sm font-medium">✅ Tip verstuurd!</p>
+          <p className="text-caroo-groen text-ou-sm font-medium">{t('oudere.tip.verstuurd')}</p>
         </div>
       )}
 
       <textarea
         value={tip}
         onChange={e => setTip(e.target.value)}
-        placeholder="Schrijf hier je tip of herinnering..."
+        placeholder={t('oudere.tip.placeholder')}
         className="input-field text-ou-base h-36 resize-none mb-4"
       />
 
@@ -244,23 +250,24 @@ function TabMijnTip({ groepId }: any) {
         disabled={!tip.trim()}
         className="btn-primary w-full text-ou-base py-4"
       >
-        💡 Tip versturen
+        {t('oudere.tip.versturen')}
       </button>
     </div>
   )
 }
 
 function TabInstellingen({ naam, email, lettergrootte, geluid, meldingEmail }: { naam: string; email: string; lettergrootte: string; geluid: boolean; meldingEmail: boolean }) {
+  const { t } = useT()
   return (
     <div className="px-4 py-6">
-      <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">Instellingen</h2>
+      <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">{t('algemeen.instellingen')}</h2>
       <InstellingenFormulier naam={naam} email={email} lettergrootte={lettergrootte} geluid={geluid} meldingEmail={meldingEmail} groot />
       <form action={uitloggen} className="mt-8">
         <button
           type="submit"
           className="w-full py-4 text-ou-base text-red-500 border border-red-200 rounded-caroo hover:bg-red-50 transition-colors"
         >
-          Uitloggen
+          {t('algemeen.uitloggen')}
         </button>
       </form>
     </div>

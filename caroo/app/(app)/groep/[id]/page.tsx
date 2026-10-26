@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { heeftRecht } from '@/lib/rechten'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { rolLabel } from '@/lib/rollen'
+import { getT } from '@/lib/i18n/server'
+import { rolTekst, JAARPRIJS, datum, tijd } from '@/lib/i18n/vertaal'
 import { uitloggen } from '@/app/auth/actions'
 import AbonnementKnop from './AbonnementKnop'
 import { FamilieSignalen } from '@/components/familie/FamilieSignalen'
@@ -104,6 +105,7 @@ export default async function GroepPage({
   const isBeheerder = mijnLidschap?.rol === 'groepsbeheerder'
   const isEigenaar = groep.eigenaar_id === user.id
   const welkom = searchParams.welkom === 'true'
+  const { t, taal } = await getT()
 
   return (
     <div className="max-w-md mx-auto min-h-screen pb-24">
@@ -111,17 +113,17 @@ export default async function GroepPage({
       <header className="bg-caroo-groen text-white sticky top-0 z-10">
         <div className="flex items-center justify-between px-4 py-3">
           <div>
-            <Link href="/dashboard" className="text-white/70 text-xs">← Dashboard</Link>
+            <Link href="/dashboard" className="text-white/70 text-xs"><span className="inline-block rtl:rotate-180">←</span> {t('groep.dashboard')}</Link>
             <h1 className="font-bold">{groep.naam}</h1>
           </div>
-          <div className="text-right">
+          <div className="text-end">
             <div className="flex items-center justify-end gap-3">
-              <Link href="/instellingen" className="text-white/80 text-lg" aria-label="Instellingen">⚙️</Link>
+              <Link href="/instellingen" className="text-white/80 text-lg" aria-label={t('algemeen.instellingen')}>⚙️</Link>
               <form action={uitloggen}>
-                <button type="submit" className="text-white/70 text-sm">Uitloggen</button>
+                <button type="submit" className="text-white/70 text-sm">{t('algemeen.uitloggen')}</button>
               </form>
             </div>
-            <p className="text-white/60 text-[11px] max-w-[160px] truncate">{user.email}</p>
+            <p className="text-white/60 text-[11px] max-w-[160px] truncate" dir="ltr">{user.email}</p>
           </div>
         </div>
       </header>
@@ -130,7 +132,7 @@ export default async function GroepPage({
       {welkom && (
         <div className="bg-caroo-groen-licht border-b border-caroo-groen px-4 py-3">
           <p className="text-caroo-donker text-sm font-medium">
-            🎉 Welkom bij {groep.naam}! Je bent nu lid van deze zorggroep.
+            {t('groep.welkom', { groep: groep.naam })}
           </p>
         </div>
       )}
@@ -139,9 +141,9 @@ export default async function GroepPage({
       {!groep.betaald && (
         <div className="bg-orange-50 border-b border-orange-200 px-4 py-3">
           <p className="text-orange-800 text-sm font-medium">
-            ⚠️ Zorggroep nog niet geactiveerd —{' '}
+            {t('groep.nietGeactiveerd')}{' '}
             <Link href={`/betalen?groep=${groep.id}&naam=${encodeURIComponent(groep.naam)}`} className="underline">
-              Nu activeren (€19,99/jaar)
+              {t('groep.nuActiveren', { prijs: JAARPRIJS })}
             </Link>
           </p>
         </div>
@@ -149,7 +151,7 @@ export default async function GroepPage({
 
       <div className="px-4 py-4 space-y-4">
         <FamilieSignalen
-          mijnNaam={mijnProfiel?.naam || 'Iemand'}
+          mijnNaam={mijnProfiel?.naam || t('algemeen.iemand')}
           mijnId={user.id}
           stemmingen={stemmingenVandaag || []}
           verzoeken={bezoekverzoeken || []}
@@ -158,14 +160,14 @@ export default async function GroepPage({
         {/* Snelkoppelingen */}
         <div className="grid grid-cols-3 gap-2">
           {[
-            { href: `/groep/${params.id}/agenda`, emoji: '📅', label: 'Agenda' },
-            { href: `/groep/${params.id}/taken`, emoji: '✅', label: 'Taken' },
-            { href: `/groep/${params.id}/boodschappen`, emoji: '🛒', label: 'Boodschappen' },
-            { href: `/groep/${params.id}/medicijnen`, emoji: '💊', label: 'Medicijnen' },
-            { href: `/groep/${params.id}/dagboek`, emoji: '📔', label: 'Dagboek' },
-            { href: `/groep/${params.id}/fotos`, emoji: '📸', label: "Foto's" },
+            { href: `/groep/${params.id}/agenda`, emoji: '📅', label: t('groep.tegels.agenda') },
+            { href: `/groep/${params.id}/taken`, emoji: '✅', label: t('groep.tegels.taken') },
+            { href: `/groep/${params.id}/boodschappen`, emoji: '🛒', label: t('groep.tegels.boodschappen') },
+            { href: `/groep/${params.id}/medicijnen`, emoji: '💊', label: t('groep.tegels.medicijnen') },
+            { href: `/groep/${params.id}/dagboek`, emoji: '📔', label: t('groep.tegels.dagboek') },
+            { href: `/groep/${params.id}/fotos`, emoji: '📸', label: t('groep.tegels.fotos') },
             ...(isBeheerder
-              ? [{ href: `/groep/${params.id}/beheer`, emoji: '⚙️', label: 'Beheer' }]
+              ? [{ href: `/groep/${params.id}/beheer`, emoji: '⚙️', label: t('groep.tegels.beheer') }]
               : []),
           ].map(item => (
             <Link
@@ -184,15 +186,15 @@ export default async function GroepPage({
         {tips && tips.length > 0 && (
           <div>
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              Tips en levenslessen
+              {t('groep.tips')}
             </h2>
             <div className="space-y-2">
               {tips.map((tip: any) => (
-                <div key={tip.id} className="caroo-card border-l-4 border-caroo-oranje">
+                <div key={tip.id} className="caroo-card border-s-4 border-caroo-oranje">
                   <p className="text-caroo-donker whitespace-pre-line">💡 {tip.tekst}</p>
                   <p className="text-xs text-gray-400 mt-1">
-                    {tip.users?.naam || tip.auteur_naam || 'Onbekend'} ·{' '}
-                    {new Date(tip.aangemaakt_op).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}
+                    {tip.users?.naam || tip.auteur_naam || t('algemeen.onbekend')} ·{' '}
+                    {datum(taal, tip.aangemaakt_op, { day: 'numeric', month: 'long' })}
                   </p>
                 </div>
               ))}
@@ -204,7 +206,7 @@ export default async function GroepPage({
         {openTaken && openTaken.length > 0 && (
           <div>
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              Open taken
+              {t('groep.openTaken')}
             </h2>
             <div className="space-y-2">
               {openTaken.map((taak: any) => (
@@ -214,7 +216,7 @@ export default async function GroepPage({
                     <p className="text-sm font-medium">{taak.titel}</p>
                     {taak.deadline && (
                       <p className="text-xs text-gray-400">
-                        {new Date(taak.deadline).toLocaleDateString('nl-NL')}
+                        {datum(taal, taak.deadline, { day: 'numeric', month: 'numeric', year: 'numeric' })}
                       </p>
                     )}
                   </div>
@@ -228,7 +230,7 @@ export default async function GroepPage({
         {afspraken && afspraken.length > 0 && (
           <div>
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              Komende afspraken
+              {t('groep.komendeAfspraken')}
             </h2>
             <div className="space-y-2">
               {afspraken.map((afspraak: any) => (
@@ -240,10 +242,7 @@ export default async function GroepPage({
                   <div>
                     <p className="text-sm font-medium">{afspraak.titel}</p>
                     <p className="text-xs text-gray-400">
-                      {new Date(afspraak.start_tijd).toLocaleDateString('nl-NL', {
-                        weekday: 'short', day: 'numeric', month: 'short',
-                        hour: '2-digit', minute: '2-digit'
-                      })}
+                      {datum(taal, afspraak.start_tijd, { weekday: 'short', day: 'numeric', month: 'short' })} · {tijd(taal, afspraak.start_tijd)}
                     </p>
                   </div>
                 </div>
@@ -255,17 +254,17 @@ export default async function GroepPage({
         {/* Leden */}
         <div>
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
-            Groepsleden ({leden?.length || 0})
+            {t('groep.leden', { aantal: leden?.length || 0 })}
           </h2>
           <div className="space-y-2">
             {leden?.map((lid: any) => (
               <div key={lid.users.id} className="caroo-card flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium">{lid.users.naam}</p>
-                  <p className="text-xs text-gray-400">{lid.users.email}</p>
+                  <p className="text-xs text-gray-400" dir="ltr">{lid.users.email}</p>
                 </div>
                 <span className="text-xs bg-caroo-groen-licht text-caroo-groen px-2 py-0.5 rounded-full">
-                  {rolLabel(lid.rol)}
+                  {rolTekst(t, lid.rol)}
                 </span>
               </div>
             ))}
@@ -276,7 +275,7 @@ export default async function GroepPage({
               href={`/groep/${params.id}/uitnodigen`}
               className="mt-3 text-caroo-groen text-sm font-medium flex items-center gap-1 hover:underline"
             >
-              ＋ Lid uitnodigen
+              {t('groep.lidUitnodigen')}
             </Link>
           )}
 

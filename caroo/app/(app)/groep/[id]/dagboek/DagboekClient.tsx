@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useT } from '@/lib/i18n/client'
 
 interface Entry {
   id: string
@@ -24,6 +25,7 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
   const [inhoud, setInhoud] = useState('')
   const [laden, setLaden] = useState(false)
   const [uitgebreid, setUitgebreid] = useState<string | null>(null)
+  const { t, datum, tijd } = useT()
 
   async function voegToe(e: React.FormEvent) {
     e.preventDefault()
@@ -51,7 +53,7 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
   // Groepeer per maand
   const perMaand: Record<string, Entry[]> = {}
   entries.forEach(e => {
-    const maand = new Date(e.aangemaakt_op).toLocaleDateString('nl-NL', { month: 'long', year: 'numeric' })
+    const maand = datum(e.aangemaakt_op, { month: 'long', year: 'numeric' })
     if (!perMaand[maand]) perMaand[maand] = []
     perMaand[maand].push(e)
   })
@@ -62,23 +64,23 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
         onClick={() => setToonFormulier(!toonFormulier)}
         className="btn-primary w-full mb-4"
       >
-        {toonFormulier ? 'Annuleren' : '✏️ Nieuwe aantekening'}
+        {toonFormulier ? t('algemeen.annuleren') : t('dagboek.nieuw')}
       </button>
 
       {toonFormulier && (
         <form onSubmit={voegToe} className="caroo-card mb-4 space-y-3">
           <div>
-            <label className="input-label">Aantekening</label>
+            <label className="input-label">{t('dagboek.aantekening')}</label>
             <textarea
               value={inhoud}
               onChange={e => setInhoud(e.target.value)}
               required
               className="input-field h-28 resize-none"
-              placeholder="Schrijf hier hoe het gaat, bijzonderheden of gedachten..."
+              placeholder={t('dagboek.placeholder')}
             />
           </div>
           <button type="submit" disabled={laden} className="btn-primary w-full">
-            {laden ? 'Opslaan...' : 'Opslaan'}
+            {laden ? t('algemeen.opslaanBezig') : t('algemeen.opslaan')}
           </button>
         </form>
       )}
@@ -86,8 +88,8 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
       {entries.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-5xl mb-3">📖</p>
-          <p className="text-gray-500">Het dagboek is nog leeg</p>
-          <p className="text-sm text-gray-400 mt-1">Voeg de eerste aantekening toe</p>
+          <p className="text-gray-500">{t('dagboek.leeg')}</p>
+          <p className="text-sm text-gray-400 mt-1">{t('dagboek.eerste')}</p>
         </div>
       ) : (
         Object.entries(perMaand).map(([maand, maandEntries]) => (
@@ -111,16 +113,13 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <div>
                         <p className="text-xs text-gray-400">
-                          {new Date(entry.aangemaakt_op).toLocaleDateString('nl-NL', {
-                            weekday: 'long', day: 'numeric', month: 'short',
-                            hour: '2-digit', minute: '2-digit'
-                          })}
+                          {datum(entry.aangemaakt_op, { weekday: 'long', day: 'numeric', month: 'short' })} · {tijd(entry.aangemaakt_op)}
                           {(entry.users?.naam || entry.auteur_naam) && ` · ${entry.users?.naam || entry.auteur_naam}`}
                         </p>
                       </div>
                       <div className="flex items-center gap-1 flex-shrink-0">
                         {entry.gesproken && (
-                          <span title="Via spraak ingevoerd" className="text-xs text-gray-300">🎤</span>
+                          <span title={t('dagboek.viaSpraak')} className="text-xs text-gray-300">🎤</span>
                         )}
                       </div>
                     </div>
@@ -129,7 +128,7 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
                     </p>
                     {entry.inhoud.length > 80 && (
                       <p className="text-xs text-caroo-groen mt-1">
-                        {isUitgebreid ? 'Minder tonen' : 'Meer lezen'}
+                        {isUitgebreid ? t('dagboek.minder') : t('dagboek.meer')}
                       </p>
                     )}
                   </div>

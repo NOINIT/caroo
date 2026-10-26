@@ -2,9 +2,11 @@
 
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { getT } from '@/lib/i18n/server'
 
 export async function registreer(formData: FormData) {
   const supabase = createClient()
+  const { t, taal } = await getT()
 
   const email = formData.get('email') as string
   const wachtwoord = formData.get('wachtwoord') as string
@@ -12,11 +14,11 @@ export async function registreer(formData: FormData) {
   const redirectNaar = formData.get('redirectNaar') as string | null
 
   if (!email || !wachtwoord || !naam) {
-    return { error: 'Vul alle velden in.' }
+    return { error: t('auth.vulAlles') }
   }
 
   if (wachtwoord.length < 8) {
-    return { error: 'Wachtwoord moet minimaal 8 tekens zijn.' }
+    return { error: t('auth.wachtwoordKort') }
   }
 
   const next = redirectNaar || '/dashboard'
@@ -29,7 +31,7 @@ export async function registreer(formData: FormData) {
     options: {
       // De uitnodigingstoken gaat mee in het account zelf, zodat hij niet
       // verloren kan gaan in redirects of als de mail in een andere browser opent
-      data: { naam, ...(tokenMatch ? { uitnodiging_token: tokenMatch[1] } : {}) },
+      data: { naam, taal, ...(tokenMatch ? { uitnodiging_token: tokenMatch[1] } : {}) },
       emailRedirectTo: `${baseUrl}/auth/callback?next=${encodeURIComponent(next)}`,
     },
   })
@@ -42,7 +44,7 @@ export async function registreer(formData: FormData) {
   // een account zonder identities terug. Zeg het eerlijk in plaats van te wachten
   // op een mail die nooit komt.
   if (data.user && (data.user.identities?.length ?? 0) === 0) {
-    return { error: 'Er bestaat al een account met dit e-mailadres. Log in om verder te gaan.' }
+    return { error: t('auth.bestaatAl') }
   }
 
   redirect('/registreer/bevestig')
@@ -50,6 +52,7 @@ export async function registreer(formData: FormData) {
 
 export async function inloggen(formData: FormData) {
   const supabase = createClient()
+  const { t } = await getT()
 
   const email = formData.get('email') as string
   const wachtwoord = formData.get('wachtwoord') as string
@@ -63,12 +66,12 @@ export async function inloggen(formData: FormData) {
   if (error) {
     if (error.code === 'email_not_confirmed' || /not confirmed/i.test(error.message)) {
       return {
-        error: 'Je e-mailadres is nog niet bevestigd. Klik op de link in de bevestigingsmail, of laat hieronder een nieuwe sturen.',
+        error: t('auth.nietBevestigd'),
         onbevestigd: true,
       }
     }
     if (error.code === 'invalid_credentials' || /invalid login/i.test(error.message)) {
-      return { error: 'E-mailadres of wachtwoord klopt niet.' }
+      return { error: t('auth.klopNiet') }
     }
     return { error: error.message }
   }
@@ -78,10 +81,11 @@ export async function inloggen(formData: FormData) {
 
 export async function stuurBevestigingOpnieuw(email: string, redirectNaar?: string | null) {
   const supabase = createClient()
+  const { t } = await getT()
   const next = redirectNaar || '/dashboard'
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
-  if (!email) return { error: 'Vul eerst je e-mailadres in.' }
+  if (!email) return { error: t('auth.vulEerstEmail') }
 
   const { error } = await supabase.auth.resend({
     type: 'signup',
@@ -93,7 +97,7 @@ export async function stuurBevestigingOpnieuw(email: string, redirectNaar?: stri
 
   if (error) {
     if (/rate limit|security purposes|seconds/i.test(error.message)) {
-      return { error: 'Er is net al een mail gestuurd. Wacht een minuut en probeer het dan opnieuw.' }
+      return { error: t('auth.netGestuurdMail') }
     }
     return { error: error.message }
   }
@@ -103,16 +107,18 @@ export async function stuurBevestigingOpnieuw(email: string, redirectNaar?: stri
 
 export async function magicLink(formData: FormData) {
   const supabase = createClient()
+  const { t, taal } = await getT()
 
   const email = formData.get('email') as string
 
   if (!email) {
-    return { error: 'Vul je e-mailadres in.' }
+    return { error: t('auth.vulEmail') }
   }
 
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
+      data: { taal },
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/callback?next=%2Fdashboard`,
     },
   })
@@ -137,8 +143,9 @@ function maskeerEmail(email: string) {
  * Wie de uitnodigingslink in handen krijgt, kan dus geen eigen adres invullen.
  */
 export async function stuurOudereInloglink(token: string, naam: string) {
+  const { t, taal } = await getT()
   if (!token || !/^[a-f0-9]{64}$/.test(token)) {
-    return { error: 'Deze uitnodiging is niet geldig.' }
+    return { error: t('auth.uitnodigingOngeldig') }
   }
 
   const service = createServiceClient()
@@ -149,13 +156,13 @@ export async function stuurOudereInloglink(token: string, naam: string) {
     .single()
 
   if (!uitnodiging || uitnodiging.rol !== 'oudere') {
-    return { error: 'Deze uitnodiging is niet geldig.' }
+    return { error: t('auth.uitnodigingOngeldig') }
   }
   if (uitnodiging.gebruikt) {
-    return { error: 'Deze uitnodiging is al gebruikt. Log in via de inlogpagina.' }
+    return { error: t('auth.uitnodigingGebruikt') }
   }
   if (new Date(uitnodiging.verloopt_op) < new Date()) {
-    return { error: 'Deze uitnodiging is verlopen. Vraag de familie om een nieuwe.' }
+    return { error: t('auth.uitnodigingVerlopen') }
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
@@ -169,6 +176,7 @@ export async function stuurOudereInloglink(token: string, naam: string) {
       data: {
         ...(schoneNaam ? { naam: schoneNaam } : {}),
         uitnodiging_token: token,
+        taal,
       },
       emailRedirectTo: `${baseUrl}/auth/callback?next=%2Fdashboard`,
     },
@@ -176,9 +184,9 @@ export async function stuurOudereInloglink(token: string, naam: string) {
 
   if (error) {
     if (/rate limit|security purposes|seconds/i.test(error.message)) {
-      return { error: 'Er is net al een link gestuurd. Wacht een minuut en probeer het dan opnieuw.' }
+      return { error: t('auth.netGestuurdLink') }
     }
-    return { error: 'Het versturen lukte niet. Probeer het over een paar minuten nog eens.' }
+    return { error: t('auth.versturenMislukt') }
   }
 
   return { success: true, email: maskeerEmail(uitnodiging.email) }

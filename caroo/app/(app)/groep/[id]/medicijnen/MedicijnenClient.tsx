@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useT } from '@/lib/i18n/client'
 
 interface Medicijn {
   id: string
@@ -30,6 +31,7 @@ export function MedicijnenClient({ groepId, medicijnen: initieel, registratiesVa
   const [registraties, setRegistraties] = useState(initieelReg)
   const [toonFormulier, setToonFormulier] = useState(false)
   const [laden, setLaden] = useState(false)
+  const { t, datum } = useT()
   const [nieuw, setNieuw] = useState({
     naam: '',
     dosering: '',
@@ -79,7 +81,7 @@ export function MedicijnenClient({ groepId, medicijnen: initieel, registratiesVa
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    const tijdstippen = nieuw.tijdstippen.split(',').map(t => t.trim()).filter(Boolean)
+    const tijdstippen = nieuw.tijdstippen.split(',').map(x => x.trim()).filter(Boolean)
 
     const { data } = await supabase.from('medicijnen').insert({
       groep_id: groepId,
@@ -103,7 +105,7 @@ export function MedicijnenClient({ groepId, medicijnen: initieel, registratiesVa
     <div className="px-4 py-4">
       <div className="bg-caroo-groen-licht rounded-caroo p-3 mb-4">
         <p className="text-sm text-caroo-donker">
-          📅 Vandaag: {new Date(vandaag).toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })}
+          {t('medicijnen.vandaag', { datum: datum(vandaag, { weekday: 'long', day: 'numeric', month: 'long' }) })}
         </p>
       </div>
 
@@ -111,57 +113,57 @@ export function MedicijnenClient({ groepId, medicijnen: initieel, registratiesVa
         onClick={() => setToonFormulier(!toonFormulier)}
         className="btn-primary w-full mb-4"
       >
-        {toonFormulier ? 'Annuleren' : '＋ Medicijn toevoegen'}
+        {toonFormulier ? t('algemeen.annuleren') : t('medicijnen.toevoegen')}
       </button>
 
       {/* Formulier */}
       {toonFormulier && (
         <form onSubmit={voegMedicijnToe} className="caroo-card mb-4 space-y-3">
           <div>
-            <label className="input-label">Naam medicijn</label>
+            <label className="input-label">{t('medicijnen.naam')}</label>
             <input
               type="text"
               value={nieuw.naam}
               onChange={e => setNieuw(p => ({ ...p, naam: e.target.value }))}
               required
               className="input-field"
-              placeholder="bijv. Metformine"
+              placeholder={t('medicijnen.voorbeeldNaam')}
             />
           </div>
           <div>
-            <label className="input-label">Dosering</label>
+            <label className="input-label">{t('medicijnen.dosering')}</label>
             <input
               type="text"
               value={nieuw.dosering}
               onChange={e => setNieuw(p => ({ ...p, dosering: e.target.value }))}
               required
               className="input-field"
-              placeholder="bijv. 500mg"
+              placeholder={t('medicijnen.voorbeeldDosering')}
             />
           </div>
           <div>
-            <label className="input-label">Tijdstippen (komma-gescheiden)</label>
+            <label className="input-label">{t('medicijnen.tijdstippen')}</label>
             <input
               type="text"
               value={nieuw.tijdstippen}
               onChange={e => setNieuw(p => ({ ...p, tijdstippen: e.target.value }))}
               required
               className="input-field"
-              placeholder="bijv. 08:00, 12:00, 20:00"
+              placeholder={t('medicijnen.voorbeeldTijden')} dir="ltr"
             />
           </div>
           <div>
-            <label className="input-label">Opmerkingen (optioneel)</label>
+            <label className="input-label">{t('medicijnen.opmerkingen')}</label>
             <input
               type="text"
               value={nieuw.opmerkingen}
               onChange={e => setNieuw(p => ({ ...p, opmerkingen: e.target.value }))}
               className="input-field"
-              placeholder="bijv. Bij het eten innemen"
+              placeholder={t('medicijnen.voorbeeldOpmerking')}
             />
           </div>
           <button type="submit" disabled={laden} className="btn-primary w-full">
-            {laden ? 'Opslaan...' : 'Opslaan'}
+            {laden ? t('algemeen.opslaanBezig') : t('algemeen.opslaan')}
           </button>
         </form>
       )}
@@ -170,7 +172,7 @@ export function MedicijnenClient({ groepId, medicijnen: initieel, registratiesVa
       {medicijnen.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-4xl mb-2">💊</p>
-          <p className="text-gray-500">Nog geen medicijnen toegevoegd</p>
+          <p className="text-gray-500">{t('medicijnen.geen')}</p>
         </div>
       ) : (
         <div className="space-y-4">

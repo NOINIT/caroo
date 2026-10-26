@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { verwijderLidUitGroep } from './actions'
+import { useT } from '@/lib/i18n/client'
+import { categorieTekst } from '@/lib/i18n/vertaal'
 
 interface Lid {
   id: string
@@ -25,12 +27,6 @@ interface Props {
   categorieen: Categorie[]
 }
 
-const rolLabels: Record<string, string> = {
-  mantelzorger: 'Mantelzorger',
-  oudere: 'Hoofdpersoon',
-  groepsbeheerder: 'Beheerder',
-}
-
 export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden, categorieen: initieelCat }: Props) {
   const [leden, setLeden] = useState(initieelLeden)
   const [categorieen, setCategorieen] = useState(initieelCat)
@@ -40,9 +36,10 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
   const [nieuweCat, setNieuweCat] = useState({ naam: '', kleur: '#1A7A6E' })
   const [toonNieuweCat, setToonNieuweCat] = useState(false)
   const [laden, setLaden] = useState(false)
+  const { t } = useT()
 
   async function verwijderLid(lidId: string) {
-    if (!confirm('Weet je zeker dat je dit lid wilt verwijderen?')) return
+    if (!confirm(t('beheer.lidZeker'))) return
     const resultaat = await verwijderLidUitGroep(groepId, lidId)
     if ('error' in resultaat && resultaat.error) {
       alert(resultaat.error)
@@ -53,7 +50,7 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
 
   async function startBewerkCat(cat: Categorie) {
     setBewerkCat(cat.id)
-    setCatNaam(cat.naam)
+    setCatNaam(categorieTekst(t, cat.naam))
     setCatKleur(cat.kleur)
   }
 
@@ -67,7 +64,7 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
   }
 
   async function verwijderCategorie(catId: string) {
-    if (!confirm('Weet je zeker dat je deze categorie wilt verwijderen?')) return
+    if (!confirm(t('beheer.categorieZeker'))) return
     const supabase = createClient()
     await supabase.from('agenda_categorieen').delete().eq('id', catId)
     setCategorieen(prev => prev.filter(c => c.id !== catId))
@@ -102,7 +99,7 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
       {/* Leden */}
       <section>
         <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">
-          Groepsleden ({leden.length})
+          {t('groep.leden', { aantal: leden.length })}
         </h2>
         <div className="space-y-2">
           {leden.map(lid => {
@@ -113,14 +110,14 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
                   {lid.users?.naam?.charAt(0)?.toUpperCase() || '?'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-caroo-donker text-sm">{lid.users?.naam || 'Onbekend'}</p>
-                  <p className="text-xs text-gray-500">{lid.users?.email} · {rolLabels[lid.rol]}</p>
+                  <p className="font-medium text-caroo-donker text-sm">{lid.users?.naam || t('algemeen.onbekend')}</p>
+                  <p className="text-xs text-gray-500"><span dir="ltr">{lid.users?.email}</span> · {lid.rol === 'groepsbeheerder' ? t('dashboard.beheerder') : t(`rollen.${lid.rol as 'mantelzorger' | 'oudere'}`)}</p>
                 </div>
                 {!isZijzelf && (
                   <button
                     onClick={() => verwijderLid(lid.id)}
                     className="text-gray-300 hover:text-red-400 text-lg flex-shrink-0"
-                    aria-label="Lid verwijderen"
+                    aria-label={t('beheer.lidVerwijderen')}
                   >
                     ×
                   </button>
@@ -135,13 +132,13 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
       <section>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
-            Categorieën
+            {t('beheer.categorieen')}
           </h2>
           <button
             onClick={() => setToonNieuweCat(!toonNieuweCat)}
             className="text-xs text-caroo-groen font-medium"
           >
-            + Nieuwe categorie
+            {t('beheer.nieuweCategorie')}
           </button>
         </div>
 
@@ -153,7 +150,7 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
                 value={nieuweCat.naam}
                 onChange={e => setNieuweCat(p => ({ ...p, naam: e.target.value }))}
                 className="input-field flex-1"
-                placeholder="Naam categorie"
+                placeholder={t('beheer.naamCategorie')}
                 required
               />
               <input
@@ -164,7 +161,7 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
               />
             </div>
             <button type="submit" disabled={laden} className="btn-primary w-full text-sm">
-              {laden ? 'Opslaan...' : 'Toevoegen'}
+              {laden ? t('algemeen.opslaanBezig') : t('beheer.toevoegen')}
             </button>
           </form>
         )}
@@ -205,14 +202,14 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
                     className="w-4 h-4 rounded-full flex-shrink-0"
                     style={{ backgroundColor: cat.kleur }}
                   />
-                  <span className="flex-1 text-sm text-caroo-donker">{cat.naam}</span>
+                  <span className="flex-1 text-sm text-caroo-donker">{categorieTekst(t, cat.naam)}</span>
                   {cat.systeem && (
-                    <span className="text-xs text-gray-400">standaard</span>
+                    <span className="text-xs text-gray-400">{t('beheer.standaard')}</span>
                   )}
                   <button
                     onClick={() => startBewerkCat(cat)}
                     className="text-gray-400 hover:text-caroo-groen text-sm"
-                    aria-label="Bewerken"
+                    aria-label={t('beheer.bewerken')}
                   >
                     ✏️
                   </button>
@@ -220,7 +217,7 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
                     <button
                       onClick={() => verwijderCategorie(cat.id)}
                       className="text-gray-300 hover:text-red-400 text-lg"
-                      aria-label="Verwijderen"
+                      aria-label={t('algemeen.verwijderen')}
                     >
                       ×
                     </button>

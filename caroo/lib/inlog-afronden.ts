@@ -1,6 +1,7 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { verwerkOpenUitnodigingen } from '@/lib/uitnodiging'
 import type { User } from '@supabase/supabase-js'
+import { isTaal } from '@/lib/i18n/talen'
 
 /**
  * Alles wat moet gebeuren direct nadat iemand is ingelogd via een maillink:
@@ -23,6 +24,8 @@ export async function rondInlogAf(user: User, next: string): Promise<string> {
       email: user.email!,
       naam,
       rol: 'mantelzorger',
+      // Taal die iemand koos bij registreren of op de uitnodiging
+      ...(isTaal(user.user_metadata?.taal) ? { taal: user.user_metadata.taal } : {}),
     })
   }
 

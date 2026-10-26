@@ -1,28 +1,30 @@
 import Link from 'next/link'
+import { getT } from '@/lib/i18n/server'
 
-export default function BetalingSuccesPage() {
+export default async function BetalingSuccesPage() {
+  const { t } = await getT()
   return (
     <div className="max-w-md mx-auto px-4 py-12 text-center">
       <div className="text-6xl mb-4">🎉</div>
       <h1 className="text-2xl font-bold text-caroo-donker mb-2">
-        Betaling geslaagd!
+        {t('succes.titel')}
       </h1>
       <p className="text-gray-600 mb-6">
-        Jouw zorggroep is geactiveerd. Je kunt nu mensen uitnodigen en alles instellen.
+        {t('succes.tekst')}
       </p>
 
-      <div className="caroo-card bg-caroo-groen-licht mb-6 text-left">
-        <h2 className="font-semibold text-caroo-donker mb-3">Volgende stappen:</h2>
+      <div className="caroo-card bg-caroo-groen-licht mb-6 text-start">
+        <h2 className="font-semibold text-caroo-donker mb-3">{t('succes.stappen')}</h2>
         <ol className="text-sm text-gray-700 space-y-2">
-          <li>1️⃣ Nodig familieleden uit als mantelzorger</li>
-          <li>2️⃣ Stuur een uitnodigingslink naar de oudere (die logt in zonder wachtwoord)</li>
-          <li>3️⃣ Voeg medicijnen toe aan de agenda</li>
-          <li>4️⃣ Plan de eerste afspraken in de kleurenagenda</li>
+          <li>{t('succes.stap1')}</li>
+          <li>{t('succes.stap2')}</li>
+          <li>{t('succes.stap3')}</li>
+          <li>{t('succes.stap4')}</li>
         </ol>
       </div>
 
       <Link href="/dashboard" className="btn-primary w-full block text-center">
-        Naar mijn dashboard →
+        {t('succes.naarDashboard')}
       </Link>
     </div>
   )

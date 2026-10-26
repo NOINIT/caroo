@@ -2,6 +2,7 @@
 
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { heeftRecht } from '@/lib/rechten'
+import { getT } from '@/lib/i18n/server'
 
 /**
  * Verwijder een foto (bestand én record).
@@ -9,8 +10,9 @@ import { heeftRecht } from '@/lib/rechten'
  */
 export async function verwijderFoto(groepId: string, fotoId: string) {
   const supabase = createClient()
+  const { t } = await getT()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Je bent niet ingelogd.' }
+  if (!user) return { error: t('algemeen.nietIngelogd') }
 
   const service = createServiceClient()
   const { data: foto } = await service
@@ -19,15 +21,15 @@ export async function verwijderFoto(groepId: string, fotoId: string) {
     .eq('id', fotoId)
     .single()
 
-  if (!foto || foto.groep_id !== groepId) return { error: 'Deze foto bestaat niet (meer).' }
+  if (!foto || foto.groep_id !== groepId) return { error: t('fotos.bestaatNiet') }
 
   const isPlaatser = foto.uploader_id === user.id
   const isBeheerder = await heeftRecht(groepId, ['groepsbeheerder'])
-  if (!isPlaatser && !isBeheerder) return { error: 'Alleen wie de foto plaatste of de beheerder kan hem verwijderen.' }
+  if (!isPlaatser && !isBeheerder) return { error: t('fotos.geenRecht') }
 
   await service.storage.from('fotos').remove([foto.opslag_pad])
   const { error } = await service.from('fotos').delete().eq('id', fotoId)
-  if (error) return { error: 'Verwijderen lukte niet. Probeer het nog eens.' }
+  if (error) return { error: t('fotos.verwijderenMislukt') }
 
   return { succes: true }
 }

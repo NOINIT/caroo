@@ -3,6 +3,7 @@ import { heeftRecht } from '@/lib/rechten'
 import { redirect } from 'next/navigation'
 import { OudereInterface } from '@/components/oudere/OudereInterface'
 import { vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
+import { getT } from '@/lib/i18n/server'
 
 export default async function OuderePage({ params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -11,6 +12,7 @@ export default async function OuderePage({ params }: { params: { id: string } })
 
   const heeftToegang = await heeftRecht(params.id, ['oudere', 'mantelzorger', 'groepsbeheerder'])
   if (!heeftToegang) redirect('/dashboard')
+  const { t } = await getT()
 
   const vandaag = new Date()
   vandaag.setHours(0, 0, 0, 0)
@@ -80,7 +82,7 @@ export default async function OuderePage({ params }: { params: { id: string } })
       groepId={params.id}
       userId={user.id}
       email={user.email || ''}
-      naam={profiel?.naam || 'Lieve gebruiker'}
+      naam={profiel?.naam || t('oudere.lieveGebruiker')}
       groepNaam={groep?.naam || ''}
       dagAfspraken={dagAfspraken || []}
       medicijnen={medicijnen || []}

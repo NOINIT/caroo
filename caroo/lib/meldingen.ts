@@ -1,6 +1,8 @@
 import 'server-only'
 import webpush from 'web-push'
 import { createServiceClient } from '@/lib/supabase/server'
+import { maakT, type TFunctie } from '@/lib/i18n/vertaal'
+import { isTaal, STANDAARD_TAAL, taalInfo, type Taal } from '@/lib/i18n/talen'
 
 export interface Melding {
   titel: string
@@ -10,7 +12,10 @@ export interface Melding {
   tag?: string
 }
 
-const BASIS_URL = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://caroo-psi.vercel.app'
+/** Een melding mag ook een functie zijn: dan krijgt iedere ontvanger hem in zijn eigen taal. */
+export type MeldingInvoer = Melding | ((t: TFunctie) => Melding)
+
+const BASIS_URL = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://clanoo.nl'
 
 let vapidKlaar = false
 function pushBeschikbaar() {
@@ -28,16 +33,18 @@ function escape(t: string) {
   return t.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!))
 }
 
-async function stuurMail(naar: string, m: Melding) {
+async function stuurMail(naar: string, m: Melding, taal: Taal) {
+  const t = maakT(taal)
+  const dir = taalInfo(taal).dir
   const key = process.env.RESEND_API_KEY
   if (!key) return
   const link = `${BASIS_URL}${m.url}`
   const html = `
-    <div style="font-family:Arial,sans-serif;max-width:480px">
+    <div dir="${dir}" lang="${taal}" style="font-family:Arial,sans-serif;max-width:480px">
       <h2 style="color:#1A2F5A">${escape(m.titel)}</h2>
       <p style="font-size:17px;color:#333">${escape(m.tekst)}</p>
-      <p><a href="${link}" style="display:inline-block;padding:14px 28px;background:#1A7A6E;color:#fff;border-radius:10px;text-decoration:none;font-size:17px;font-weight:bold">Open Clanoo</a></p>
-      <p style="font-size:13px;color:#888">Je krijgt deze mail omdat meldingen per e-mail aanstaan. Dit kun je in Clanoo uitzetten bij Instellingen.</p>
+      <p><a href="${link}" style="display:inline-block;padding:14px 28px;background:#1A7A6E;color:#fff;border-radius:10px;text-decoration:none;font-size:17px;font-weight:bold">${escape(t('mail.openClanoo'))}</a></p>
+      <p style="font-size:13px;color:#888">${escape(t('mail.waaromMelding'))}</p>
     </div>`
   await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -56,7 +63,7 @@ async function stuurMail(naar: string, m: Melding) {
  * pop-up op de telefoon, e-mail, allebei of niets.
  * Fouten bij het versturen mogen de actie zelf nooit laten mislukken.
  */
-export async function stuurMelding(userIds: string[], melding: Melding) {
+export async function stuurMelding(userIds: string[], invoer: MeldingInvoer) {
   const ids = Array.from(new Set(userIds)).filter(Boolean)
   if (ids.length === 0) return
 
@@ -64,22 +71,29 @@ export async function stuurMelding(userIds: string[], melding: Melding) {
     const service = createServiceClient()
     const { data: ontvangers } = await service
       .from('users')
-      .select('id, email, melding_push, melding_email')
+      .select('id, email, melding_push, melding_email, taal')
       .in('id', ids)
 
-    const pushIds = (ontvangers || []).filter(o => o.melding_push).map(o => o.id)
-    const mails = (ontvangers || []).filter(o => o.melding_email && o.email).map(o => o.email as string)
+    const taalVan = new Map<string, Taal>()
+    for (const o of ontvangers || []) taalVan.set(o.id, isTaal(o.taal) ? o.taal : STANDAARD_TAAL)
+    const meldingIn = (taal: Taal): Melding => (typeof invoer === 'function' ? invoer(maakT(taal)) : invoer)
 
-    const taken: Promise<unknown>[] = mails.map(e => stuurMail(e, melding))
+    const pushIds = (ontvangers || []).filter(o => o.melding_push).map(o => o.id)
+    const taken: Promise<unknown>[] = (ontvangers || [])
+      .filter(o => o.melding_email && o.email)
+      .map(o => {
+        const taal = taalVan.get(o.id) ?? STANDAARD_TAAL
+        return stuurMail(o.email as string, meldingIn(taal), taal)
+      })
 
     if (pushIds.length > 0 && pushBeschikbaar()) {
       const { data: abonnementen } = await service
         .from('push_abonnementen')
-        .select('id, endpoint, p256dh, auth')
+        .select('id, user_id, endpoint, p256dh, auth')
         .in('user_id', pushIds)
 
-      const payload = JSON.stringify(melding)
       for (const a of abonnementen || []) {
+        const payload = JSON.stringify(meldingIn(taalVan.get(a.user_id) ?? STANDAARD_TAAL))
         taken.push(
           webpush
             .sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, payload, { TTL: 60 * 60 * 12 })

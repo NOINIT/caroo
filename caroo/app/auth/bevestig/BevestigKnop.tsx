@@ -3,10 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { bevestigInlog } from './actions'
+import { useT } from '@/lib/i18n/client'
 
 export function BevestigKnop({ tokenHash, type, next }: { tokenHash: string; type: string; next: string }) {
   const [laden, setLaden] = useState(false)
   const [fout, setFout] = useState<string | null>(null)
+  const { t } = useT()
 
   async function verstuur(formData: FormData) {
     setLaden(true)
@@ -24,7 +26,7 @@ export function BevestigKnop({ tokenHash, type, next }: { tokenHash: string; typ
           {fout}
         </div>
         <Link href="/login" className="btn-primary w-full block text-center text-ou-base py-4">
-          Nieuwe inloglink aanvragen
+          {t('bevestig.nieuweLink')}
         </Link>
       </div>
     )
@@ -36,7 +38,7 @@ export function BevestigKnop({ tokenHash, type, next }: { tokenHash: string; typ
       <input type="hidden" name="type" value={type} />
       <input type="hidden" name="next" value={next} />
       <button type="submit" disabled={laden} className="btn-primary w-full text-ou-base py-5">
-        {laden ? 'Even geduld...' : 'Inloggen bij Clanoo'}
+        {laden ? t('algemeen.evenGeduld') : t('bevestig.knop')}
       </button>
     </form>
   )

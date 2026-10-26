@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { CarooLogo } from '@/components/ui/CarooLogo'
 import { uitloggen } from '@/app/auth/actions'
+import { getT } from '@/lib/i18n/server'
+import { JAARPRIJS } from '@/lib/i18n/vertaal'
 
 export default async function DashboardPage({
   searchParams
@@ -39,6 +41,7 @@ export default async function DashboardPage({
     }
   }
 
+  const { t } = await getT()
   const heeftGeenGroepen = groepen.length === 0
   const welkomTerug = searchParams.welkom === 'true'
   const uitnodigingOngeldig = searchParams.uitnodiging === 'ongeldig'
@@ -50,10 +53,10 @@ export default async function DashboardPage({
         <div className="flex items-center justify-between px-4 py-3">
           <CarooLogo size="sm" />
           <div className="flex items-center gap-4">
-            <Link href="/instellingen" className="text-lg" aria-label="Instellingen">⚙️</Link>
+            <Link href="/instellingen" className="text-lg" aria-label={t('algemeen.instellingen')}>⚙️</Link>
             <form action={uitloggen}>
               <button type="submit" className="text-sm text-gray-500 hover:text-red-500 transition-colors">
-                Uitloggen
+                {t('algemeen.uitloggen')}
               </button>
             </form>
           </div>
@@ -64,17 +67,17 @@ export default async function DashboardPage({
         {/* Welkomstbericht */}
         <div className="mb-6">
           <h1 className="text-xl font-bold text-caroo-donker">
-            Hallo, {profiel?.naam?.split(' ')[0] || 'daar'} 👋
+            {t('dashboard.hallo', { naam: profiel?.naam?.split(' ')[0] || t('dashboard.daar') })}
           </h1>
-          <p className="text-xs text-gray-400 mt-0.5">Ingelogd als {user.email}</p>
+          <p className="text-xs text-gray-400 mt-0.5">{t('instellingen.ingelogdAls', { email: user.email || '' })}</p>
           {welkomTerug && (
             <p className="text-caroo-groen text-sm mt-1">
-              Welkom in jouw zorggroep! Je kunt nu beginnen.
+              {t('dashboard.welkom')}
             </p>
           )}
           {uitnodigingOngeldig && (
             <div className="bg-orange-50 border border-orange-200 text-orange-700 rounded-caroo p-3 mt-3 text-sm">
-              Deze uitnodigingslink is verlopen of al gebruikt. Vraag de beheerder van de groep om een nieuwe link.
+              {t('dashboard.uitnodigingOngeldig')}
             </div>
           )}
         </div>
@@ -82,12 +85,12 @@ export default async function DashboardPage({
         {/* Geen groepen — call to action */}
         {heeftGeenGroepen && (
           <div className="caroo-card bg-caroo-groen-licht border-caroo-groen border mb-6">
-            <h2 className="font-bold text-caroo-donker mb-2">Maak je eerste zorggroep aan</h2>
+            <h2 className="font-bold text-caroo-donker mb-2">{t('dashboard.eersteGroep')}</h2>
             <p className="text-sm text-gray-600 mb-4">
-              Nodig familie en mantelzorgers uit. €19,99 per jaar voor de hele groep.
+              {t('dashboard.eersteGroepUitleg', { prijs: JAARPRIJS })}
             </p>
             <Link href="/groep/aanmaken" className="btn-primary text-sm">
-              Zorggroep aanmaken →
+              {t('dashboard.groepAanmaken')} <span className="inline-block rtl:rotate-180">→</span>
             </Link>
           </div>
         )}
@@ -96,7 +99,7 @@ export default async function DashboardPage({
         {groepen.length > 0 && (
           <div className="mb-6">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-              Mijn zorggroepen
+              {t('dashboard.mijnGroepen')}
             </h2>
             <div className="space-y-3">
               {groepen.map((lid: any) => {
@@ -110,14 +113,14 @@ export default async function DashboardPage({
                     <div>
                       <p className="font-semibold text-caroo-donker">{groep.naam}</p>
                       <p className="text-xs text-gray-500 mt-0.5">
-                        {lid.rol === 'groepsbeheerder' ? '👑 Beheerder' :
-                         lid.rol === 'mantelzorger' ? '🤝 Mantelzorger' : '⭐ Hoofdpersoon'}
+                        {lid.rol === 'groepsbeheerder' ? `👑 ${t('dashboard.beheerder')}` :
+                         lid.rol === 'mantelzorger' ? `🤝 ${t('rollen.mantelzorger')}` : `⭐ ${t('rollen.oudere')}`}
                         {!groep.betaald && (
-                          <span className="ml-2 text-orange-500">⚠️ Niet betaald</span>
+                          <span className="ms-2 text-orange-500">{t('dashboard.nietBetaald')}</span>
                         )}
                       </p>
                     </div>
-                    <span className="text-caroo-groen">→</span>
+                    <span className="text-caroo-groen rtl:rotate-180">→</span>
                   </Link>
                 )
               })}
@@ -131,7 +134,7 @@ export default async function DashboardPage({
             href="/groep/aanmaken"
             className="text-caroo-groen text-sm font-medium flex items-center gap-1 hover:underline"
           >
-            ＋ Nieuwe zorggroep aanmaken
+            {t('dashboard.nieuweGroep')}
           </Link>
         )}
       </div>

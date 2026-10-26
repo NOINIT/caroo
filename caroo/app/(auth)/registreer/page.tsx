@@ -4,10 +4,12 @@ import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { registreer } from '@/app/auth/actions'
+import { useT } from '@/lib/i18n/client'
 
 function RegistreerForm() {
   const [fout, setFout] = useState<string | null>(null)
   const [laden, setLaden] = useState(false)
+  const { t } = useT()
 
   const searchParams = useSearchParams()
   const redirectNaar = searchParams.get('redirect')
@@ -34,11 +36,9 @@ function RegistreerForm() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-caroo-donker mb-2">Account aanmaken</h1>
+        <h1 className="text-2xl font-bold text-caroo-donker mb-2">{t('registreer.titel')}</h1>
         <p className="text-gray-500">
-          {viaUitnodiging
-            ? 'Maak een account aan om de uitnodiging te accepteren.'
-            : 'Start jouw zorggroep. €19,99 per jaar — voor de hele groep.'}
+          {viaUitnodiging ? t('registreer.viaUitnodiging') : t('registreer.intro')}
         </p>
       </div>
 
@@ -52,7 +52,7 @@ function RegistreerForm() {
         <input type="hidden" name="redirectNaar" value={volledigeRedirect} />
 
         <div>
-          <label className="input-label" htmlFor="naam">Jouw naam</label>
+          <label className="input-label" htmlFor="naam">{t('registreer.naam')}</label>
           <input
             id="naam"
             name="naam"
@@ -60,11 +60,11 @@ function RegistreerForm() {
             autoComplete="name"
             required
             className="input-field"
-            placeholder="Voornaam Achternaam"
+            placeholder={t('registreer.voorbeeldNaam')}
           />
         </div>
         <div>
-          <label className="input-label" htmlFor="email">E-mailadres</label>
+          <label className="input-label" htmlFor="email">{t('login.email')}</label>
           <input
             id="email"
             name="email"
@@ -72,11 +72,11 @@ function RegistreerForm() {
             autoComplete="email"
             required
             className="input-field"
-            placeholder="naam@voorbeeld.nl"
+            placeholder={t('login.voorbeeldEmail')} dir="ltr"
           />
         </div>
         <div>
-          <label className="input-label" htmlFor="wachtwoord">Wachtwoord</label>
+          <label className="input-label" htmlFor="wachtwoord">{t('login.wachtwoord')}</label>
           <input
             id="wachtwoord"
             name="wachtwoord"
@@ -85,14 +85,14 @@ function RegistreerForm() {
             required
             minLength={8}
             className="input-field"
-            placeholder="Minimaal 8 tekens"
+            placeholder={t('registreer.minimaal8')}
           />
         </div>
 
         {!viaUitnodiging && (
           <div className="bg-caroo-groen-licht rounded-caroo p-3 text-sm text-caroo-donker">
-            <p>✅ Gratis beginnen, betaal later bij het aanmaken van je zorggroep</p>
-            <p className="mt-1">✅ AVG-conform opgeslagen in Europa</p>
+            <p>{t('registreer.gratisBeginnen')}</p>
+            <p className="mt-1">{t('registreer.avg')}</p>
           </div>
         )}
 
@@ -101,17 +101,17 @@ function RegistreerForm() {
           disabled={laden}
           className="btn-primary w-full"
         >
-          {laden ? 'Account aanmaken...' : 'Account aanmaken'}
+          {laden ? t('registreer.bezig') : t('registreer.titel')}
         </button>
       </form>
 
       <p className="text-center text-sm text-gray-500 mt-6">
-        Al een account?{' '}
+        {t('registreer.alAccount')}{' '}
         <Link
           href={viaUitnodiging ? `/login?redirect=${redirectNaar}&token=${token}` : '/login'}
           className="text-caroo-groen font-medium hover:underline"
         >
-          Log in
+          {t('registreer.logIn')}
         </Link>
       </p>
     </div>

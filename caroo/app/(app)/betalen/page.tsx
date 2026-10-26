@@ -3,11 +3,15 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useT } from '@/lib/i18n/client'
+import { MetVet } from '@/components/ui/MetVet'
+import { JAARPRIJS } from '@/lib/i18n/vertaal'
 
 export default function BetalenPage() {
   const searchParams = useSearchParams()
+  const { t } = useT()
   const groepId = searchParams.get('groep')
-  const groepNaam = searchParams.get('naam') || 'Jouw zorggroep'
+  const groepNaam = searchParams.get('naam') || t('betalen.jouwGroep')
   const [laden, setLaden] = useState(false)
   const [fout, setFout] = useState<string | null>(null)
   const [userId, setUserId] = useState<string | null>(null)
@@ -43,7 +47,7 @@ export default function BetalenPage() {
 
       window.location.href = data.url
     } catch {
-      setFout('Er is iets misgegaan. Probeer het opnieuw.')
+      setFout(t('algemeen.lukteNiet'))
       setLaden(false)
     }
   }
@@ -52,10 +56,10 @@ export default function BetalenPage() {
     <div className="max-w-md mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-caroo-donker mb-2">
-          Zorggroep activeren
+          {t('betalen.titel')}
         </h1>
         <p className="text-gray-500">
-          Activeer <strong>{groepNaam}</strong> met een jaarabonnement.
+          <MetVet tekst={t('betalen.activeer')} waarde={groepNaam} sleutel="groep" />
         </p>
       </div>
 
@@ -63,15 +67,15 @@ export default function BetalenPage() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="font-semibold text-caroo-donker">{groepNaam}</p>
-            <p className="text-sm text-gray-500">Clanoo zorggroep — jaarabonnement</p>
+            <p className="text-sm text-gray-500">{t('betalen.product')}</p>
           </div>
-          <p className="text-2xl font-bold text-caroo-groen">€19,99</p>
+          <p className="text-2xl font-bold text-caroo-groen">{JAARPRIJS}</p>
         </div>
 
         <div className="border-t pt-4 text-sm text-gray-500">
-          <p>💳 Betalen met iDEAL, creditcard of debitcard</p>
-          <p className="mt-1">🔒 Veilig betalen via Stripe</p>
-          <p className="mt-1">🔄 Jaarabonnement — opzegbaar wanneer je wil</p>
+          <p>{t('betalen.methodes')}</p>
+          <p className="mt-1">{t('betalen.veilig')}</p>
+          <p className="mt-1">{t('betalen.opzegbaar')}</p>
         </div>
       </div>
 
@@ -86,11 +90,11 @@ export default function BetalenPage() {
         disabled={laden || !userId}
         className="btn-primary w-full text-lg py-4"
       >
-        {laden ? 'Doorsturen naar betaling...' : '💳 Nu betalen — €19,99/jaar'}
+        {laden ? t('betalen.doorsturen') : t('betalen.nuBetalen', { prijs: JAARPRIJS })}
       </button>
 
       <p className="text-center text-xs text-gray-400 mt-4">
-        Na betaling kun je direct leden uitnodigen
+        {t('betalen.daarna')}
       </p>
     </div>
   )

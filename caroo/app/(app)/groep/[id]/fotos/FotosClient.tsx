@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { verwijderFoto } from './actions'
+import { useT } from '@/lib/i18n/client'
 
 interface Foto {
   id: string
@@ -31,6 +32,7 @@ export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: P
   const [groteFoto, setGroteFoto] = useState<Foto | null>(null)
   const [bevestigVerwijderen, setBevestigVerwijderen] = useState(false)
   const [verwijderFout, setVerwijderFout] = useState('')
+  const { t, datum } = useT()
 
   function sluitGroot() {
     setGroteFoto(null)
@@ -122,14 +124,14 @@ export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: P
             htmlFor="foto-upload"
             className="btn-primary w-full mb-4 flex items-center justify-center gap-2 cursor-pointer"
           >
-            📷 Foto toevoegen
+            {t('fotos.toevoegen')}
           </label>
         </>
       ) : (
         <div className="caroo-card mb-4 space-y-3">
           {voorvertoning && (
             <div className="relative w-full aspect-video rounded-caroo overflow-hidden bg-gray-100">
-              <img src={voorvertoning} alt="Voorvertoning" className="w-full h-full object-cover" />
+              <img src={voorvertoning} alt={t('fotos.voorvertoning')} className="w-full h-full object-cover" />
             </div>
           )}
           <input
@@ -137,12 +139,12 @@ export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: P
             value={beschrijving}
             onChange={e => setBeschrijving(e.target.value)}
             className="input-field"
-            placeholder="Bijschrift (optioneel)"
+            placeholder={t('fotos.bijschrift')}
           />
           <div className="flex gap-2">
-            <button onClick={annuleer} className="btn-secondary flex-1">Annuleren</button>
+            <button onClick={annuleer} className="btn-secondary flex-1">{t('algemeen.annuleren')}</button>
             <button onClick={uploadFoto} disabled={uploaden} className="btn-primary flex-1">
-              {uploaden ? 'Uploaden...' : 'Plaatsen'}
+              {uploaden ? t('fotos.uploaden') : t('fotos.plaatsen')}
             </button>
           </div>
         </div>
@@ -152,8 +154,8 @@ export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: P
       {fotos.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-5xl mb-3">🖼️</p>
-          <p className="text-gray-500">Nog geen foto's gedeeld</p>
-          <p className="text-sm text-gray-400 mt-1">Voeg de eerste foto toe!</p>
+          <p className="text-gray-500">{t('fotos.geen')}</p>
+          <p className="text-sm text-gray-400 mt-1">{t('fotos.eerste')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-2">
@@ -166,12 +168,12 @@ export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: P
               {foto.url && (
                 <img
                   src={foto.url}
-                  alt={foto.onderschrift || 'Foto'}
+                  alt={foto.onderschrift || t('oudere.fotos.foto')}
                   className="w-full h-full object-cover"
                 />
               )}
               {foto.onderschrift && (
-                <div className="absolute bottom-0 left-0 right-0 bg-black/40 px-2 py-1">
+                <div className="absolute bottom-0 inset-x-0 bg-black/40 px-2 py-1">
                   <p className="text-white text-xs truncate">{foto.onderschrift}</p>
                 </div>
               )}
@@ -190,7 +192,7 @@ export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: P
             {groteFoto.url && (
               <img
                 src={groteFoto.url}
-                alt={groteFoto.onderschrift || 'Foto'}
+                alt={groteFoto.onderschrift || t('oudere.fotos.foto')}
                 className="w-full rounded-caroo object-contain max-h-[70vh]"
               />
             )}
@@ -201,8 +203,8 @@ export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: P
                 )}
                 {(groteFoto.users?.naam || groteFoto.auteur_naam) && (
                   <p className="text-sm text-gray-500">
-                    Geplaatst door {groteFoto.users?.naam || groteFoto.auteur_naam} ·{' '}
-                    {new Date(groteFoto.aangemaakt_op).toLocaleDateString('nl-NL')}
+                    {t('fotos.geplaatstDoor', { naam: groteFoto.users?.naam || groteFoto.auteur_naam || '' })} ·{' '}
+                    {datum(groteFoto.aangemaakt_op, { day: 'numeric', month: 'numeric', year: 'numeric' })}
                   </p>
                 )}
               </div>
@@ -211,15 +213,15 @@ export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: P
               <div className="mt-3">
                 {!bevestigVerwijderen ? (
                   <button onClick={() => setBevestigVerwijderen(true)} className="w-full text-sm text-white/80 underline py-2">
-                    Foto verwijderen
+                    {t('fotos.verwijderen')}
                   </button>
                 ) : (
                   <div className="bg-white rounded-caroo p-3 space-y-2">
-                    <p className="text-sm text-caroo-donker">Weet je het zeker? De foto verdwijnt voor iedereen in de groep.</p>
+                    <p className="text-sm text-caroo-donker">{t('fotos.zeker')}</p>
                     {verwijderFout && <p className="text-sm text-red-600">{verwijderFout}</p>}
                     <div className="flex gap-2">
-                      <button onClick={() => setBevestigVerwijderen(false)} className="btn-secondary flex-1">Toch niet</button>
-                      <button onClick={() => verwijder(groteFoto)} className="flex-1 rounded-caroo bg-red-600 text-white font-medium py-2">Verwijderen</button>
+                      <button onClick={() => setBevestigVerwijderen(false)} className="btn-secondary flex-1">{t('thuis.tochNiet')}</button>
+                      <button onClick={() => verwijder(groteFoto)} className="flex-1 rounded-caroo bg-red-600 text-white font-medium py-2">{t('algemeen.verwijderen')}</button>
                     </div>
                   </div>
                 )}
@@ -229,7 +231,7 @@ export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: P
               onClick={sluitGroot}
               className="mt-3 w-full btn-secondary text-white bg-white/20 border-white/40"
             >
-              Sluiten
+              {t('fotos.sluiten')}
             </button>
           </div>
         </div>

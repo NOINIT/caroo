@@ -1,6 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useT } from '@/lib/i18n/client'
+import { MetVet } from '@/components/ui/MetVet'
+import { rolTekst } from '@/lib/i18n/vertaal'
 
 interface Uitnodiging {
   id: string
@@ -17,12 +20,6 @@ interface Props {
   uitnodigingen: Uitnodiging[]
 }
 
-const rolLabels: Record<string, string> = {
-  mantelzorger: 'Mantelzorger',
-  oudere: 'Hoofdpersoon',
-  groepsbeheerder: 'Groepsbeheerder',
-}
-
 export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initieel }: Props) {
   const [uitnodigingen, setUitnodigingen] = useState(initieel)
   const [email, setEmail] = useState('')
@@ -30,6 +27,7 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
   const [laden, setLaden] = useState(false)
   const [fout, setFout] = useState('')
   const [link, setLink] = useState('')
+  const { t, datum } = useT()
 
   async function stuurUitnodiging(e: React.FormEvent) {
     e.preventDefault()
@@ -46,7 +44,7 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
     const data = await res.json()
 
     if (!res.ok) {
-      setFout(data.error || 'Er ging iets mis')
+      setFout(data.error || t('uitnodigen.misgegaan'))
     } else {
       setLink(data.link)
       // Een nieuwe uitnodiging vervangt een openstaande naar hetzelfde adres
@@ -61,64 +59,64 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
     navigator.clipboard.writeText(link)
   }
 
-  const isVerlopen = (datum: string) => new Date(datum) < new Date()
+  const isVerlopen = (d: string) => new Date(d) < new Date()
   const openstaand = uitnodigingen.filter(u => !u.gebruikt && !isVerlopen(u.verloopt_op))
 
   return (
     <div className="px-4 py-4">
       <div className="bg-caroo-groen-licht rounded-caroo p-3 mb-4">
         <p className="text-sm text-caroo-donker">
-          👥 Nodig mensen uit voor <strong>{groepNaam}</strong>. Ze ontvangen een persoonlijke link die 7 dagen geldig is.
+          <MetVet tekst={t('uitnodigen.intro')} waarde={groepNaam} sleutel="groep" />
         </p>
       </div>
 
       <form onSubmit={stuurUitnodiging} className="caroo-card mb-4 space-y-3">
         <div>
-          <label className="input-label">E-mailadres</label>
+          <label className="input-label">{t('login.email')}</label>
           <input
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
             className="input-field"
-            placeholder="naam@voorbeeld.nl"
+            placeholder={t('login.voorbeeldEmail')} dir="ltr"
           />
         </div>
         <div>
-          <label className="input-label">Rol</label>
+          <label className="input-label">{t('uitnodigen.rol')}</label>
           <select
             value={rol}
             onChange={e => setRol(e.target.value)}
             className="input-field"
           >
-            <option value="mantelzorger">Mantelzorger</option>
-            <option value="oudere">Hoofdpersoon (inloggen zonder wachtwoord)</option>
-            <option value="groepsbeheerder">Groepsbeheerder</option>
+            <option value="mantelzorger">{t('rollen.mantelzorger')}</option>
+            <option value="oudere">{t('uitnodigen.hoofdpersoonOptie')}</option>
+            <option value="groepsbeheerder">{t('rollen.groepsbeheerder')}</option>
           </select>
         </div>
 
         {fout && <p className="error-text">{fout}</p>}
 
         <button type="submit" disabled={laden} className="btn-primary w-full">
-          {laden ? 'Link aanmaken...' : 'Uitnodigingslink aanmaken'}
+          {laden ? t('uitnodigen.bezig') : t('uitnodigen.aanmaken')}
         </button>
       </form>
 
       {link && (
         <div className="caroo-card mb-4 bg-caroo-groen-licht border border-caroo-groen">
-          <p className="text-sm font-medium text-caroo-donker mb-2">✅ Link aangemaakt!</p>
+          <p className="text-sm font-medium text-caroo-donker mb-2">{t('uitnodigen.aangemaakt')}</p>
           <p className="text-xs text-gray-600 mb-3">
-            Stuur deze link naar de persoon die je uitnodigt. De link verloopt over 7 dagen.
+            {t('uitnodigen.stuurLink')}
           </p>
-          <div className="bg-white rounded p-2 text-xs text-gray-700 break-all mb-2 font-mono">
+          <div className="bg-white rounded p-2 text-xs text-gray-700 break-all mb-2 font-mono" dir="ltr">
             {link}
           </div>
           <button onClick={kopieerLink} className="btn-secondary w-full text-sm">
-            📋 Kopieer link
+            {t('uitnodigen.kopieer')}
           </button>
           <div className="flex gap-2 mt-2">
             <a
-              href={`https://wa.me/?text=${encodeURIComponent(`Je bent uitgenodigd voor de zorggroep ${groepNaam} op Clanoo. Gebruik deze link om mee te doen: ${link}`)}`}
+              href={`https://wa.me/?text=${encodeURIComponent(t('uitnodigen.whatsapp', { groep: groepNaam, link }))}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 flex items-center justify-center gap-2 bg-[#25D366] text-white rounded-caroo py-2 text-sm font-medium"
@@ -127,11 +125,11 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
               WhatsApp
             </a>
             <a
-              href={`mailto:${email}?subject=${encodeURIComponent(`Uitnodiging voor zorggroep ${groepNaam}`)}&body=${encodeURIComponent(`Hallo,\n\nJe bent uitgenodigd voor de zorggroep ${groepNaam} op Clanoo.\n\nKlik op de link om mee te doen:\n${link}\n\nDeze link is 7 dagen geldig.`)}`}
+              href={`mailto:${email}?subject=${encodeURIComponent(t('uitnodigen.mailOnderwerp', { groep: groepNaam }))}&body=${encodeURIComponent(t('uitnodigen.mailTekst', { groep: groepNaam, link }))}`}
               className="flex-1 flex items-center justify-center gap-2 bg-caroo-groen text-white rounded-caroo py-2 text-sm font-medium"
             >
               <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-              E-mail
+              {t('uitnodigen.email')}
             </a>
           </div>
         </div>
@@ -140,19 +138,19 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
       {openstaand.length > 0 && (
         <div>
           <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-1">
-            Wacht op reactie
+            {t('uitnodigen.wachtOpReactie')}
           </h2>
           <p className="text-xs text-gray-400 mb-2">
-            Wie de uitnodiging heeft geaccepteerd, zie je bij Beheer in de ledenlijst.
+            {t('uitnodigen.geaccepteerdBij')}
           </p>
           <div className="space-y-2">
             {openstaand.map(u => (
               <div key={u.id} className="caroo-card flex items-center gap-3">
                 <span className="text-lg">📨</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-caroo-donker truncate">{u.email}</p>
+                  <p className="text-sm font-medium text-caroo-donker truncate" dir="ltr">{u.email}</p>
                   <p className="text-xs text-gray-500">
-                    {rolLabels[u.rol]} · Geldig t/m {new Date(u.verloopt_op).toLocaleDateString('nl-NL')}
+                    {rolTekst(t, u.rol)} · {t('uitnodigen.geldigTot', { datum: datum(u.verloopt_op, { day: 'numeric', month: 'numeric', year: 'numeric' }) })}
                   </p>
                 </div>
               </div>

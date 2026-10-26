@@ -46,11 +46,11 @@ export async function stuurTestMelding() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Niet ingelogd' }
   const { stuurMelding } = await import('@/lib/meldingen')
-  await stuurMelding([user.id], {
-    titel: '🔔 Meldingen staan aan',
-    tekst: 'Zo ziet een melding van Clanoo eruit.',
+  await stuurMelding([user.id], t => ({
+    titel: t('melding.testTitel'),
+    tekst: t('melding.testTekst'),
     url: '/dashboard',
     tag: 'test',
-  })
+  }))
   return { succes: true }
 }

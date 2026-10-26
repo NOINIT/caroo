@@ -2,14 +2,17 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { stuurMelding, groepsledenBehalve } from '@/lib/meldingen'
+import { getT } from '@/lib/i18n/server'
+import { wanneerTekst, hoofdletter } from '@/lib/i18n/vertaal'
 
 export async function vraagBezoekAan(groepId: string) {
   const supabase = createClient()
+  const { t } = await getT()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Niet ingelogd' }
+  if (!user) return { error: t('algemeen.nietIngelogd') }
 
   const { data: profiel } = await supabase.from('users').select('naam').eq('id', user.id).single()
-  const naam = profiel?.naam || 'De hoofdpersoon'
+  const naam = profiel?.naam || t('algemeen.deHoofdpersoon')
 
   // RLS controleert dat je lid bent van deze groep
   const { data, error } = await supabase
@@ -18,26 +21,27 @@ export async function vraagBezoekAan(groepId: string) {
     .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer')
     .single()
 
-  if (error || !data) return { error: 'Dat lukte niet.' }
+  if (error || !data) return { error: t('algemeen.lukteNiet') }
 
   const familie = await groepsledenBehalve(groepId, user.id)
-  await stuurMelding(familie, {
-    titel: `🏠 ${naam} wil graag bezoek`,
-    tekst: 'Open Clanoo om te laten weten wanneer je langskomt.',
+  await stuurMelding(familie, tt => ({
+    titel: tt('bezoek.meldingTitel', { naam }),
+    tekst: tt('bezoek.meldingTekst'),
     url: `/groep/${groepId}`,
     tag: `bezoek-${data.id}`,
-  })
+  }))
 
   return { verzoek: data }
 }
 
 export async function reageerOpBezoek(verzoekId: string, wanneer: string) {
   const supabase = createClient()
+  const { t } = await getT()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Niet ingelogd' }
+  if (!user) return { error: t('algemeen.nietIngelogd') }
 
   const { data: profiel } = await supabase.from('users').select('naam').eq('id', user.id).single()
-  const naam = profiel?.naam || 'Iemand'
+  const naam = profiel?.naam || t('algemeen.iemand')
   const schoon = (wanneer || '').trim().slice(0, 40)
 
   // Alleen als nog niemand heeft gereageerd (RLS: alleen groepsleden)
@@ -49,16 +53,16 @@ export async function reageerOpBezoek(verzoekId: string, wanneer: string) {
     .select('groep_id, aangevraagd_door')
     .maybeSingle()
 
-  if (error) return { error: 'Dat lukte niet.' }
-  if (!data) return { error: 'Iemand anders heeft al gereageerd.' }
+  if (error) return { error: t('algemeen.lukteNiet') }
+  if (!data) return { error: t('bezoek.alGereageerd') }
 
   if (data.aangevraagd_door) {
-    await stuurMelding([data.aangevraagd_door], {
-      titel: `🎉 ${naam} komt langs!`,
-      tekst: schoon ? schoon.charAt(0).toUpperCase() + schoon.slice(1) : 'Binnenkort',
+    await stuurMelding([data.aangevraagd_door], tt => ({
+      titel: tt('bezoek.komtLangsTitel', { naam }),
+      tekst: schoon ? hoofdletter(wanneerTekst(tt, schoon)) : tt('wanneer.binnenkort'),
       url: `/oudere/${data.groep_id}`,
       tag: `bezoek-${verzoekId}`,
-    })
+    }))
   }
 
   return { succes: true, naam }

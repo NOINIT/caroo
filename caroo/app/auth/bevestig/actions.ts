@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { rondInlogAf, veiligPad } from '@/lib/inlog-afronden'
 import type { EmailOtpType } from '@supabase/supabase-js'
+import { getT } from '@/lib/i18n/server'
 
 const TOEGESTANE_TYPES: EmailOtpType[] = ['signup', 'magiclink', 'email', 'invite', 'recovery', 'email_change']
 
@@ -11,9 +12,10 @@ export async function bevestigInlog(formData: FormData) {
   const tokenHash = String(formData.get('token_hash') || '')
   const type = String(formData.get('type') || '') as EmailOtpType
   const next = veiligPad(String(formData.get('next') || ''))
+  const { t } = await getT()
 
   if (!tokenHash || !TOEGESTANE_TYPES.includes(type)) {
-    return { error: 'Deze link is niet geldig.' }
+    return { error: t('bevestig.ongeldig') }
   }
 
   const supabase = createClient()
@@ -26,7 +28,7 @@ export async function bevestigInlog(formData: FormData) {
       const pad = await rondInlogAf(user, next)
       redirect(pad)
     }
-    return { error: 'Deze link is al gebruikt of verlopen. Vraag hieronder een nieuwe aan.' }
+    return { error: t('bevestig.gebruikt') }
   }
 
   const pad = await rondInlogAf(data.user, next)

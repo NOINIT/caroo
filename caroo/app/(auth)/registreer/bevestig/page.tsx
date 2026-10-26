@@ -1,21 +1,22 @@
 import Link from 'next/link'
+import { getT } from '@/lib/i18n/server'
 
-export default function BevestigPage() {
+export default async function BevestigPage() {
+  const { t } = await getT()
   return (
     <div className="caroo-card text-center py-8">
       <div className="text-5xl mb-4">📧</div>
       <h1 className="text-xl font-bold text-caroo-donker mb-2">
-        Controleer je e-mail
+        {t('registreer.controleerMail')}
       </h1>
       <p className="text-gray-600 mb-4">
-        We hebben een bevestigingslink gestuurd naar jouw e-mailadres.
-        Klik op de link om je account te activeren.
+        {t('registreer.bevestigingGestuurd')}
       </p>
       <p className="text-sm text-gray-400 mb-6">
-        Geen e-mail ontvangen? Check ook je spamfolder.
+        {t('login.geenMail')}
       </p>
       <Link href="/login" className="text-caroo-groen text-sm font-medium hover:underline">
-        Terug naar inloggen
+        {t('registreer.terugInloggen')}
       </Link>
     </div>
   )

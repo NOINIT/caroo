@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useT } from '@/lib/i18n/client'
+import { categorieTekst } from '@/lib/i18n/vertaal'
 
 interface Categorie {
   id: string
@@ -29,6 +31,7 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
   const [afspraken, setAfspraken] = useState(initieel)
   const [toonFormulier, setToonFormulier] = useState(false)
   const [laden, setLaden] = useState(false)
+  const { t, datum, tijd } = useT()
   const [nieuw, setNieuw] = useState({
     titel: '',
     beschrijving: '',
@@ -37,9 +40,8 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
     categorie_id: categorieen[0]?.id || '',
   })
 
-  const maandenSet = new Set(afspraken.map(a =>
-    new Date(a.start_tijd).toLocaleDateString('nl-NL', { month: 'long', year: 'numeric' })
-  ))
+  const maandVan = (iso: string) => datum(iso, { month: 'long', year: 'numeric' })
+  const maandenSet = new Set(afspraken.map(a => maandVan(a.start_tijd)))
   const maanden = Array.from(maandenSet)
 
   async function voegToe(e: React.FormEvent) {
@@ -89,7 +91,7 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
             className="text-xs font-medium px-2 py-0.5 rounded-full text-white"
             style={{ backgroundColor: cat.kleur }}
           >
-            {cat.naam}
+            {categorieTekst(t, cat.naam)}
           </span>
         ))}
       </div>
@@ -99,26 +101,26 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
         onClick={() => setToonFormulier(!toonFormulier)}
         className="btn-primary w-full mb-4"
       >
-        {toonFormulier ? 'Annuleren' : '＋ Afspraak toevoegen'}
+        {toonFormulier ? t('algemeen.annuleren') : t('agenda.toevoegen')}
       </button>
 
       {/* Formulier */}
       {toonFormulier && (
         <form onSubmit={voegToe} className="caroo-card mb-4 space-y-3">
           <div>
-            <label className="input-label">Titel</label>
+            <label className="input-label">{t('agenda.titel')}</label>
             <input
               type="text"
               value={nieuw.titel}
               onChange={e => setNieuw(p => ({ ...p, titel: e.target.value }))}
               required
               className="input-field"
-              placeholder="bijv. Cardioloog"
+              placeholder={t('agenda.voorbeeldTitel')}
             />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="input-label">Begin</label>
+              <label className="input-label">{t('agenda.begin')}</label>
               <input
                 type="datetime-local"
                 value={nieuw.start_tijd}
@@ -128,7 +130,7 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
               />
             </div>
             <div>
-              <label className="input-label">Eind (optioneel)</label>
+              <label className="input-label">{t('agenda.eind')}</label>
               <input
                 type="datetime-local"
                 value={nieuw.eind_tijd}
@@ -138,7 +140,7 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
             </div>
           </div>
           <div>
-            <label className="input-label">Categorie</label>
+            <label className="input-label">{t('agenda.categorie')}</label>
             <select
               value={nieuw.categorie_id}
               onChange={e => setNieuw(p => ({ ...p, categorie_id: e.target.value }))}
@@ -146,22 +148,22 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
             >
               {categorieen.map(cat => (
                 <option key={cat.id} value={cat.id}>
-                  {cat.naam}
+                  {categorieTekst(t, cat.naam)}
                 </option>
               ))}
             </select>
           </div>
           <div>
-            <label className="input-label">Notitie (optioneel)</label>
+            <label className="input-label">{t('agenda.notitie')}</label>
             <textarea
               value={nieuw.beschrijving}
               onChange={e => setNieuw(p => ({ ...p, beschrijving: e.target.value }))}
               className="input-field h-20 resize-none"
-              placeholder="bijv. Adres, telefoonnummer..."
+              placeholder={t('agenda.voorbeeldNotitie')}
             />
           </div>
           <button type="submit" disabled={laden} className="btn-primary w-full">
-            {laden ? 'Opslaan...' : 'Opslaan'}
+            {laden ? t('algemeen.opslaanBezig') : t('algemeen.opslaan')}
           </button>
         </form>
       )}
@@ -170,7 +172,7 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
       {afspraken.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-3xl mb-2">📅</p>
-          <p className="text-gray-500">Nog geen afspraken</p>
+          <p className="text-gray-500">{t('agenda.geen')}</p>
         </div>
       ) : (
         maanden.map(maand => (
@@ -180,7 +182,7 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
             </h2>
             <div className="space-y-2">
               {afspraken
-                .filter(a => new Date(a.start_tijd).toLocaleDateString('nl-NL', { month: 'long', year: 'numeric' }) === maand)
+                .filter(a => maandVan(a.start_tijd) === maand)
                 .map(af => (
                   <div key={af.id} className="caroo-card flex gap-3 items-start">
                     <div
@@ -193,10 +195,7 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-caroo-donker truncate">{af.titel}</p>
                       <p className="text-sm text-gray-500">
-                        {new Date(af.start_tijd).toLocaleDateString('nl-NL', {
-                          weekday: 'short', day: 'numeric', month: 'short',
-                          hour: '2-digit', minute: '2-digit'
-                        })}
+                        {datum(af.start_tijd, { weekday: 'short', day: 'numeric', month: 'short' })} · {tijd(af.start_tijd)}
                       </p>
                       {af.beschrijving && (
                         <p className="text-xs text-gray-400 mt-0.5 truncate">{af.beschrijving}</p>
@@ -206,14 +205,14 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
                           className="text-xs font-medium px-1.5 py-0.5 rounded text-white mt-1 inline-block"
                           style={{ backgroundColor: af.agenda_categorieen.kleur }}
                         >
-                          {af.agenda_categorieen.naam}
+                          {categorieTekst(t, af.agenda_categorieen.naam)}
                         </span>
                       )}
                     </div>
                     <button
                       onClick={() => verwijder(af.id)}
                       className="text-gray-300 hover:text-red-400 text-lg flex-shrink-0"
-                      aria-label="Verwijderen"
+                      aria-label={t('algemeen.verwijderen')}
                     >
                       ×
                     </button>

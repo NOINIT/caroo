@@ -5,6 +5,8 @@ import { LETTERGROOTTES, lettergroottePx, type Lettergrootte } from '@/lib/voork
 import { speelGeluid, zetGeluid } from '@/lib/geluid'
 import { slaVoorkeurenOp } from '@/app/(app)/instellingen/actions'
 import { MeldingenInstellingen } from './MeldingenInstellingen'
+import { TaalKiezer } from '@/components/TaalKiezer'
+import { useT } from '@/lib/i18n/client'
 
 interface Props {
   naam: string
@@ -22,6 +24,7 @@ export function InstellingenFormulier({ naam: startNaam, email, lettergrootte: s
   const [geluid, setGeluid] = useState(startGeluid)
   const [status, setStatus] = useState<'rust' | 'bezig' | 'opgeslagen' | 'fout'>('rust')
   const [fout, setFout] = useState('')
+  const { t } = useT()
 
   function kiesGrootte(waarde: Lettergrootte) {
     setGrootte(waarde)
@@ -55,20 +58,26 @@ export function InstellingenFormulier({ naam: startNaam, email, lettergrootte: s
   return (
     <div className="space-y-6">
       <section>
-        <h2 className={kop}>Mijn naam</h2>
+        <h2 className={kop}>{t('instellingen.mijnNaam')}</h2>
         <input
           type="text"
           value={naam}
           onChange={e => { setNaam(e.target.value); setStatus('rust') }}
           maxLength={60}
           className={`input-field ${groot ? 'text-ou-base py-4' : ''}`}
-          aria-label="Mijn naam"
+          aria-label={t('instellingen.mijnNaam')}
         />
-        <p className="text-xs text-gray-400 mt-1">Ingelogd als {email}</p>
+        <p className="text-xs text-gray-400 mt-1">{t('instellingen.ingelogdAls', { email })}</p>
       </section>
 
       <section>
-        <h2 className={kop}>Lettergrootte</h2>
+        <h2 className={kop}>{t('instellingen.taal')}</h2>
+        <p className="text-xs text-gray-500 mb-3">{t('instellingen.taalUitleg')}</p>
+        <TaalKiezer groot={groot} />
+      </section>
+
+      <section>
+        <h2 className={kop}>{t('instellingen.lettergrootte')}</h2>
         <div className="grid grid-cols-2 gap-2">
           {LETTERGROOTTES.map(l => (
             <button
@@ -83,14 +92,14 @@ export function InstellingenFormulier({ naam: startNaam, email, lettergrootte: s
               }`}
             >
               <span style={{ fontSize: `${l.px}px` }}>Aa</span>
-              <span className="block text-xs mt-0.5">{l.label}</span>
+              <span className="block text-xs mt-0.5">{t(`lettergrootte.${l.waarde}`)}</span>
             </button>
           ))}
         </div>
       </section>
 
       <section>
-        <h2 className={kop}>Geluid</h2>
+        <h2 className={kop}>{t('instellingen.geluid')}</h2>
         <div className="grid grid-cols-2 gap-2">
           {[true, false].map(aan => (
             <button
@@ -104,16 +113,16 @@ export function InstellingenFormulier({ naam: startNaam, email, lettergrootte: s
                   : 'border-gray-200 bg-white text-gray-600'
               }`}
             >
-              {aan ? '🔔 Aan' : '🔕 Uit'}
+              {aan ? t('instellingen.geluidAan') : t('instellingen.geluidUit')}
             </button>
           ))}
         </div>
       </section>
 
       <section>
-        <h2 className={kop}>Meldingen</h2>
+        <h2 className={kop}>{t('instellingen.meldingen')}</h2>
         <p className="text-xs text-gray-500 mb-3">
-          Bijvoorbeeld als iemand om bezoek vraagt, of als iemand laat weten dat hij langskomt.
+          {t('instellingen.meldingenUitleg')}
         </p>
         <MeldingenInstellingen email={meldingEmail} groot={groot} />
       </section>
@@ -128,7 +137,7 @@ export function InstellingenFormulier({ naam: startNaam, email, lettergrootte: s
         disabled={status === 'bezig'}
         className={`btn-primary w-full ${groot ? 'text-ou-base py-5' : ''}`}
       >
-        {status === 'bezig' ? 'Opslaan...' : status === 'opgeslagen' ? '✓ Opgeslagen' : 'Opslaan'}
+        {status === 'bezig' ? t('algemeen.opslaanBezig') : status === 'opgeslagen' ? t('algemeen.opgeslagen') : t('algemeen.opslaan')}
       </button>
     </div>
   )

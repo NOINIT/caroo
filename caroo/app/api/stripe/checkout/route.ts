@@ -1,14 +1,17 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { getT } from '@/lib/i18n/server'
+import { stripeTaal } from '@/lib/i18n/talen'
 
 export async function POST(request: Request) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
   const { groepId, groepNaam, userId, userEmail } = await request.json()
+  const { t, taal } = await getT()
 
   if (!groepId || !userId) {
-    return NextResponse.json({ error: 'Ontbrekende gegevens' }, { status: 400 })
+    return NextResponse.json({ error: t('auth.vulAlles') }, { status: 400 })
   }
 
   const serviceClient = createServiceClient()
@@ -21,11 +24,11 @@ export async function POST(request: Request) {
 
   if (!groep) {
     console.error('Groep niet gevonden', { groepId, userId, groepError })
-    return NextResponse.json({ error: 'Groep niet gevonden' }, { status: 404 })
+    return NextResponse.json({ error: t('betalen.groepNietGevonden') }, { status: 404 })
   }
 
   if (groep.betaald) {
-    return NextResponse.json({ error: 'Groep is al betaald' }, { status: 400 })
+    return NextResponse.json({ error: t('betalen.alBetaald') }, { status: 400 })
   }
 
   try {
@@ -40,7 +43,7 @@ export async function POST(request: Request) {
             },
             product_data: {
               name: 'Clanoo — Zorggroep jaarabonnement',
-              description: `Jaarabonnement voor zorggroep "${groep.naam || groepNaam}"`,
+              description: t('betalen.stripeOmschrijving', { groep: groep.naam || groepNaam }),
               images: [],
             },
           },
@@ -48,6 +51,7 @@ export async function POST(request: Request) {
         },
       ],
       mode: 'subscription',
+      locale: stripeTaal(taal),
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/betalen/succes?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/betalen/annuleren?groep=${groepId}`,
       customer_email: userEmail || undefined,
@@ -65,6 +69,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ url: session.url })
   } catch (error) {
     console.error('Stripe checkout error:', error)
-    return NextResponse.json({ error: 'Betaling kon niet worden aangemaakt' }, { status: 500 })
+    return NextResponse.json({ error: t('betalen.nietAangemaakt') }, { status: 500 })
   }
 }

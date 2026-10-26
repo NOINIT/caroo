@@ -20,7 +20,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-atkinson)', 'Atkinson Hyperlegible', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-atkinson)', 'var(--font-atkinson-ext)', 'var(--font-arabisch)', 'Atkinson Hyperlegible', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         // WCAG AA: minimaal 18px voor body tekst ouderen interface

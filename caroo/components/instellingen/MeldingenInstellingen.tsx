@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useT } from '@/lib/i18n/client'
 import { slaPushAbonnementOp, verwijderPushAbonnement, zetEmailMeldingen, stuurTestMelding } from '@/lib/acties/push'
 
 function naarUint8(base64: string) {
@@ -17,6 +18,7 @@ export function MeldingenInstellingen({ email: startEmail, groot = false }: { em
   const [email, setEmail] = useState(startEmail)
   const [bezig, setBezig] = useState(false)
   const [melding, setMelding] = useState('')
+  const { t } = useT()
 
   useEffect(() => {
     ;(async () => {
@@ -55,9 +57,9 @@ export function MeldingenInstellingen({ email: startEmail, groot = false }: { em
       if ('error' in r && r.error) throw new Error(r.error)
       setPush('aan')
       await stuurTestMelding()
-      setMelding('Gelukt. Je krijgt zo een testmelding.')
+      setMelding(t('instellingen.pushGelukt'))
     } catch {
-      setMelding('Aanzetten lukte niet. Probeer het later nog eens.')
+      setMelding(t('instellingen.pushMislukt'))
     } finally {
       setBezig(false)
     }
@@ -90,26 +92,26 @@ export function MeldingenInstellingen({ email: startEmail, groot = false }: { em
   return (
     <div className="space-y-4">
       <div>
-        <p className={`${tekst} font-medium text-caroo-donker mb-2`}>📱 Pop-up op deze telefoon</p>
+        <p className={`${tekst} font-medium text-caroo-donker mb-2`}>{t('instellingen.popup')}</p>
         {push === 'iphone-beginscherm' ? (
           <div className={`rounded-caroo bg-caroo-oranje-licht p-3 ${tekst} text-gray-700`}>
-            Op een iPhone werkt dit als Clanoo op je beginscherm staat. Tik in Safari onderin op het deelknopje
-            <span className="whitespace-nowrap"> (vierkantje met pijl)</span> en kies <strong>Zet op beginscherm</strong>.
-            Open Clanoo daarna via het nieuwe icoontje en zet hier de meldingen aan.
+            {t('instellingen.iphone1')}
+            <span className="whitespace-nowrap">{t('instellingen.iphone2')}</span>{t('instellingen.iphone3')}<strong>{t('instellingen.iphoneZetOp')}</strong>
+            {t('instellingen.iphone4')}
           </div>
         ) : push === 'niet-mogelijk' ? (
-          <p className={`${tekst} text-gray-500`}>Deze browser ondersteunt geen pop-ups. Kies dan voor e-mail.</p>
+          <p className={`${tekst} text-gray-500`}>{t('instellingen.geenPopups')}</p>
         ) : push === 'geblokkeerd' ? (
           <p className={`${tekst} text-gray-600`}>
-            Meldingen zijn geblokkeerd voor Clanoo. Zet ze aan in de instellingen van je telefoon of browser en kom dan terug.
+            {t('instellingen.geblokkeerd')}
           </p>
         ) : (
           <div className="grid grid-cols-2 gap-2">
             <button type="button" disabled={bezig || push === 'laden'} onClick={zetPushAan} className={keuze(push === 'aan')}>
-              🔔 Aan
+              {t('instellingen.geluidAan')}
             </button>
             <button type="button" disabled={bezig || push === 'laden'} onClick={zetPushUit} className={keuze(push === 'uit')}>
-              🔕 Uit
+              {t('instellingen.geluidUit')}
             </button>
           </div>
         )}
@@ -117,10 +119,10 @@ export function MeldingenInstellingen({ email: startEmail, groot = false }: { em
       </div>
 
       <div>
-        <p className={`${tekst} font-medium text-caroo-donker mb-2`}>✉️ E-mail</p>
+        <p className={`${tekst} font-medium text-caroo-donker mb-2`}>{t('instellingen.email')}</p>
         <div className="grid grid-cols-2 gap-2">
-          <button type="button" onClick={() => kiesEmail(true)} className={keuze(email)}>Aan</button>
-          <button type="button" onClick={() => kiesEmail(false)} className={keuze(!email)}>Uit</button>
+          <button type="button" onClick={() => kiesEmail(true)} className={keuze(email)}>{t('algemeen.aan')}</button>
+          <button type="button" onClick={() => kiesEmail(false)} className={keuze(!email)}>{t('algemeen.uit')}</button>
         </div>
       </div>
     </div>

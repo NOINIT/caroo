@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useT } from '@/lib/i18n/client'
 
 interface Lid {
   id: string
@@ -30,6 +31,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
   const [toonFormulier, setToonFormulier] = useState(false)
   const [laden, setLaden] = useState(false)
   const [filter, setFilter] = useState<'open' | 'voltooid'>('open')
+  const { t, datum } = useT()
   const [nieuw, setNieuw] = useState({
     titel: '',
     beschrijving: '',
@@ -37,7 +39,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
     toegewezen_aan: '',
   })
 
-  const gefilterd = taken.filter(t => filter === 'open' ? !t.voltooid : t.voltooid)
+  const gefilterd = taken.filter(tk => filter === 'open' ? !tk.voltooid : tk.voltooid)
 
   async function voegToe(e: React.FormEvent) {
     e.preventDefault()
@@ -70,13 +72,13 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
   async function toggleVoltooid(taakId: string, huidig: boolean) {
     const supabase = createClient()
     await supabase.from('taken').update({ voltooid: !huidig }).eq('id', taakId)
-    setTaken(prev => prev.map(t => t.id === taakId ? { ...t, voltooid: !huidig } : t))
+    setTaken(prev => prev.map(tk => tk.id === taakId ? { ...tk, voltooid: !huidig } : tk))
   }
 
   async function verwijder(taakId: string) {
     const supabase = createClient()
     await supabase.from('taken').delete().eq('id', taakId)
-    setTaken(prev => prev.filter(t => t.id !== taakId))
+    setTaken(prev => prev.filter(tk => tk.id !== taakId))
   }
 
   return (
@@ -91,7 +93,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
               : 'bg-gray-100 text-gray-600'
           }`}
         >
-          Open ({taken.filter(t => !t.voltooid).length})
+          {t('taken.open', { aantal: taken.filter(tk => !tk.voltooid).length })}
         </button>
         <button
           onClick={() => setFilter('voltooid')}
@@ -101,7 +103,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
               : 'bg-gray-100 text-gray-600'
           }`}
         >
-          Gedaan ({taken.filter(t => t.voltooid).length})
+          {t('taken.gedaan', { aantal: taken.filter(tk => tk.voltooid).length })}
         </button>
       </div>
 
@@ -109,36 +111,36 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
         onClick={() => setToonFormulier(!toonFormulier)}
         className="btn-primary w-full mb-4"
       >
-        {toonFormulier ? 'Annuleren' : '＋ Taak toevoegen'}
+        {toonFormulier ? t('algemeen.annuleren') : t('taken.toevoegen')}
       </button>
 
       {/* Formulier */}
       {toonFormulier && (
         <form onSubmit={voegToe} className="caroo-card mb-4 space-y-3">
           <div>
-            <label className="input-label">Omschrijving</label>
+            <label className="input-label">{t('taken.omschrijving')}</label>
             <input
               type="text"
               value={nieuw.titel}
               onChange={e => setNieuw(p => ({ ...p, titel: e.target.value }))}
               required
               className="input-field"
-              placeholder="bijv. Oma naar de kapper brengen"
+              placeholder={t('taken.voorbeeld')}
             />
           </div>
           <div>
-            <label className="input-label">Notitie (optioneel)</label>
+            <label className="input-label">{t('agenda.notitie')}</label>
             <input
               type="text"
               value={nieuw.beschrijving}
               onChange={e => setNieuw(p => ({ ...p, beschrijving: e.target.value }))}
               className="input-field"
-              placeholder="bijv. Vrijdag om 10 uur"
+              placeholder={t('taken.voorbeeldNotitie')}
             />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="input-label">Deadline (optioneel)</label>
+              <label className="input-label">{t('taken.deadline')}</label>
               <input
                 type="date"
                 value={nieuw.deadline}
@@ -147,13 +149,13 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
               />
             </div>
             <div>
-              <label className="input-label">Toewijzen aan</label>
+              <label className="input-label">{t('taken.toewijzen')}</label>
               <select
                 value={nieuw.toegewezen_aan}
                 onChange={e => setNieuw(p => ({ ...p, toegewezen_aan: e.target.value }))}
                 className="input-field text-sm"
               >
-                <option value="">Niemand</option>
+                <option value="">{t('taken.niemand')}</option>
                 {leden.map(lid => (
                   <option key={lid.id} value={lid.id}>{lid.naam}</option>
                 ))}
@@ -161,7 +163,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
             </div>
           </div>
           <button type="submit" disabled={laden} className="btn-primary w-full">
-            {laden ? 'Opslaan...' : 'Opslaan'}
+            {laden ? t('algemeen.opslaanBezig') : t('algemeen.opslaan')}
           </button>
         </form>
       )}
@@ -171,7 +173,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
         <div className="text-center py-8">
           <p className="text-4xl mb-2">{filter === 'open' ? '✅' : '📋'}</p>
           <p className="text-gray-500">
-            {filter === 'open' ? 'Geen open taken' : 'Nog niets afgerond'}
+            {filter === 'open' ? t('taken.geenOpen') : t('taken.nietsAfgerond')}
           </p>
         </div>
       ) : (
@@ -188,7 +190,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
                 <button
                   onClick={() => toggleVoltooid(taak.id, taak.voltooid)}
                   className="mt-0.5 text-2xl flex-shrink-0"
-                  aria-label={taak.voltooid ? 'Markeer als open' : 'Markeer als gedaan'}
+                  aria-label={taak.voltooid ? t('taken.markeerOpen') : t('taken.markeerGedaan')}
                 >
                   {taak.voltooid ? '✅' : '⬜'}
                 </button>
@@ -206,7 +208,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
                           ? 'bg-red-100 text-red-600'
                           : 'bg-gray-100 text-gray-500'
                       }`}>
-                        📅 {new Date(taak.deadline).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}
+                        📅 {datum(taak.deadline, { day: 'numeric', month: 'short' })}
                       </span>
                     )}
                     {taak.toegewezen?.naam && (
@@ -219,7 +221,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
                 <button
                   onClick={() => verwijder(taak.id)}
                   className="text-gray-300 hover:text-red-400 text-lg flex-shrink-0"
-                  aria-label="Verwijderen"
+                  aria-label={t('algemeen.verwijderen')}
                 >
                   ×
                 </button>

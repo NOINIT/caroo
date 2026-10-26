@@ -4,6 +4,7 @@ import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { inloggen, magicLink, stuurBevestigingOpnieuw } from '@/app/auth/actions'
+import { useT } from '@/lib/i18n/client'
 
 function LoginForm() {
   const [tabblad, setTabblad] = useState<'wachtwoord' | 'magic'>('wachtwoord')
@@ -12,6 +13,7 @@ function LoginForm() {
   const [laden, setLaden] = useState(false)
   const [onbevestigdEmail, setOnbevestigdEmail] = useState<string | null>(null)
   const [opnieuwVerstuurd, setOpnieuwVerstuurd] = useState(false)
+  const { t } = useT()
 
   const searchParams = useSearchParams()
   const redirectNaar = searchParams.get('redirect')
@@ -70,13 +72,13 @@ function LoginForm() {
       <div className="caroo-card text-center py-8">
         <div className="text-5xl mb-4">📧</div>
         <h2 className="text-xl font-bold text-caroo-donker mb-2">
-          Check je e-mail
+          {t('login.checkMail')}
         </h2>
         <p className="text-gray-600">
-          We hebben een inloglink gestuurd. Klik op de link in de e-mail om in te loggen.
+          {t('login.linkGestuurd')}
         </p>
         <p className="text-sm text-gray-400 mt-4">
-          Geen e-mail ontvangen? Check ook je spamfolder.
+          {t('login.geenMail')}
         </p>
       </div>
     )
@@ -85,9 +87,9 @@ function LoginForm() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-caroo-donker mb-2">Inloggen</h1>
+        <h1 className="text-2xl font-bold text-caroo-donker mb-2">{t('login.titel')}</h1>
         <p className="text-gray-500">
-          {viaUitnodiging ? 'Log in om de uitnodiging te accepteren.' : 'Welkom terug bij Clanoo'}
+          {viaUitnodiging ? t('login.viaUitnodiging') : t('login.welkomTerug')}
         </p>
       </div>
 
@@ -100,7 +102,7 @@ function LoginForm() {
               : 'text-gray-500'
           }`}
         >
-          Wachtwoord
+          {t('login.tabWachtwoord')}
         </button>
         <button
           onClick={() => setTabblad('magic')}
@@ -110,13 +112,13 @@ function LoginForm() {
               : 'text-gray-500'
           }`}
         >
-          Inloglink (zonder wachtwoord)
+          {t('login.tabLink')}
         </button>
       </div>
 
       {netBevestigd && !fout && (
         <div className="bg-caroo-groen-licht border border-caroo-groen text-caroo-donker rounded-caroo p-3 mb-4 text-sm">
-          Je e-mailadres is bevestigd. Log hieronder in om verder te gaan.
+          {t('login.bevestigd')}
         </div>
       )}
 
@@ -133,13 +135,13 @@ function LoginForm() {
           disabled={laden}
           className="btn-secondary w-full mb-4"
         >
-          Stuur bevestigingsmail opnieuw
+          {t('login.opnieuwSturen')}
         </button>
       )}
 
       {opnieuwVerstuurd && (
         <div className="bg-caroo-groen-licht border border-caroo-groen text-caroo-donker rounded-caroo p-3 mb-4 text-sm">
-          We hebben een nieuwe bevestigingsmail gestuurd naar {onbevestigdEmail}. Klik op de link in die mail, dan kom je direct in de groep. Check ook je spamfolder.
+          {t('login.opnieuwGestuurd', { email: onbevestigdEmail || '' })}
         </div>
       )}
 
@@ -147,7 +149,7 @@ function LoginForm() {
         <form onSubmit={handleInloggen} className="space-y-4">
           <input type="hidden" name="redirectNaar" value={volledigeRedirect} />
           <div>
-            <label className="input-label" htmlFor="email">E-mailadres</label>
+            <label className="input-label" htmlFor="email">{t('login.email')}</label>
             <input
               id="email"
               name="email"
@@ -155,11 +157,11 @@ function LoginForm() {
               autoComplete="email"
               required
               className="input-field"
-              placeholder="naam@voorbeeld.nl"
+              placeholder={t('login.voorbeeldEmail')} dir="ltr"
             />
           </div>
           <div>
-            <label className="input-label" htmlFor="wachtwoord">Wachtwoord</label>
+            <label className="input-label" htmlFor="wachtwoord">{t('login.wachtwoord')}</label>
             <input
               id="wachtwoord"
               name="wachtwoord"
@@ -174,16 +176,16 @@ function LoginForm() {
             disabled={laden}
             className="btn-primary w-full mt-2"
           >
-            {laden ? 'Even wachten...' : 'Inloggen'}
+            {laden ? t('login.evenWachten') : t('login.inloggen')}
           </button>
         </form>
       ) : (
         <form onSubmit={handleMagicLink} className="space-y-4">
           <p className="text-sm text-gray-600 bg-caroo-groen-licht rounded-caroo p-3">
-            ✨ Geen wachtwoord nodig. Vul je e-mailadres in en we sturen een inloglink.
+            {t('login.geenWachtwoordNodig')}
           </p>
           <div>
-            <label className="input-label" htmlFor="email-magic">E-mailadres</label>
+            <label className="input-label" htmlFor="email-magic">{t('login.email')}</label>
             <input
               id="email-magic"
               name="email"
@@ -191,7 +193,7 @@ function LoginForm() {
               autoComplete="email"
               required
               className="input-field text-ou-base"
-              placeholder="naam@voorbeeld.nl"
+              placeholder={t('login.voorbeeldEmail')} dir="ltr"
             />
           </div>
           <button
@@ -199,18 +201,18 @@ function LoginForm() {
             disabled={laden}
             className="btn-primary w-full mt-2"
           >
-            {laden ? 'Even wachten...' : 'Stuur inloglink'}
+            {laden ? t('login.evenWachten') : t('login.stuurLink')}
           </button>
         </form>
       )}
 
       <p className="text-center text-sm text-gray-500 mt-6">
-        Nog geen account?{' '}
+        {t('login.nogGeenAccount')}{' '}
         <Link
           href={viaUitnodiging ? `/registreer?redirect=${redirectNaar}&token=${token}` : '/registreer'}
           className="text-caroo-groen font-medium hover:underline"
         >
-          Registreer je gratis
+          {t('login.registreer')}
         </Link>
       </p>
     </div>

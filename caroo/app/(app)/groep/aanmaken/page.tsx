@@ -3,12 +3,15 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useT } from '@/lib/i18n/client'
+import { JAARPRIJS } from '@/lib/i18n/vertaal'
 
 export default function GroepAanmakenPage() {
   const [naam, setNaam] = useState('')
   const [fout, setFout] = useState<string | null>(null)
   const [laden, setLaden] = useState(false)
   const router = useRouter()
+  const { t } = useT()
 
   async function handleAanmaken(e: React.FormEvent) {
     e.preventDefault()
@@ -33,7 +36,7 @@ export default function GroepAanmakenPage() {
       .single()
 
     if (error || !groep) {
-      setFout('Kon de zorggroep niet aanmaken.')
+      setFout(t('aanmaken.mislukt'))
       setLaden(false)
       return
     }
@@ -53,17 +56,17 @@ export default function GroepAanmakenPage() {
     <div className="max-w-md mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-caroo-donker mb-2">
-          Zorggroep aanmaken
+          {t('dashboard.groepAanmaken')}
         </h1>
         <p className="text-gray-500">
-          Geef je zorggroep een naam. Je kunt daarna meteen mensen uitnodigen.
+          {t('aanmaken.intro')}
         </p>
       </div>
 
       <form onSubmit={handleAanmaken} className="space-y-6">
         <div>
           <label className="input-label" htmlFor="naam">
-            Naam van de zorggroep
+            {t('aanmaken.naam')}
           </label>
           <input
             id="naam"
@@ -72,11 +75,11 @@ export default function GroepAanmakenPage() {
             onChange={e => setNaam(e.target.value)}
             required
             className="input-field text-lg"
-            placeholder="bijv. Familie Van Dijk"
+            placeholder={t('aanmaken.voorbeeld')}
             maxLength={60}
           />
           <p className="text-xs text-gray-400 mt-1">
-            Tip: gebruik de naam van degene voor wie je zorgt
+            {t('aanmaken.tip')}
           </p>
         </div>
 
@@ -87,15 +90,15 @@ export default function GroepAanmakenPage() {
         )}
 
         <div className="caroo-card bg-caroo-groen-licht border-caroo-groen border">
-          <h3 className="font-semibold text-caroo-donker mb-2">Wat je krijgt</h3>
+          <h3 className="font-semibold text-caroo-donker mb-2">{t('aanmaken.watJeKrijgt')}</h3>
           <ul className="text-sm text-gray-600 space-y-1">
-            <li>✅ Onbeperkt leden in je zorggroep</li>
-            <li>✅ Agenda, taken & medicijnenagenda</li>
-            <li>✅ Mijn verhaal met spraakherkenning</li>
-            <li>✅ Fotoalbum & tips delen</li>
-            <li>✅ AVG-conform opgeslagen in Europa</li>
+            <li>{t('aanmaken.punt1')}</li>
+            <li>{t('aanmaken.punt2')}</li>
+            <li>{t('aanmaken.punt3')}</li>
+            <li>{t('aanmaken.punt4')}</li>
+            <li>{t('registreer.avg')}</li>
           </ul>
-          <p className="mt-3 font-bold text-caroo-groen">€19,99 per jaar</p>
+          <p className="mt-3 font-bold text-caroo-groen">{t('aanmaken.perJaar', { prijs: JAARPRIJS })}</p>
         </div>
 
         <button
@@ -103,7 +106,7 @@ export default function GroepAanmakenPage() {
           disabled={laden || !naam.trim()}
           className="btn-primary w-full"
         >
-          {laden ? 'Even wachten...' : 'Verder naar betaling →'}
+          {laden ? t('login.evenWachten') : t('aanmaken.verder')}
         </button>
       </form>
     </div>

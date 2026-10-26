@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useT } from '@/lib/i18n/client'
 
 export interface Boodschap {
   id: string
@@ -24,6 +25,7 @@ export function BoodschappenLijst({ groepId, initieel = [], groot = false }: Pro
   const [invoer, setInvoer] = useState('')
   const [bezig, setBezig] = useState(false)
   const [fout, setFout] = useState<string | null>(null)
+  const { t } = useT()
 
   const laad = useCallback(async () => {
     const supabase = createClient()
@@ -57,7 +59,7 @@ export function BoodschappenLijst({ groepId, initieel = [], groot = false }: Pro
       .eq('id', id)
     if (error) {
       console.error('Boodschap bijwerken mislukt', error)
-      setFout('Dat lukte niet. Probeer het nog eens.')
+      setFout(t('algemeen.lukteNiet'))
       laad()
     }
   }
@@ -91,7 +93,7 @@ export function BoodschappenLijst({ groepId, initieel = [], groot = false }: Pro
         await laad()
       } else {
         console.error('Boodschap toevoegen mislukt', error)
-        setFout('Toevoegen lukte niet. Probeer het nog eens.')
+        setFout(t('boodschappen.toevoegenMislukt'))
       }
     } else if (data) {
       setItems(prev => [data, ...prev])
@@ -117,10 +119,10 @@ export function BoodschappenLijst({ groepId, initieel = [], groot = false }: Pro
           type="text"
           value={invoer}
           onChange={e => setInvoer(e.target.value)}
-          placeholder="Wat moet er gehaald worden?"
+          placeholder={t('boodschappen.placeholder')}
           maxLength={80}
           className={`input-field flex-1 ${groot ? 'text-ou-base py-4' : ''}`}
-          aria-label="Nieuw product"
+          aria-label={t('boodschappen.nieuwProduct')}
         />
         <button
           type="submit"
@@ -140,18 +142,18 @@ export function BoodschappenLijst({ groepId, initieel = [], groot = false }: Pro
       {/* Op de lijst */}
       <section>
         <h2 className={`font-bold text-caroo-donker mb-2 ${groot ? 'text-ou-lg' : 'text-base'}`}>
-          Nog halen ({opLijst.length})
+          {t('boodschappen.nogHalen', { aantal: opLijst.length })}
         </h2>
         {opLijst.length === 0 ? (
-          <p className={`text-gray-500 ${klein}`}>De lijst is leeg. Lekker rustig.</p>
+          <p className={`text-gray-500 ${klein}`}>{t('boodschappen.leeg')}</p>
         ) : (
           <ul className="space-y-2">
             {opLijst.map(item => (
               <li key={item.id}>
                 <button
                   onClick={() => zetStatus(item.id, false)}
-                  className={`caroo-card w-full flex items-center gap-3 text-left hover:border-caroo-groen transition-colors ${groot ? 'py-4' : 'py-3'}`}
-                  aria-label={`${item.naam} afvinken`}
+                  className={`caroo-card w-full flex items-center gap-3 text-start hover:border-caroo-groen transition-colors ${groot ? 'py-4' : 'py-3'}`}
+                  aria-label={t('boodschappen.afvinken', { naam: item.naam })}
                 >
                   <span className={`${vakje} flex-shrink-0 rounded-lg border-2 border-caroo-groen flex items-center justify-center`} />
                   <span className={`${tekst} text-caroo-donker font-medium`}>{item.naam}</span>
@@ -166,30 +168,30 @@ export function BoodschappenLijst({ groepId, initieel = [], groot = false }: Pro
       {eerder.length > 0 && (
         <section>
           <h2 className={`font-bold text-gray-500 mb-1 ${groot ? 'text-ou-lg' : 'text-base'}`}>
-            Eerder gekocht
+            {t('boodschappen.eerderGekocht')}
           </h2>
           <p className={`text-gray-400 mb-2 ${groot ? 'text-ou-sm' : 'text-xs'}`}>
-            Tik erop om het weer op de lijst te zetten.
+            {t('boodschappen.tikOmTerug')}
           </p>
           <ul className="space-y-2">
             {eerder.map(item => (
               <li key={item.id} className="flex items-center gap-2">
                 <button
                   onClick={() => zetStatus(item.id, true)}
-                  className={`flex-1 flex items-center gap-3 text-left rounded-caroo border border-gray-100 bg-gray-50 px-4 hover:border-caroo-groen transition-colors ${groot ? 'py-4' : 'py-2.5'}`}
-                  aria-label={`${item.naam} weer op de lijst zetten`}
+                  className={`flex-1 flex items-center gap-3 text-start rounded-caroo border border-gray-100 bg-gray-50 px-4 hover:border-caroo-groen transition-colors ${groot ? 'py-4' : 'py-2.5'}`}
+                  aria-label={t('boodschappen.weerOpLijst', { naam: item.naam })}
                 >
                   <span className={`${vakje} flex-shrink-0 rounded-lg bg-caroo-groen-licht text-caroo-groen flex items-center justify-center`}>
                     ✓
                   </span>
                   <span className={`${tekst} text-gray-500`}>{item.naam}</span>
-                  <span className={`ml-auto text-caroo-groen font-medium ${klein}`}>＋ opnieuw</span>
+                  <span className={`ms-auto text-caroo-groen font-medium ${klein}`}>{t('boodschappen.opnieuw')}</span>
                 </button>
                 {!groot && (
                   <button
                     onClick={() => verwijder(item.id)}
                     className="text-gray-300 hover:text-red-400 text-lg px-2"
-                    aria-label={`${item.naam} helemaal verwijderen`}
+                    aria-label={t('boodschappen.helemaalVerwijderen', { naam: item.naam })}
                   >
                     ×
                   </button>

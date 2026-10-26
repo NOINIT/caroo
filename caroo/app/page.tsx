@@ -1,33 +1,38 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import { CarooLogo } from '@/components/ui/CarooLogo'
+import { TaalKiezer } from '@/components/TaalKiezer'
+import { getT } from '@/lib/i18n/server'
+import { JAARPRIJS } from '@/lib/i18n/vertaal'
 
-const usps = [
-  { emoji: '🧠', tekst: 'Mijn verhaal — herinneringen met spraak' },
-  { emoji: '💊', tekst: 'Medicijnenagenda voor de hele groep' },
-  { emoji: '📅', tekst: 'Kleurenagenda met eigen categorieën' },
-  { emoji: '💡', tekst: 'Tips van opa/oma doorgeven' },
-  { emoji: '📸', tekst: 'Fotoalbum voor bijzondere momenten' },
-]
-
-export default function HomePage() {
+export default async function HomePage() {
+  const { t } = await getT()
+  const usps = [
+    { emoji: '🧠', tekst: t('home.usp1') },
+    { emoji: '💊', tekst: t('home.usp2') },
+    { emoji: '📅', tekst: t('home.usp3') },
+    { emoji: '💡', tekst: t('home.usp4') },
+    { emoji: '📸', tekst: t('home.usp5') },
+  ]
   return (
     <div className="min-h-screen bg-gradient-to-br from-caroo-groen-licht via-white to-caroo-oranje-licht">
       <header className="flex items-center justify-between px-6 pt-8 pb-4">
         <CarooLogo size="lg" />
-        <Link href="/login" className="text-caroo-groen font-semibold text-sm hover:underline">
-          Inloggen
-        </Link>
+        <div className="flex items-center gap-3">
+          <TaalKiezer variant="compact" />
+          <Link href="/login" className="text-caroo-groen font-semibold text-sm hover:underline">
+            {t('login.inloggen')}
+          </Link>
+        </div>
       </header>
       <main className="px-6 py-8 max-w-lg mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-caroo-donker leading-tight mb-3">
-            Zorg voor elkaar,
+            {t('home.kop1')}
             <br />
-            <span className="text-caroo-groen">samen georganiseerd</span>
+            <span className="text-caroo-groen">{t('home.kop2')}</span>
           </h1>
           <p className="text-gray-600">
-            De app die ook voor hem of haar werkt. Overzichtelijk voor iedereen,
-            zodat jij er gewoon kunt zijn.
+            {t('home.intro')}
           </p>
         </div>
         <div className="flex flex-wrap gap-2 justify-center mb-8">
@@ -39,23 +44,23 @@ export default function HomePage() {
         </div>
         <div className="space-y-3 mb-8">
           <Link href="/registreer" className="btn-primary w-full text-center block">
-            Gratis beginnen
+            {t('home.gratisBeginnen')}
           </Link>
           <Link href="/login" className="btn-secondary w-full text-center block">
-            Ik heb al een account
+            {t('home.alAccount')}
           </Link>
         </div>
         <div className="caroo-card bg-caroo-groen text-white mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm opacity-80 mb-1">Voor de hele zorggroep</p>
-              <p className="text-xl font-bold">€19,99 per jaar</p>
+              <p className="text-sm opacity-80 mb-1">{t('home.voorGroep')}</p>
+              <p className="text-xl font-bold">{t('aanmaken.perJaar', { prijs: JAARPRIJS })}</p>
             </div>
             <div className="text-3xl">💚</div>
           </div>
         </div>
         <p className="text-center text-xs text-gray-400">
-          🔒 AVG-conform · Servers in Europa · NOINIT
+          {t('home.voet')}
         </p>
       </main>
     </div>

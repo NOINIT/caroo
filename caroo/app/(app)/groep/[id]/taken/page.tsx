@@ -3,6 +3,7 @@ import { heeftRecht } from '@/lib/rechten'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { TakenClient } from './TakenClient'
+import { getT } from '@/lib/i18n/server'
 
 export default async function TakenPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -36,17 +37,18 @@ export default async function TakenPage({ params }: { params: { id: string } }) 
       .eq('groep_id', params.id),
   ])
 
+  const { t } = await getT()
   const ledenLijst = (leden || []).map((l: any) => ({
     id: l.user_id,
-    naam: l.users?.naam || 'Onbekend',
+    naam: l.users?.naam || t('algemeen.onbekend'),
   }))
 
   return (
     <div className="max-w-md mx-auto min-h-screen pb-20">
       <header className="bg-white border-b sticky top-0 z-10">
         <div className="flex items-center gap-3 px-4 py-3">
-          <Link href={`/groep/${params.id}`} className="text-gray-500">←</Link>
-          <h1 className="font-bold text-caroo-donker">Taken — {groep.naam}</h1>
+          <Link href={`/groep/${params.id}`} className="text-gray-500 inline-block rtl:rotate-180">←</Link>
+          <h1 className="font-bold text-caroo-donker">{t('groep.tegels.taken')} — {groep.naam}</h1>
         </div>
       </header>
       <TakenClient

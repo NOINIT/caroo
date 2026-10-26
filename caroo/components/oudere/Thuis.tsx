@@ -5,6 +5,8 @@ import { createClient } from '@/lib/supabase/client'
 import { STEMMINGEN, stemmingInfo, vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
 import { speelGeluid } from '@/lib/geluid'
 import { vraagBezoekAan } from '@/lib/acties/bezoek'
+import { useT } from '@/lib/i18n/client'
+import { wanneerTekst, hoofdletter, stemmingLabel } from '@/lib/i18n/vertaal'
 
 export interface Bezoekverzoek {
   id: string
@@ -35,8 +37,9 @@ export function Thuis({
   const [kiest, setKiest] = useState(stemmingVandaag === null)
   const [bezoek, setBezoek] = useState<Bezoekverzoek | null>(startBezoek)
   const [bezig, setBezig] = useState(false)
+  const { t, datum, tijd } = useT()
 
-  const vandaagTekst = new Date().toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })
+  const vandaagTekst = datum(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })
 
   // Kijken of iemand al heeft gereageerd op het bezoekverzoek
   const ververs = useCallback(async () => {
@@ -55,10 +58,10 @@ export function Thuis({
   }, [groepId, userId])
 
   useEffect(() => {
-    const t = setInterval(() => {
+    const timer = setInterval(() => {
       if (document.visibilityState === 'visible') ververs()
     }, 30000)
-    return () => clearInterval(t)
+    return () => clearInterval(timer)
   }, [ververs])
 
   async function kiesStemming(waarde: number) {
@@ -107,7 +110,7 @@ export function Thuis({
         {kiest || !gekozen ? (
           <>
             <h2 className="text-ou-xl font-bold text-caroo-donker mb-4 text-center">
-              Hoe voel je je vandaag?
+              {t('thuis.hoeVoelJe')}
             </h2>
             <div className="grid grid-cols-5 gap-2">
               {STEMMINGEN.map(s => (
@@ -117,10 +120,10 @@ export function Thuis({
                   className={`flex flex-col items-center rounded-caroo bg-white py-3 border-2 transition-transform active:scale-95 ${
                     stemming === s.waarde ? 'border-caroo-groen' : 'border-transparent'
                   }`}
-                  aria-label={s.label}
+                  aria-label={stemmingLabel(t, s.waarde)}
                 >
                   <span className="text-4xl leading-none">{s.emoji}</span>
-                  <span className="text-[11px] text-gray-600 mt-1.5 leading-tight text-center">{s.label}</span>
+                  <span className="text-[11px] text-gray-600 mt-1.5 leading-tight text-center">{stemmingLabel(t, s.waarde)}</span>
                 </button>
               ))}
             </div>
@@ -129,12 +132,12 @@ export function Thuis({
           <div className="flex items-center gap-4">
             <span className="text-6xl leading-none">{gekozen.emoji}</span>
             <div className="flex-1">
-              <p className="text-ou-sm text-gray-600">Vandaag voel je je</p>
-              <p className="text-ou-xl font-bold text-caroo-donker">{gekozen.label}</p>
-              <p className="text-ou-sm text-caroo-groen">Je familie ziet dit ook 💛</p>
+              <p className="text-ou-sm text-gray-600">{t('thuis.vandaagVoelJe')}</p>
+              <p className="text-ou-xl font-bold text-caroo-donker">{stemmingLabel(t, gekozen.waarde)}</p>
+              <p className="text-ou-sm text-caroo-groen">{t('thuis.familieZietDit')}</p>
             </div>
             <button onClick={() => setKiest(true)} className="text-ou-sm text-gray-500 underline">
-              Wijzig
+              {t('thuis.wijzig')}
             </button>
           </div>
         )}
@@ -148,45 +151,45 @@ export function Thuis({
           className="w-full rounded-caroo-lg bg-caroo-oranje text-white py-7 shadow-md active:scale-[0.98] transition-transform"
         >
           <span className="block text-5xl mb-1">🏠</span>
-          <span className="block text-ou-2xl font-bold">Ik wil bezoek</span>
-          <span className="block text-ou-sm text-white/90 mt-1">Je familie krijgt het meteen te zien</span>
+          <span className="block text-ou-2xl font-bold">{t('thuis.ikWilBezoek')}</span>
+          <span className="block text-ou-sm text-white/90 mt-1">{t('thuis.familieZietMeteen')}</span>
         </button>
       ) : bezoek.reactie_naam ? (
         <section className="rounded-caroo-lg bg-caroo-oranje-licht border-2 border-caroo-oranje p-5 text-center">
           <p className="text-5xl mb-2">🎉</p>
-          <p className="text-ou-xl font-bold text-caroo-donker">{bezoek.reactie_naam} komt langs!</p>
+          <p className="text-ou-xl font-bold text-caroo-donker">{t('thuis.komtLangs', { naam: bezoek.reactie_naam })}</p>
           {bezoek.reactie_wanneer && (
             <p className="text-ou-lg text-caroo-donker mt-1">
-              🕒 <span className="font-semibold">{bezoek.reactie_wanneer.charAt(0).toUpperCase() + bezoek.reactie_wanneer.slice(1)}</span>
+              🕒 <span className="font-semibold">{hoofdletter(wanneerTekst(t, bezoek.reactie_wanneer))}</span>
             </p>
           )}
           <button onClick={trekIn} className="text-ou-sm text-gray-500 underline mt-3">
-            Klaar, nieuw verzoek kunnen doen
+            {t('thuis.klaarNieuw')}
           </button>
         </section>
       ) : (
         <section className="rounded-caroo-lg bg-caroo-oranje-licht border-2 border-caroo-oranje p-5 text-center">
           <p className="text-5xl mb-2">💌</p>
-          <p className="text-ou-xl font-bold text-caroo-donker">Je familie weet het</p>
-          <p className="text-ou-base text-gray-600 mt-1">Zodra iemand reageert, zie je het hier.</p>
+          <p className="text-ou-xl font-bold text-caroo-donker">{t('thuis.familieWeetHet')}</p>
+          <p className="text-ou-base text-gray-600 mt-1">{t('thuis.zodraIemand')}</p>
           <button onClick={trekIn} className="text-ou-sm text-gray-500 underline mt-3">
-            Toch niet nodig
+            {t('thuis.tochNiet')}
           </button>
         </section>
       )}
 
       {/* Vandaag */}
       <section className="caroo-card">
-        <button onClick={() => gaNaar('mijn_dag')} className="w-full text-left">
-          <h2 className="text-ou-lg font-bold text-caroo-donker mb-2">📅 Vandaag</h2>
+        <button onClick={() => gaNaar('mijn_dag')} className="w-full text-start">
+          <h2 className="text-ou-lg font-bold text-caroo-donker mb-2">{t('thuis.vandaag')}</h2>
           {dagAfspraken.length === 0 ? (
-            <p className="text-ou-base text-gray-500">Geen afspraken. Een rustige dag.</p>
+            <p className="text-ou-base text-gray-500">{t('thuis.rustigeDag')}</p>
           ) : (
             <ul className="space-y-2">
               {dagAfspraken.map((af: any) => (
                 <li key={af.id} className="flex items-baseline gap-3">
                   <span className="text-ou-base font-semibold text-caroo-groen w-14 flex-shrink-0">
-                    {new Date(af.start_tijd).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+                    {tijd(af.start_tijd)}
                   </span>
                   <span className="text-ou-base text-caroo-donker">{af.titel}</span>
                 </li>
@@ -198,29 +201,29 @@ export function Thuis({
 
       {/* Boodschappen en foto */}
       <div className="grid grid-cols-2 gap-3">
-        <button onClick={() => gaNaar('boodschappen')} className="caroo-card text-left py-5 active:scale-[0.98] transition-transform">
+        <button onClick={() => gaNaar('boodschappen')} className="caroo-card text-start py-5 active:scale-[0.98] transition-transform">
           <span className="block text-4xl mb-2">🛒</span>
-          <span className="block text-ou-lg font-bold text-caroo-donker">Boodschappen</span>
+          <span className="block text-ou-lg font-bold text-caroo-donker">{t('thuis.boodschappen')}</span>
           <span className="block text-ou-sm text-gray-500">
-            {aantalBoodschappen === 0 ? 'Lijst is leeg' : `${aantalBoodschappen} op de lijst`}
+            {aantalBoodschappen === 0 ? t('thuis.lijstLeeg') : t('thuis.opDeLijst', { aantal: aantalBoodschappen })}
           </span>
         </button>
         <button
           onClick={() => gaNaar('fotos')}
-          className="caroo-card text-left p-0 overflow-hidden active:scale-[0.98] transition-transform"
+          className="caroo-card text-start p-0 overflow-hidden active:scale-[0.98] transition-transform"
         >
           {nieuwsteFoto?.url ? (
             <div className="relative h-full min-h-[140px]">
-              <img src={nieuwsteFoto.url} alt={nieuwsteFoto.beschrijving || 'Nieuwste foto'} className="absolute inset-0 w-full h-full object-cover" />
+              <img src={nieuwsteFoto.url} alt={nieuwsteFoto.beschrijving || t('thuis.nieuwsteFoto')} className="absolute inset-0 w-full h-full object-cover" />
               <span className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-ou-sm px-2 py-1">
-                Nieuwste foto{nieuwsteFoto.door ? ` van ${nieuwsteFoto.door}` : ''}
+                {nieuwsteFoto.door ? t('thuis.nieuwsteFotoVan', { naam: nieuwsteFoto.door }) : t('thuis.nieuwsteFoto')}
               </span>
             </div>
           ) : (
             <div className="p-4 py-5">
               <span className="block text-4xl mb-2">📸</span>
-              <span className="block text-ou-lg font-bold text-caroo-donker">Foto&apos;s</span>
-              <span className="block text-ou-sm text-gray-500">Nog geen foto&apos;s</span>
+              <span className="block text-ou-lg font-bold text-caroo-donker">{t('thuis.fotos')}</span>
+              <span className="block text-ou-sm text-gray-500">{t('thuis.geenFotos')}</span>
             </div>
           )}
         </button>
@@ -228,12 +231,12 @@ export function Thuis({
 
       {/* Medicijnen */}
       {medicijnen.length > 0 && (
-        <section className="caroo-card border-l-4 border-caroo-oranje">
-          <h2 className="text-ou-lg font-bold text-caroo-donker mb-2">💊 Medicijnen vandaag</h2>
+        <section className="caroo-card border-s-4 border-caroo-oranje">
+          <h2 className="text-ou-lg font-bold text-caroo-donker mb-2">{t('thuis.medicijnenVandaag')}</h2>
           {medicijnen.map((med: any) => (
             <div key={med.id} className="mb-1.5">
               <p className="text-ou-base text-gray-800">{med.naam}, {med.dosering}</p>
-              <p className="text-ou-sm text-gray-500">{(med.tijdstippen || []).join(', ')} uur</p>
+              <p className="text-ou-sm text-gray-500">{t('thuis.tijdenUur', { tijden: (med.tijdstippen || []).join(', ') })}</p>
             </div>
           ))}
         </section>

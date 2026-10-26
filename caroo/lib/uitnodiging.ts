@@ -1,6 +1,7 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import type { Rol } from '@/types/database'
 import crypto from 'crypto'
+import { getT } from '@/lib/i18n/server'
 
 export const MAX_UITNODIGINGEN_PER_DAG = 10
 export const UITNODIGING_VERVALT_DAGEN = 7
@@ -46,9 +47,10 @@ export async function maakUitnodiging(params: {
   const { groepId, uitgenodigdDoor, email, rol } = params
   const supabase = createClient()
 
+  const { t } = await getT()
   const magNogUitnodigen = await checkRateLimit(uitgenodigdDoor)
   if (!magNogUitnodigen) {
-    return { error: `Je kunt maximaal ${MAX_UITNODIGINGEN_PER_DAG} uitnodigingen per dag versturen.` }
+    return { error: t('uitnodigingFout.maxPerDag', { aantal: MAX_UITNODIGINGEN_PER_DAG }) }
   }
 
   // Staat er al een open uitnodiging voor dit adres in deze groep?
@@ -76,7 +78,7 @@ export async function maakUitnodiging(params: {
   }).select('id, email, rol, gebruikt, verloopt_op, aangemaakt_op').single()
 
   if (error) {
-    return { error: 'Kon uitnodiging niet aanmaken.' }
+    return { error: t('uitnodigingFout.nietAangemaakt') }
   }
 
   await verhoogTeller(uitgenodigdDoor)
@@ -101,16 +103,17 @@ export async function valideerToken(token: string) {
     .eq('token', token)
     .single()
 
+  const { t } = await getT()
   if (error || !data) {
-    return { error: 'Uitnodiging niet gevonden.' }
+    return { error: t('uitnodigingFout.nietGevonden') }
   }
 
   if (data.gebruikt) {
-    return { error: 'Deze uitnodiging is al gebruikt.' }
+    return { error: t('uitnodigingFout.alGebruikt') }
   }
 
   if (new Date(data.verloopt_op) < new Date()) {
-    return { error: 'Deze uitnodiging is verlopen.' }
+    return { error: t('uitnodigingFout.verlopen') }
   }
 
   return { uitnodiging: data }
@@ -163,7 +166,8 @@ export async function accepteerUitnodiging(
     .eq('token', token)
     .single()
 
-  if (!uitnodiging) return { error: 'Uitnodiging niet gevonden.' }
+  const { t } = await getT()
+  if (!uitnodiging) return { error: t('uitnodigingFout.nietGevonden') }
 
   // Al gebruikt? Als deze gebruiker al lid is, is dat gewoon goed.
   if (uitnodiging.gebruikt) {
@@ -175,15 +179,15 @@ export async function accepteerUitnodiging(
       .maybeSingle()
 
     if (lid) return { succes: true, groepId: uitnodiging.groep_id, rol: uitnodiging.rol, alLid: true }
-    return { error: 'Deze uitnodiging is al gebruikt.' }
+    return { error: t('uitnodigingFout.alGebruikt') }
   }
 
   if (new Date(uitnodiging.verloopt_op) < new Date()) {
-    return { error: 'Deze uitnodiging is verlopen.' }
+    return { error: t('uitnodigingFout.verlopen') }
   }
 
   const uitkomst = await voegToeAanGroep(uitnodiging, userId)
-  if (uitkomst === 'fout') return { error: 'Kon uitnodiging niet verwerken.' }
+  if (uitkomst === 'fout') return { error: t('uitnodigingFout.nietVerwerkt') }
 
   return {
     succes: true,

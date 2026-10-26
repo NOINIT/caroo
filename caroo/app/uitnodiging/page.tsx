@@ -4,12 +4,9 @@ import { valideerToken, accepteerUitnodiging } from '@/lib/uitnodiging'
 import Link from 'next/link'
 import { CarooLogo } from '@/components/ui/CarooLogo'
 import { OudereUitnodiging } from '@/components/uitnodiging/OudereUitnodiging'
-
-const rolNamen = {
-  mantelzorger: 'Mantelzorger',
-  oudere: 'Hoofdpersoon',
-  groepsbeheerder: 'Groepsbeheerder',
-}
+import { TaalKiezer } from '@/components/TaalKiezer'
+import { getT } from '@/lib/i18n/server'
+import type { TFunctie } from '@/lib/i18n/vertaal'
 
 export default async function UitnodigingPage({
   searchParams,
@@ -17,9 +14,10 @@ export default async function UitnodigingPage({
   searchParams: { token?: string }
 }) {
   const token = searchParams.token
+  const { t } = await getT()
 
   if (!token) {
-    return <FoutPagina bericht="Geen uitnodigingstoken gevonden in de link." />
+    return <FoutPagina t={t} bericht={t('uitnodiging.geenToken')} />
   }
 
   const supabase = createClient()
@@ -33,33 +31,35 @@ export default async function UitnodigingPage({
         // Deze uitnodiging is voor iemand anders: niet verbruiken, wel uitleggen
         return (
           <FoutPagina
-            titel="Je bent al lid van deze groep"
-            bericht={`Je bent ingelogd als ${user.email}. Deze uitnodiging is voor iemand anders bedoeld en blijft gewoon geldig. Wil je hem zelf testen? Log dan eerst uit of open de link in een privévenster.`}
+            t={t}
+            titel={t('uitnodiging.alLidTitel')}
+            bericht={t('uitnodiging.alLidTekst', { email: user.email || '' })}
           />
         )
       }
       redirect(`/groep/${resultaat.groepId}?welkom=true`)
     }
-    return <FoutPagina bericht={resultaat.error} />
+    return <FoutPagina t={t} bericht={resultaat.error} />
   }
 
   const validatie = await valideerToken(token)
 
   if ('error' in validatie) {
-    return <FoutPagina bericht={validatie.error ?? 'Onbekende fout'} />
+    return <FoutPagina t={t} bericht={validatie.error ?? t('uitnodiging.onbekendeFout')} />
   }
 
   const { uitnodiging } = validatie
-  const groepNaam = (uitnodiging.zorggroepen as any)?.naam || 'Onbekende groep'
+  const groepNaam = (uitnodiging.zorggroepen as any)?.naam || t('uitnodiging.onbekendeGroep')
 
   // Oudere: geen wachtwoord, alleen een inloglink naar het adres van de uitnodiging
   if (uitnodiging.rol === 'oudere') {
     const [naamDeel, domein] = (uitnodiging.email || '').split('@')
-    const gemaskeerd = domein ? `${naamDeel.slice(0, 1)}***@${domein}` : 'uw e-mailadres'
+    const gemaskeerd = domein ? `${naamDeel.slice(0, 1)}***@${domein}` : t('uitnodiging.uwEmail')
     return (
       <div className="min-h-screen bg-gradient-to-br from-caroo-groen-licht to-white flex flex-col">
-        <header className="px-6 pt-8 pb-4">
+        <header className="px-6 pt-8 pb-4 flex items-center justify-between gap-3">
           <CarooLogo size="md" />
+          <TaalKiezer variant="compact" />
         </header>
         <main className="flex-1 flex items-center justify-center px-4 pb-8">
           <div className="w-full max-w-md">
@@ -73,8 +73,9 @@ export default async function UitnodigingPage({
   // Niet ingelogd: toon uitnodigingspagina met login/registreer opties
   return (
     <div className="min-h-screen bg-gradient-to-br from-caroo-groen-licht to-white flex flex-col">
-      <header className="px-6 pt-8 pb-4">
+      <header className="px-6 pt-8 pb-4 flex items-center justify-between gap-3">
         <CarooLogo size="md" />
+        <TaalKiezer variant="compact" />
       </header>
 
       <main className="flex-1 flex items-center justify-center px-4">
@@ -82,14 +83,14 @@ export default async function UitnodigingPage({
           <div className="caroo-card text-center py-8">
             <div className="text-5xl mb-4">🤝</div>
             <h1 className="text-xl font-bold text-caroo-donker mb-2">
-              Je bent uitgenodigd!
+              {t('uitnodiging.titel')}
             </h1>
             <p className="text-gray-600 mb-1">
-              Je hebt een uitnodiging ontvangen voor:
+              {t('uitnodiging.ontvangenVoor')}
             </p>
             <p className="text-caroo-groen font-bold text-lg mb-1">{groepNaam}</p>
             <p className="text-sm text-gray-400 mb-6">
-              Rol: {rolNamen[uitnodiging.rol as keyof typeof rolNamen]}
+              {t('uitnodiging.rol', { rol: t(`rollen.${uitnodiging.rol as 'oudere' | 'mantelzorger' | 'groepsbeheerder'}`) })}
             </p>
 
             <div className="space-y-3">
@@ -97,13 +98,13 @@ export default async function UitnodigingPage({
                 href={`/login?redirect=/uitnodiging&token=${token}`}
                 className="btn-primary w-full block text-center"
               >
-                Inloggen en accepteren
+                {t('uitnodiging.inloggenAccepteren')}
               </Link>
               <Link
                 href={`/registreer?redirect=/uitnodiging&token=${token}`}
                 className="btn-secondary w-full block text-center"
               >
-                Nieuw account aanmaken
+                {t('uitnodiging.nieuwAccount')}
               </Link>
             </div>
           </div>
@@ -113,21 +114,22 @@ export default async function UitnodigingPage({
   )
 }
 
-function FoutPagina({ bericht, titel = 'Uitnodiging ongeldig' }: { bericht: string; titel?: string }) {
+function FoutPagina({ t, bericht, titel }: { t: TFunctie; bericht: string; titel?: string }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-caroo-groen-licht to-white flex flex-col">
-      <header className="px-6 pt-8 pb-4">
+      <header className="px-6 pt-8 pb-4 flex items-center justify-between gap-3">
         <CarooLogo size="md" />
+        <TaalKiezer variant="compact" />
       </header>
       <main className="flex-1 flex items-center justify-center px-4">
         <div className="caroo-card text-center py-8 max-w-md w-full">
           <div className="text-5xl mb-4">⚠️</div>
           <h1 className="text-xl font-bold text-caroo-donker mb-2">
-            {titel}
+            {titel ?? t('uitnodiging.ongeldigTitel')}
           </h1>
           <p className="text-gray-600 mb-6">{bericht}</p>
           <Link href="/" className="text-caroo-groen font-medium hover:underline text-sm">
-            Ga naar de homepage
+            {t('algemeen.naarHome')}
           </Link>
         </div>
       </main>
