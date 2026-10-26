@@ -1,5 +1,20 @@
 import type { Metadata, Viewport } from 'next'
+import localFont from 'next/font/local'
 import './globals.css'
+
+// Atkinson Hyperlegible (Braille Institute, SIL Open Font License): extra goed leesbaar,
+// ook voor slechtzienden. De bestanden zitten in de app zelf, dus elk toestel toont
+// hetzelfde lettertype en er wordt niets bij een externe partij opgehaald.
+const atkinson = localFont({
+  src: [
+    { path: './fonts/atkinson/atkinson-hyperlegible-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: './fonts/atkinson/atkinson-hyperlegible-latin-400-italic.woff2', weight: '400', style: 'italic' },
+    { path: './fonts/atkinson/atkinson-hyperlegible-latin-700-normal.woff2', weight: '700', style: 'normal' },
+    { path: './fonts/atkinson/atkinson-hyperlegible-latin-700-italic.woff2', weight: '700', style: 'italic' },
+  ],
+  display: 'swap',
+  variable: '--font-atkinson',
+})
 
 export const metadata: Metadata = {
   title: 'Caroo — Zorg voor elkaar',
@@ -30,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="nl">
+    <html lang="nl" className={atkinson.variable}>
       <body className="font-sans antialiased">
         {children}
       </body>
