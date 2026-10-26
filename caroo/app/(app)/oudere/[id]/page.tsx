@@ -40,7 +40,7 @@ export default async function OuderePage({ params }: { params: { id: string } })
     supabase.from('medicijnen').select('id, naam, dosering, tijdstippen').eq('groep_id', params.id).eq('actief', true),
     supabase
       .from('fotos')
-      .select('id, opslag_pad, beschrijving, aangemaakt_op, auteur_naam, users (naam)')
+      .select('id, opslag_pad, onderschrift, aangemaakt_op, auteur_naam, users (naam)')
       .eq('groep_id', params.id)
       .order('aangemaakt_op', { ascending: false })
       .limit(6),

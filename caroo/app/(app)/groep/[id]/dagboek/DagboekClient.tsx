@@ -6,7 +6,6 @@ import { createClient } from '@/lib/supabase/client'
 interface Entry {
   id: string
   inhoud: string
-  stemming: number | null
   gesproken: boolean
   aangemaakt_op: string
   users: { naam: string } | null
@@ -18,18 +17,11 @@ interface Props {
   entries: Entry[]
 }
 
-const stemmingEmoji = (s: number | null) => {
-  if (s === null) return ''
-  if (s >= 4) return '😊'
-  if (s === 3) return '😐'
-  return '😔'
-}
 
 export function DagboekClient({ groepId, entries: initieel }: Props) {
   const [entries, setEntries] = useState(initieel)
   const [toonFormulier, setToonFormulier] = useState(false)
   const [inhoud, setInhoud] = useState('')
-  const [stemming, setStemming] = useState<number>(3)
   const [laden, setLaden] = useState(false)
   const [uitgebreid, setUitgebreid] = useState<string | null>(null)
 
@@ -43,17 +35,15 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
     const { data } = await supabase.from('dagboek').insert({
       groep_id: groepId,
       inhoud,
-      stemming,
       gesproken: false,
-      geschreven_door: user.id,
-    }).select('id, inhoud, stemming, gesproken, aangemaakt_op, auteur_naam, users (naam)').single()
+      auteur_id: user.id,
+    }).select('id, inhoud, gesproken, aangemaakt_op, auteur_naam, users (naam)').single()
 
     if (data) {
       setEntries(prev => [data as any, ...prev])
     }
 
     setInhoud('')
-    setStemming(3)
     setToonFormulier(false)
     setLaden(false)
   }
@@ -77,21 +67,6 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
 
       {toonFormulier && (
         <form onSubmit={voegToe} className="caroo-card mb-4 space-y-3">
-          <div>
-            <label className="input-label">Hoe gaat het?</label>
-            <div className="flex gap-3 py-2">
-              {[1, 2, 3, 4, 5].map(s => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setStemming(s)}
-                  className={`text-2xl transition-transform ${stemming === s ? 'scale-125' : 'opacity-40'}`}
-                >
-                  {s === 1 ? '😔' : s === 2 ? '😕' : s === 3 ? '😐' : s === 4 ? '😊' : '😄'}
-                </button>
-              ))}
-            </div>
-          </div>
           <div>
             <label className="input-label">Aantekening</label>
             <textarea
@@ -146,9 +121,6 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
                       <div className="flex items-center gap-1 flex-shrink-0">
                         {entry.gesproken && (
                           <span title="Via spraak ingevoerd" className="text-xs text-gray-300">🎤</span>
-                        )}
-                        {stemmingEmoji(entry.stemming) && (
-                          <span className="text-lg">{stemmingEmoji(entry.stemming)}</span>
                         )}
                       </div>
                     </div>

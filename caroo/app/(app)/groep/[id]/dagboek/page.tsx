@@ -22,7 +22,7 @@ export default async function DagboekPage({ params }: { params: { id: string } }
 
   const { data: entries } = await supabase
     .from('dagboek')
-    .select('id, inhoud, stemming, gesproken, aangemaakt_op, auteur_naam, users (naam)')
+    .select('id, inhoud, gesproken, aangemaakt_op, auteur_naam, users (naam)')
     .eq('groep_id', params.id)
     .order('aangemaakt_op', { ascending: false })
     .limit(50)

@@ -72,6 +72,14 @@ export default async function GroepPage({
     supabase.from('users').select('naam').eq('id', user.id).single(),
   ])
 
+  // Tips en levenslessen van de hoofdpersoon (en anderen)
+  const { data: tips } = await supabase
+    .from('tips')
+    .select('id, tekst, aangemaakt_op, auteur_naam, users (naam)')
+    .eq('groep_id', params.id)
+    .order('aangemaakt_op', { ascending: false })
+    .limit(5)
+
   // Haal aankomende taken op
   const { data: openTaken } = await supabase
     .from('taken')
@@ -171,6 +179,26 @@ export default async function GroepPage({
             </Link>
           ))}
         </div>
+
+        {/* Tips en levenslessen */}
+        {tips && tips.length > 0 && (
+          <div>
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+              Tips en levenslessen
+            </h2>
+            <div className="space-y-2">
+              {tips.map((tip: any) => (
+                <div key={tip.id} className="caroo-card border-l-4 border-caroo-oranje">
+                  <p className="text-caroo-donker whitespace-pre-line">💡 {tip.tekst}</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {tip.users?.naam || tip.auteur_naam || 'Onbekend'} ·{' '}
+                    {new Date(tip.aangemaakt_op).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long' })}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Aankomende taken */}
         {openTaken && openTaken.length > 0 && (

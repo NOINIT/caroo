@@ -2,12 +2,13 @@
 
 import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import Image from 'next/image'
+import { verwijderFoto } from './actions'
 
 interface Foto {
   id: string
   opslag_pad: string
-  beschrijving: string | null
+  onderschrift: string | null
+  uploader_id: string | null
   aangemaakt_op: string
   url: string
   users: { naam: string } | null
@@ -17,15 +18,35 @@ interface Foto {
 interface Props {
   groepId: string
   fotos: Foto[]
+  mijnId: string
+  isBeheerder: boolean
 }
 
-export function FotosClient({ groepId, fotos: initieel }: Props) {
+export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: Props) {
   const [fotos, setFotos] = useState(initieel)
   const [uploaden, setUploaden] = useState(false)
   const [beschrijving, setBeschrijving] = useState('')
   const [geselecteerd, setGeselecteerd] = useState<File | null>(null)
   const [voorvertoning, setVoorvertoning] = useState<string | null>(null)
   const [groteFoto, setGroteFoto] = useState<Foto | null>(null)
+  const [bevestigVerwijderen, setBevestigVerwijderen] = useState(false)
+  const [verwijderFout, setVerwijderFout] = useState('')
+
+  function sluitGroot() {
+    setGroteFoto(null)
+    setBevestigVerwijderen(false)
+    setVerwijderFout('')
+  }
+
+  async function verwijder(foto: Foto) {
+    const r = await verwijderFoto(groepId, foto.id)
+    if ('error' in r && r.error) {
+      setVerwijderFout(r.error)
+      return
+    }
+    setFotos(prev => prev.filter(f => f.id !== foto.id))
+    sluitGroot()
+  }
   const inputRef = useRef<HTMLInputElement>(null)
 
   function kiesBestand(e: React.ChangeEvent<HTMLInputElement>) {
@@ -72,9 +93,9 @@ export function FotosClient({ groepId, fotos: initieel }: Props) {
     const { data: nieuweFoto } = await supabase.from('fotos').insert({
       groep_id: groepId,
       opslag_pad: pad,
-      beschrijving: beschrijving || null,
-      geupload_door: user.id,
-    }).select('id, opslag_pad, beschrijving, aangemaakt_op, auteur_naam, users (naam)').single()
+      onderschrift: beschrijving || null,
+      uploader_id: user.id,
+    }).select('id, opslag_pad, onderschrift, uploader_id, aangemaakt_op, auteur_naam, users (naam)').single()
 
     if (nieuweFoto) {
       setFotos(prev => [{ ...nieuweFoto as any, url: signedData?.signedUrl || '' }, ...prev])
@@ -145,13 +166,13 @@ export function FotosClient({ groepId, fotos: initieel }: Props) {
               {foto.url && (
                 <img
                   src={foto.url}
-                  alt={foto.beschrijving || 'Foto'}
+                  alt={foto.onderschrift || 'Foto'}
                   className="w-full h-full object-cover"
                 />
               )}
-              {foto.beschrijving && (
+              {foto.onderschrift && (
                 <div className="absolute bottom-0 left-0 right-0 bg-black/40 px-2 py-1">
-                  <p className="text-white text-xs truncate">{foto.beschrijving}</p>
+                  <p className="text-white text-xs truncate">{foto.onderschrift}</p>
                 </div>
               )}
             </button>
@@ -163,20 +184,20 @@ export function FotosClient({ groepId, fotos: initieel }: Props) {
       {groteFoto && (
         <div
           className="fixed inset-0 bg-black/80 z-50 flex flex-col items-center justify-center p-4"
-          onClick={() => setGroteFoto(null)}
+          onClick={sluitGroot}
         >
           <div className="w-full max-w-md" onClick={e => e.stopPropagation()}>
             {groteFoto.url && (
               <img
                 src={groteFoto.url}
-                alt={groteFoto.beschrijving || 'Foto'}
+                alt={groteFoto.onderschrift || 'Foto'}
                 className="w-full rounded-caroo object-contain max-h-[70vh]"
               />
             )}
-            {(groteFoto.beschrijving || groteFoto.users?.naam || groteFoto.auteur_naam) && (
+            {(groteFoto.onderschrift || groteFoto.users?.naam || groteFoto.auteur_naam) && (
               <div className="bg-white rounded-b-caroo px-4 py-3">
-                {groteFoto.beschrijving && (
-                  <p className="text-caroo-donker font-medium">{groteFoto.beschrijving}</p>
+                {groteFoto.onderschrift && (
+                  <p className="text-caroo-donker font-medium">{groteFoto.onderschrift}</p>
                 )}
                 {(groteFoto.users?.naam || groteFoto.auteur_naam) && (
                   <p className="text-sm text-gray-500">
@@ -186,9 +207,27 @@ export function FotosClient({ groepId, fotos: initieel }: Props) {
                 )}
               </div>
             )}
+            {(groteFoto.uploader_id === mijnId || isBeheerder) && (
+              <div className="mt-3">
+                {!bevestigVerwijderen ? (
+                  <button onClick={() => setBevestigVerwijderen(true)} className="w-full text-sm text-white/80 underline py-2">
+                    Foto verwijderen
+                  </button>
+                ) : (
+                  <div className="bg-white rounded-caroo p-3 space-y-2">
+                    <p className="text-sm text-caroo-donker">Weet je het zeker? De foto verdwijnt voor iedereen in de groep.</p>
+                    {verwijderFout && <p className="text-sm text-red-600">{verwijderFout}</p>}
+                    <div className="flex gap-2">
+                      <button onClick={() => setBevestigVerwijderen(false)} className="btn-secondary flex-1">Toch niet</button>
+                      <button onClick={() => verwijder(groteFoto)} className="flex-1 rounded-caroo bg-red-600 text-white font-medium py-2">Verwijderen</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             <button
-              onClick={() => setGroteFoto(null)}
-              className="mt-4 w-full btn-secondary text-white bg-white/20 border-white/40"
+              onClick={sluitGroot}
+              className="mt-3 w-full btn-secondary text-white bg-white/20 border-white/40"
             >
               Sluiten
             </button>

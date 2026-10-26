@@ -22,7 +22,7 @@ export default async function FotosPage({ params }: { params: { id: string } }) 
 
   const { data: fotos } = await supabase
     .from('fotos')
-    .select('id, opslag_pad, beschrijving, aangemaakt_op, auteur_naam, users (naam)')
+    .select('id, opslag_pad, onderschrift, uploader_id, aangemaakt_op, auteur_naam, users (naam)')
     .eq('groep_id', params.id)
     .order('aangemaakt_op', { ascending: false })
 
@@ -47,6 +47,8 @@ export default async function FotosPage({ params }: { params: { id: string } }) 
       <FotosClient
         groepId={params.id}
         fotos={fotosMetUrl}
+        mijnId={user.id}
+        isBeheerder={await heeftRecht(params.id, ['groepsbeheerder'])}
       />
     </div>
   )

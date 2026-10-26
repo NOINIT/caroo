@@ -69,7 +69,7 @@ export function OudereInterface({
             stemmingVandaag={stemmingVandaag}
             bezoek={bezoek}
             aantalBoodschappen={aantalBoodschappen}
-            nieuwsteFoto={fotos[0] ? { url: fotos[0].url, beschrijving: fotos[0].beschrijving, door: fotos[0].door } : null}
+            nieuwsteFoto={fotos[0] ? { url: fotos[0].url, beschrijving: fotos[0].onderschrift, door: fotos[0].door } : null}
             gaNaar={tab => setActieveTab(tab)}
           />
         )}
@@ -180,11 +180,11 @@ function TabFotos({ fotos }: any) {
           <div key={foto.id} className="aspect-square rounded-caroo overflow-hidden bg-gray-100">
             <img
               src={foto.url}
-              alt={foto.beschrijving || 'Foto'}
+              alt={foto.onderschrift || 'Foto'}
               className="w-full h-full object-cover"
             />
-            {foto.beschrijving && (
-              <p className="text-xs text-gray-600 p-1 truncate">{foto.beschrijving}</p>
+            {foto.onderschrift && (
+              <p className="text-xs text-gray-600 p-1 truncate">{foto.onderschrift}</p>
             )}
           </div>
         ))}
@@ -195,7 +195,6 @@ function TabFotos({ fotos }: any) {
 
 function TabMijnTip({ groepId }: any) {
   const [tip, setTip] = useState('')
-  const [buurtDelen, setBuurtDelen] = useState(false)
   const [verstuurd, setVerstuurd] = useState(false)
 
   async function stuurTip() {
@@ -210,7 +209,7 @@ function TabMijnTip({ groepId }: any) {
       groep_id: groepId,
       auteur_id: user.id,
       tekst: tip,
-      buurt_delen: buurtDelen,
+      buurt_delen: false,
     })
 
     setTip('')
@@ -222,7 +221,7 @@ function TabMijnTip({ groepId }: any) {
     <div className="px-4 py-6">
       <h2 className="text-ou-xl font-bold text-caroo-donker mb-2">Mijn tip</h2>
       <p className="text-ou-sm text-gray-500 mb-4">
-        Deel een tip of levensles met je familie
+        Deel een tip of levensles. Je familie ziet hem bij jullie groep.
       </p>
 
       {verstuurd && (
@@ -238,17 +237,7 @@ function TabMijnTip({ groepId }: any) {
         className="input-field text-ou-base h-36 resize-none mb-4"
       />
 
-      <label className="flex items-center gap-3 mb-4 cursor-pointer">
-        <input
-          type="checkbox"
-          checked={buurtDelen}
-          onChange={e => setBuurtDelen(e.target.checked)}
-          className="w-5 h-5 accent-caroo-groen"
-        />
-        <span className="text-ou-sm text-gray-600">
-          Deel ook met de buurt (Buurtverbinding)
-        </span>
-      </label>
+
 
       <button
         onClick={stuurTip}
