@@ -15,7 +15,17 @@ const PUBLIC_ROUTES = [
   '/icons',
 ]
 
+// Het oude Vercel-adres stuurt door naar het eigen domein.
+// De Stripe-webhook blijft daar werken: Stripe volgt geen doorverwijzingen.
+const OUD_ADRES = 'caroo-psi.vercel.app'
+const HOOFDDOMEIN = 'https://clanoo.nl'
+
 export async function middleware(request: NextRequest) {
+  const host = request.headers.get('host') || ''
+  if (host === OUD_ADRES && !request.nextUrl.pathname.startsWith('/api/stripe/webhook')) {
+    return NextResponse.redirect(`${HOOFDDOMEIN}${request.nextUrl.pathname}${request.nextUrl.search}`, 308)
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
