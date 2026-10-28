@@ -35,7 +35,7 @@ export default function WachtlijstPagina({ searchParams }: { searchParams: { bro
       <main className="max-w-5xl mx-auto px-5 pb-16">
         <section className="grid md:grid-cols-[1.1fr_1fr] gap-10 items-start pt-6 md:pt-12">
           <div>
-            <p className="text-caroo-oranje font-bold text-sm tracking-wide uppercase mb-3">
+            <p className="text-[#B4510C] font-bold text-sm tracking-wide uppercase mb-3">
               Nog {o.aantal} oprichtersplekken
             </p>
             <h1 className="text-[2.1rem] md:text-5xl font-bold leading-tight mb-5 text-balance">

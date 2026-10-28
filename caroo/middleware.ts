@@ -16,6 +16,8 @@ const PUBLIC_ROUTES = [
   '/wachtlijst',
   '/privacy',
   '/site',
+  '/robots.txt',
+  '/sitemap.xml',
 ]
 
 // Statische websitepagina's: geen sessiecontrole nodig

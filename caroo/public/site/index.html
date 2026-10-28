@@ -12,10 +12,15 @@
 <meta property="og:title" content="Clanoo, de familie-app voor zorg met liefde">
 <meta property="og:description" content="Clanoo brengt de familie samen rond de zorg voor een ouder of grootouder. Met een eigen, eenvoudig scherm voor de hoofdpersoon. Vanaf januari 2027.">
 <meta property="og:url" content="https://clanoo.nl/">
-<meta property="og:image" content="https://clanoo.nl/site/img/tablet.jpg">
+<meta property="og:image" content="https://clanoo.nl/site/img/delen.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Clanoo, de familie-app voor zorg met liefde">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#1A7A6E">
 <link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="preload" as="image" href="/site/img/tablet-1600.webp" imagesrcset="/site/img/tablet-800.webp 800w, /site/img/tablet-1200.webp 1200w, /site/img/tablet-1600.webp 1600w, /site/img/tablet-2304.webp 2304w" imagesizes="min(1152px, calc(100vw - 48px))" fetchpriority="high">
 <link rel="preload" href="/site/fonts/atkinson-hyperlegible-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/site/fonts/atkinson-hyperlegible-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -28,11 +33,11 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
 body{margin:0;background:#FFFFFF}
-a{color:#1A7A6E}a:hover{color:#145F56}
+a{color:#1A7A6E}a:hover{color:#145F56}a[style*="background: #C2570C"]:hover{background:#A84B0A!important;color:#FFFFFF!important}
 .dia-tekst{position:absolute;left:3%;top:7%;width:24%;text-align:left;color:#1A2F5A}
 @media (max-width:760px){.navlinks{display:none!important}.dia-tekst{position:static;width:auto;text-align:center;padding:12px 8px 0}}
-#baan::-webkit-scrollbar{display:none}
-.stip:focus-visible,#wissel:focus-visible,a:focus-visible{outline:3px solid #E8711A;outline-offset:3px}
+#baan::-webkit-scrollbar{display:none}#baan:focus-visible{outline:3px solid #B4510C;outline-offset:4px;border-radius:8px}
+.stip:focus-visible,#wissel:focus-visible,a:focus-visible{outline:3px solid #B4510C;outline-offset:3px}
 </style>
 </head>
 <body>
@@ -43,7 +48,7 @@ a{color:#1A7A6E}a:hover{color:#145F56}
     <nav style="max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px;">
       <a href="/" style="display: flex; align-items: center; gap: 10px; text-decoration: none;" aria-label="Clanoo, naar boven">
         <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="9" fill="#E8711A"></rect><path d="M24.5 9.5 A10 10 0 1 0 24.5 24.5" fill="none" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round"></path><circle cx="17" cy="17" r="3.6" fill="#FFFFFF"></circle></svg>
-        <span style="font-size: 22px; font-weight: 700; letter-spacing: -0.2px;"><span style="color: #1A7A6E;">Clan</span><span style="color: #E8711A;">oo</span></span>
+        <span style="font-size: 22px; font-weight: 700; letter-spacing: -0.2px;"><span style="color: #1A7A6E;">Clan</span><span style="color: #B4510C;">oo</span></span>
       </a>
       <div class="navlinks" style="display: flex; flex-wrap: wrap; gap: 4px 22px; flex: 1 1 320px; min-width: 0; justify-content: center; font-size: 15px;">
         <a href="#hoofdpersoon" style="color: #1A2F5A; text-decoration: none; padding: 10px 0;">Voor de hoofdpersoon</a>
@@ -53,10 +58,11 @@ a{color:#1A7A6E}a:hover{color:#145F56}
       </div>
       <div style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
         <a href="/login" style="color: #1A2F5A; text-decoration: none; font-size: 15px; padding: 10px 6px;">Inloggen</a>
-        <a href="/wachtlijst" style="background: #E8711A; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 700; padding: 11px 18px; border-radius: 999px;">Op de wachtlijst</a>
+        <a href="/wachtlijst" style="background: #C2570C; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 700; padding: 11px 18px; border-radius: 999px;">Op de wachtlijst</a>
       </div>
     </nav>
   </header>
+<main>
 
   <!-- Functies als iconenrij -->
   <section aria-label="Wat Clanoo kan" style="background: #F7F8F9; border-bottom: 1px solid #ECEEF1;">
@@ -130,11 +136,11 @@ a{color:#1A7A6E}a:hover{color:#145F56}
   <section id="top" aria-label="Zo werkt Clanoo, in vijf beelden" style="--b: min(1152px, calc(100vw - 48px)); background: #F7F7F9; padding: 24px 24px 8px;">
     <div style="max-width: 1152px; margin: 0 auto;">
       <div style="position: relative;">
-      <div id="baan" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;">
+      <div id="baan" tabindex="0" role="region" aria-roledescription="carrousel" aria-label="Zo werkt Clanoo, in vijf beelden. Gebruik de pijltjestoetsen." style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;">
         <div style="flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative;">
           <div style="position: relative; width: var(--b); margin: 0 auto; font-size: calc(var(--b) * 0.012);">
-            <img src="/site/img/tablet.jpg" width="2304" height="1286" fetchpriority="high" alt="Twee handen houden een tablet vast met Clanoo erop" style="display: block; width: 100%; height: auto;">
-            <div style="position: absolute; left: 29.23%; top: 13.14%; width: 43.17%; height: 58.28%; border-radius: 0.9em; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column; color: #1A2F5A;">
+            <img src="/site/img/tablet.jpg" srcset="/site/img/tablet-800.webp 800w, /site/img/tablet-1200.webp 1200w, /site/img/tablet-1600.webp 1600w, /site/img/tablet-2304.webp 2304w" sizes="min(1152px, calc(100vw - 48px))" width="2304" height="1286" fetchpriority="high" alt="Rosa houdt haar tablet vast. Op het scherm vraagt Clanoo hoe ze zich vandaag voelt en staat een grote oranje knop: Ik wil bezoek." style="display: block; width: 100%; height: auto;">
+            <div aria-hidden="true" style="position: absolute; left: 29.23%; top: 13.14%; width: 43.17%; height: 58.28%; border-radius: 0.9em; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column; color: #1A2F5A;">
               <div style="background: #1A7A6E; color: #FFFFFF; padding: 0.9em 1.3em; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                   <div style="font-size: 0.85em; opacity: 0.85;">Goedemiddag,</div>
@@ -189,15 +195,15 @@ a{color:#1A7A6E}a:hover{color:#145F56}
             </div>
           </div>
           <div class="dia-tekst">
-            <div style="font-size: 14px; font-weight: 700; color: #E8711A;">1 van 5</div>
+            <div style="font-size: 14px; font-weight: 700; color: #B4510C;">1 van 5</div>
             <div style="font-size: clamp(20px, 2.3vw, 28px); line-height: 1.15; font-weight: 700; margin-top: 4px;">Rosa heeft zin in gezelschap</div>
             <div style="font-size: clamp(15px, 1.35vw, 17px); line-height: 1.45; color: #4A5875; margin-top: 8px;">Eén tik op Ik wil bezoek. Meer hoeft ze niet te doen.</div>
           </div>
         </div>
         <div style="flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative;">
           <div style="position: relative; width: var(--b); margin: 0 auto;">
-            <img src="/site/img/telefoon.jpg" width="1790" height="1000" loading="lazy" alt="Een hand tikt op Ik kom langs in Clanoo op een telefoon" style="display: block; width: 100%; height: auto;">
-            <div style="position: absolute; left: 38.72%; top: 8.6%; width: 21.45%; height: 84%; border-radius: 9%/4.2%; overflow: hidden; background: #F3F4F6; color: #1A2F5A; font-size: calc(var(--b) * 0.0107);">
+            <img src="/site/img/telefoon.jpg" srcset="/site/img/telefoon-800.webp 800w, /site/img/telefoon-1200.webp 1200w, /site/img/telefoon-1790.webp 1790w" sizes="min(1152px, calc(100vw - 48px))" width="1790" height="1000" loading="lazy" alt="Nick ziet op zijn telefoon dat Rosa zich goed voelt en graag bezoek wil. Hij tikt op Ik kom langs." style="display: block; width: 100%; height: auto;">
+            <div aria-hidden="true" style="position: absolute; left: 38.72%; top: 8.6%; width: 21.45%; height: 84%; border-radius: 9%/4.2%; overflow: hidden; background: #F3F4F6; color: #1A2F5A; font-size: calc(var(--b) * 0.0107);">
               <div style="position: absolute; left: 0; right: 0; top: 0; height: 6.6em; background: #1A7A6E; color: #FFFFFF; padding: 2.4em 1em 0; box-sizing: border-box;">
                 <div style="font-size: 0.7em; opacity: 0.8;">‹ Dashboard</div>
                 <div style="font-size: 1.15em; font-weight: 700;">Familie Van Dijk</div>
@@ -216,18 +222,18 @@ a{color:#1A7A6E}a:hover{color:#145F56}
                 <div style="font-size: 0.7em; color: #4B5563;">Do 29 okt · 10:30 Huisarts</div>
               </div>
             </div>
-            <img src="/site/img/vinger.png" alt="" aria-hidden="true" style="position: absolute; left: 38.72%; top: 8.6%; width: 21.45%; height: 84%; pointer-events: none;">
+            <img src="/site/img/vinger.webp" loading="lazy" alt="" aria-hidden="true" style="position: absolute; left: 38.72%; top: 8.6%; width: 21.45%; height: 84%; pointer-events: none;">
           </div>
           <div class="dia-tekst">
-            <div style="font-size: 14px; font-weight: 700; color: #E8711A;">2 van 5</div>
+            <div style="font-size: 14px; font-weight: 700; color: #B4510C;">2 van 5</div>
             <div style="font-size: clamp(20px, 2.3vw, 28px); line-height: 1.15; font-weight: 700; margin-top: 4px;">Zoon Nick ziet het meteen</div>
             <div style="font-size: clamp(15px, 1.35vw, 17px); line-height: 1.45; color: #4A5875; margin-top: 8px;">Op zijn telefoon, waar hij ook is. Hij ziet ook hoe Rosa zich vandaag voelt.</div>
           </div>
         </div>
         <div style="flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative;">
           <div style="position: relative; width: var(--b); margin: 0 auto;">
-            <img src="/site/img/telefoon.jpg" width="1790" height="1000" loading="lazy" alt="Een hand kiest Vanavond in Clanoo op een telefoon" style="display: block; width: 100%; height: auto;">
-            <div style="position: absolute; left: 38.72%; top: 8.6%; width: 21.45%; height: 84%; border-radius: 9%/4.2%; overflow: hidden; background: #F3F4F6; color: #1A2F5A; font-size: calc(var(--b) * 0.0107);">
+            <img src="/site/img/telefoon.jpg" srcset="/site/img/telefoon-800.webp 800w, /site/img/telefoon-1200.webp 1200w, /site/img/telefoon-1790.webp 1790w" sizes="min(1152px, calc(100vw - 48px))" width="1790" height="1000" loading="lazy" alt="Nick kiest wanneer hij komt: binnen een uur, vanmiddag, vanavond of morgen, of een eigen tijd. Hij tikt op Vanavond." style="display: block; width: 100%; height: auto;">
+            <div aria-hidden="true" style="position: absolute; left: 38.72%; top: 8.6%; width: 21.45%; height: 84%; border-radius: 9%/4.2%; overflow: hidden; background: #F3F4F6; color: #1A2F5A; font-size: calc(var(--b) * 0.0107);">
               <div style="position: absolute; left: 0; right: 0; top: 0; height: 6.6em; background: #1A7A6E; color: #FFFFFF; padding: 2.4em 1em 0; box-sizing: border-box;">
                 <div style="font-size: 0.7em; opacity: 0.8;">‹ Dashboard</div>
                 <div style="font-size: 1.15em; font-weight: 700;">Familie Van Dijk</div>
@@ -240,18 +246,18 @@ a{color:#1A7A6E}a:hover{color:#145F56}
               <div style="position: absolute; left: 0.9em; right: 0.9em; top: 24.9em; color: #6B7280;"><span style="font-size: 0.7em;">Of kies zelf een tijd</span></div>
               <div style="position: absolute; left: 0.9em; right: 0.9em; top: 26.4em; display: flex; gap: 0.5em;"><div style="flex: 1; height: 2.5em; background: #FFFFFF; border: 0.08em solid #D1D5DB; border-radius: 0.6em; display: flex; align-items: center; padding: 0 0.7em; color: #9CA3AF;"><span style="font-size: 0.85em;">--:--</span></div><div style="height: 2.5em; background: #A3CFC9; color: #FFFFFF; border-radius: 0.6em; display: flex; align-items: center; padding: 0 0.7em; font-weight: 700;"><span style="font-size: 0.75em;">Vandaag rond ...</span></div></div>
             </div>
-            <img src="/site/img/vinger.png" alt="" aria-hidden="true" style="position: absolute; left: 38.72%; top: 8.6%; width: 21.45%; height: 84%; pointer-events: none;">
+            <img src="/site/img/vinger.webp" loading="lazy" alt="" aria-hidden="true" style="position: absolute; left: 38.72%; top: 8.6%; width: 21.45%; height: 84%; pointer-events: none;">
           </div>
           <div class="dia-tekst">
-            <div style="font-size: 14px; font-weight: 700; color: #E8711A;">3 van 5</div>
+            <div style="font-size: 14px; font-weight: 700; color: #B4510C;">3 van 5</div>
             <div style="font-size: clamp(20px, 2.3vw, 28px); line-height: 1.15; font-weight: 700; margin-top: 4px;">Nick laat weten wanneer hij komt</div>
             <div style="font-size: clamp(15px, 1.35vw, 17px); line-height: 1.45; color: #4A5875; margin-top: 8px;">Hij tikt op Vanavond. Hij had ook een precieze tijd kunnen kiezen.</div>
           </div>
         </div>
         <div style="flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative;">
           <div style="position: relative; width: var(--b); margin: 0 auto; font-size: calc(var(--b) * 0.012);">
-            <img src="/site/img/tablet.jpg" width="2304" height="1286" loading="lazy" alt="Twee handen houden een tablet vast met Clanoo erop" style="display: block; width: 100%; height: auto;">
-            <div style="position: absolute; left: 29.23%; top: 13.14%; width: 43.17%; height: 58.28%; border-radius: 0.9em; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column; color: #1A2F5A;">
+            <img src="/site/img/tablet.jpg" srcset="/site/img/tablet-800.webp 800w, /site/img/tablet-1200.webp 1200w, /site/img/tablet-1600.webp 1600w, /site/img/tablet-2304.webp 2304w" sizes="min(1152px, calc(100vw - 48px))" width="2304" height="1286" loading="lazy" alt="Op de tablet van Rosa staat nu: Nick komt langs, vanavond." style="display: block; width: 100%; height: auto;">
+            <div aria-hidden="true" style="position: absolute; left: 29.23%; top: 13.14%; width: 43.17%; height: 58.28%; border-radius: 0.9em; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column; color: #1A2F5A;">
               <div style="background: #1A7A6E; color: #FFFFFF; padding: 0.9em 1.3em; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                   <div style="font-size: 0.85em; opacity: 0.85;">Goedemiddag,</div>
@@ -285,15 +291,15 @@ a{color:#1A7A6E}a:hover{color:#145F56}
             </div>
           </div>
           <div class="dia-tekst">
-            <div style="font-size: 14px; font-weight: 700; color: #E8711A;">4 van 5</div>
+            <div style="font-size: 14px; font-weight: 700; color: #B4510C;">4 van 5</div>
             <div style="font-size: clamp(20px, 2.3vw, 28px); line-height: 1.15; font-weight: 700; margin-top: 4px;">En Rosa weet waar ze naar uitkijkt</div>
             <div style="font-size: clamp(15px, 1.35vw, 17px); line-height: 1.45; color: #4A5875; margin-top: 8px;">Geen gebel heen en weer. Wel bezoek.</div>
           </div>
         </div>
         <div style="flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative;">
           <div style="position: relative; width: var(--b); margin: 0 auto; font-size: calc(var(--b) * 0.012);">
-            <img src="/site/img/tablet.jpg" width="2304" height="1286" loading="lazy" alt="Twee handen houden een tablet vast met de boodschappenlijst van Clanoo" style="display: block; width: 100%; height: auto;">
-            <div style="position: absolute; left: 29.23%; top: 13.14%; width: 43.17%; height: 58.28%; border-radius: 0.9em; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column; color: #1A2F5A;">
+            <img src="/site/img/tablet.jpg" srcset="/site/img/tablet-800.webp 800w, /site/img/tablet-1200.webp 1200w, /site/img/tablet-1600.webp 1600w, /site/img/tablet-2304.webp 2304w" sizes="min(1152px, calc(100vw - 48px))" width="2304" height="1286" loading="lazy" alt="Rosa zet appelmoes op de boodschappenlijst, naast melk, brood en koffie." style="display: block; width: 100%; height: auto;">
+            <div aria-hidden="true" style="position: absolute; left: 29.23%; top: 13.14%; width: 43.17%; height: 58.28%; border-radius: 0.9em; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column; color: #1A2F5A;">
               <div style="background: #1A7A6E; color: #FFFFFF; padding: 0.9em 1.3em; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                   <div style="font-size: 0.85em; opacity: 0.85;">Goedemiddag,</div>
@@ -319,7 +325,7 @@ a{color:#1A7A6E}a:hover{color:#145F56}
             </div>
           </div>
           <div class="dia-tekst">
-            <div style="font-size: 14px; font-weight: 700; color: #E8711A;">5 van 5</div>
+            <div style="font-size: 14px; font-weight: 700; color: #B4510C;">5 van 5</div>
             <div style="font-size: clamp(20px, 2.3vw, 28px); line-height: 1.15; font-weight: 700; margin-top: 4px;">Rosa doet zelf mee</div>
             <div style="font-size: clamp(15px, 1.35vw, 17px); line-height: 1.45; color: #4A5875; margin-top: 8px;">Ze zet appelmoes op de boodschappenlijst, bekijkt nieuwe foto's van de kleinkinderen en spreekt een herinnering in. Haar Clanoo, op haar manier.</div>
           </div>
@@ -327,17 +333,8 @@ a{color:#1A7A6E}a:hover{color:#145F56}
       </div>
       </div>
       <div style="display: flex; justify-content: center; align-items: center; gap: 12px; padding: 14px 0 6px;">
-        <div style="display: flex; align-items: center; gap: 10px; background: #E8E8ED; border-radius: 999px; padding: 0 22px; height: 52px;">
-          <button type="button" class="stip" aria-label="Beeld 1 van 5" style="width: 44px; height: 8px; transition: width .35s ease; border-radius: 999px; border: 0; padding: 0; background: #A1A1A6; overflow: hidden; cursor: pointer; display: flex;"><span class="vulling" style="display: block; height: 100%; width: 0%; background: #1D1D1F; border-radius: 999px;"></span></button>
-          
-            <button type="button" class="stip" aria-label="Beeld 2 van 5" style="width: 8px; height: 8px; transition: width .35s ease; border-radius: 999px; border: 0; padding: 0; background: #A1A1A6; overflow: hidden; cursor: pointer; display: flex;"><span class="vulling" style="display: block; height: 100%; width: 0%; background: #1D1D1F; border-radius: 999px;"></span></button>
-          
-            <button type="button" class="stip" aria-label="Beeld 3 van 5" style="width: 8px; height: 8px; transition: width .35s ease; border-radius: 999px; border: 0; padding: 0; background: #A1A1A6; overflow: hidden; cursor: pointer; display: flex;"><span class="vulling" style="display: block; height: 100%; width: 0%; background: #1D1D1F; border-radius: 999px;"></span></button>
-          
-            <button type="button" class="stip" aria-label="Beeld 4 van 5" style="width: 8px; height: 8px; transition: width .35s ease; border-radius: 999px; border: 0; padding: 0; background: #A1A1A6; overflow: hidden; cursor: pointer; display: flex;"><span class="vulling" style="display: block; height: 100%; width: 0%; background: #1D1D1F; border-radius: 999px;"></span></button>
-          
-            <button type="button" class="stip" aria-label="Beeld 5 van 5" style="width: 8px; height: 8px; transition: width .35s ease; border-radius: 999px; border: 0; padding: 0; background: #A1A1A6; overflow: hidden; cursor: pointer; display: flex;"><span class="vulling" style="display: block; height: 100%; width: 0%; background: #1D1D1F; border-radius: 999px;"></span></button>
-        </div>
+        <div style="display: flex; align-items: center; gap: 0; background: #E8E8ED; border-radius: 999px; padding: 0 14px; height: 52px;">
+          <button type="button" class="stip" aria-label="Beeld 1 van 5" style="height: 44px; padding: 0 8px; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center;"><span class="spoor" style="display: block; width: 44px; height: 8px; border-radius: 999px; background: #8E8E93; overflow: hidden; transition: width .35s ease;"><span class="vulling" style="display: block; height: 100%; width: 100%; background: #1D1D1F; border-radius: 999px; transform: scaleX(0); transform-origin: left center;"></span></span></button><button type="button" class="stip" aria-label="Beeld 2 van 5" style="height: 44px; padding: 0 8px; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center;"><span class="spoor" style="display: block; width: 8px; height: 8px; border-radius: 999px; background: #8E8E93; overflow: hidden; transition: width .35s ease;"><span class="vulling" style="display: block; height: 100%; width: 100%; background: #1D1D1F; border-radius: 999px; transform: scaleX(0); transform-origin: left center;"></span></span></button><button type="button" class="stip" aria-label="Beeld 3 van 5" style="height: 44px; padding: 0 8px; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center;"><span class="spoor" style="display: block; width: 8px; height: 8px; border-radius: 999px; background: #8E8E93; overflow: hidden; transition: width .35s ease;"><span class="vulling" style="display: block; height: 100%; width: 100%; background: #1D1D1F; border-radius: 999px; transform: scaleX(0); transform-origin: left center;"></span></span></button><button type="button" class="stip" aria-label="Beeld 4 van 5" style="height: 44px; padding: 0 8px; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center;"><span class="spoor" style="display: block; width: 8px; height: 8px; border-radius: 999px; background: #8E8E93; overflow: hidden; transition: width .35s ease;"><span class="vulling" style="display: block; height: 100%; width: 100%; background: #1D1D1F; border-radius: 999px; transform: scaleX(0); transform-origin: left center;"></span></span></button><button type="button" class="stip" aria-label="Beeld 5 van 5" style="height: 44px; padding: 0 8px; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center;"><span class="spoor" style="display: block; width: 8px; height: 8px; border-radius: 999px; background: #8E8E93; overflow: hidden; transition: width .35s ease;"><span class="vulling" style="display: block; height: 100%; width: 100%; background: #1D1D1F; border-radius: 999px; transform: scaleX(0); transform-origin: left center;"></span></span></button></div>
         <button type="button" id="wissel" aria-label="Pauzeren" style="width: 52px; height: 52px; border-radius: 50%; border: 0; background: #E8E8ED; color: #1D1D1F; cursor: pointer; display: flex; align-items: center; justify-content: center;">
           <svg class="ic-pauze" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1.2" fill="#1D1D1F"></rect><rect x="14" y="4" width="4" height="16" rx="1.2" fill="#1D1D1F"></rect></svg>
           <svg class="ic-speel" style="display:none" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z" fill="#1D1D1F"></path></svg>
@@ -348,11 +345,11 @@ a{color:#1A7A6E}a:hover{color:#145F56}
 
   <!-- Openingskop -->
   <section style="background: #F7F7F9; padding: 24px 24px 96px; text-align: center;">
-    <p style="margin: 0 0 14px; font-size: 16px; font-weight: 700; color: #E8711A; letter-spacing: 0.4px;">Vanaf januari 2027</p>
+    <p style="margin: 0 0 14px; font-size: 16px; font-weight: 700; color: #B4510C; letter-spacing: 0.4px;">Vanaf januari 2027</p>
     <h1 style="margin: 0 auto; max-width: 860px; font-size: clamp(40px, 7vw, 76px); line-height: 1.04; letter-spacing: -1.5px; font-weight: 700;">Zorg mét je,<br>niet over je.</h1>
     <p style="margin: 22px auto 0; max-width: 640px; font-size: clamp(18px, 2.2vw, 22px); line-height: 1.5; color: #4A5875;">De familie-app voor zorg met liefde. De persoon om wie het draait beslist mee, en wat die nodig heeft mag er gewoon zijn.</p>
     <div style="margin-top: 30px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
-      <a href="/wachtlijst" style="background: #E8711A; color: #FFFFFF; text-decoration: none; font-size: 18px; font-weight: 700; padding: 16px 28px; border-radius: 999px;">Zet me op de wachtlijst</a>
+      <a href="/wachtlijst" style="background: #C2570C; color: #FFFFFF; text-decoration: none; font-size: 18px; font-weight: 700; padding: 16px 28px; border-radius: 999px;">Zet me op de wachtlijst</a>
       <a href="#hoe" style="background: #FFFFFF; color: #1A7A6E; text-decoration: none; font-size: 18px; font-weight: 700; padding: 15px 27px; border-radius: 999px; border: 1.5px solid #1A7A6E;">Zo werkt het</a>
     </div>
     <p style="margin: 16px 0 0; font-size: 15px; color: #5B6780;">Oprichtersprijs voor de eerste 100 families: €69 het eerste jaar.</p>
@@ -361,7 +358,7 @@ a{color:#1A7A6E}a:hover{color:#145F56}
   <!-- Hoofdpersoon -->
   <section id="hoofdpersoon" style="background: #FDF6F0; padding: 96px 24px;">
     <div style="max-width: 1100px; margin: 0 auto;">
-      <p style="margin: 0 0 10px; font-size: 16px; font-weight: 700; color: #E8711A;">Voor de hoofdpersoon</p>
+      <p style="margin: 0 0 10px; font-size: 16px; font-weight: 700; color: #B4510C;">Voor de hoofdpersoon</p>
       <h2 style="margin: 0; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; letter-spacing: -1px; max-width: 720px;">Wat jij nodig hebt, telt mee.</h2>
       <p style="margin: 18px 0 0; font-size: 20px; line-height: 1.55; color: #4A5875; max-width: 620px;">Clanoo begint bij de persoon om wie het draait. Grote knoppen en duidelijke letters. Geen wachtwoord, wel veilig. Je logt in met een persoonlijke link die alleen in jouw mailbox komt en maar één keer werkt.</p>
       <div style="margin-top: 48px; display: flex; flex-wrap: wrap; gap: 20px;">
@@ -369,7 +366,7 @@ a{color:#1A7A6E}a:hover{color:#145F56}
         <div style="flex: 2 1 560px; min-width: 0; background: #E8711A; color: #FFFFFF; border-radius: 32px; padding: clamp(28px, 4vw, 48px); display: flex; flex-wrap: wrap; gap: 32px; align-items: center; justify-content: space-between; min-height: 340px; box-sizing: border-box;">
           <div style="flex: 1 1 260px;">
             <h3 style="margin: 0; font-size: clamp(30px, 3.6vw, 44px); line-height: 1.05; letter-spacing: -0.8px;">Zin in bezoek?<br>Eén tik.</h3>
-            <p style="margin: 16px 0 0; font-size: 18px; line-height: 1.5; color: #FFE8D6; max-width: 340px;">De familie ziet het meteen. Wie komt, laat weten wanneer.</p>
+            <p style="margin: 16px 0 0; font-size: 19px; font-weight: 700; line-height: 1.45; color: #FFFFFF; max-width: 340px;">De familie ziet het meteen. Wie komt, laat weten wanneer.</p>
           </div>
           <div style="flex: 0 1 300px; background: #FFFFFF; color: #1A2F5A; border-radius: 26px; padding: 30px 24px; text-align: center; box-shadow: 0 18px 40px rgba(120,50,0,0.22);">
             <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#E8711A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path><path d="M10 21v-6h4v6"></path></svg>
@@ -404,7 +401,7 @@ a{color:#1A7A6E}a:hover{color:#145F56}
             <h3 style="margin: 0; font-size: clamp(30px, 3.6vw, 44px); line-height: 1.05; letter-spacing: -0.8px;">Letters zo groot<br>als je wilt.</h3>
             <p style="margin: 16px 0 0; font-size: 18px; line-height: 1.5; color: #4A5875; max-width: 360px;">Een lettertype dat ook bij slecht zien goed leesbaar is. Geluid aan of uit, jij kiest.</p>
           </div>
-          <div style="display: flex; align-items: flex-end; gap: clamp(10px, 3vw, 18px); color: #1A7A6E; font-weight: 700; line-height: 0.8;">
+          <div aria-hidden="true" style="display: flex; align-items: flex-end; gap: clamp(10px, 3vw, 18px); color: #1A7A6E; font-weight: 700; line-height: 0.8;">
             <span style="font-size: clamp(24px, 6vw, 36px); opacity: 0.45;">Aa</span>
             <span style="font-size: clamp(36px, 9vw, 56px); opacity: 0.65;">Aa</span>
             <span style="font-size: clamp(52px, 14vw, 84px); opacity: 0.85;">Aa</span>
@@ -419,13 +416,13 @@ a{color:#1A7A6E}a:hover{color:#145F56}
   <!-- Mijn verhaal -->
   <section id="verhaal" style="padding: 96px 24px; background: #FFFFFF;">
     <div style="max-width: 1100px; margin: 0 auto;">
-      <p style="margin: 0 0 10px; font-size: 16px; font-weight: 700; color: #E8711A;">Mijn verhaal</p>
+      <p style="margin: 0 0 10px; font-size: 16px; font-weight: 700; color: #B4510C;">Mijn verhaal</p>
       <h2 style="margin: 0; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; letter-spacing: -1px;">Haar verhalen blijven bewaard.</h2>
       <p style="margin: 18px 0 0; font-size: 20px; line-height: 1.55; color: #4A5875; max-width: 560px;">Rosa vertelt over vroeger, gewoon hardop. Clanoo zet haar woorden op papier. Typen hoeft niet.</p>
 
       <div style="position: relative; margin-top: 44px; border-radius: 32px; overflow: hidden; font-size: calc(min(1100px, 100vw - 48px) * 0.0109);">
-        <img src="/site/img/keuken.jpg" width="2200" height="1229" loading="lazy" alt="Oude handen houden aan de keukentafel een tablet vast met Mijn verhaal open" style="display: block; width: 100%; height: auto;">
-        <div style="position: absolute; left: 31.75%; top: 29.49%; width: 37.03%; height: 43.88%; clip-path: polygon(1.4% 0, 98.7% 0, 100% 100%, 0 100%); background: #FFFFFF; color: #1A2F5A; display: flex; flex-direction: column;">
+        <img src="/site/img/keuken.jpg" srcset="/site/img/keuken-800.webp 800w, /site/img/keuken-1200.webp 1200w, /site/img/keuken-1600.webp 1600w, /site/img/keuken-2200.webp 2200w" sizes="min(1100px, calc(100vw - 48px))" width="2200" height="1229" loading="lazy" alt="Aan de keukentafel spreekt Rosa een herinnering in. Clanoo schrijft mee: op mijn twintigste fietste ik elke zaterdag naar de markt in Dordrecht." style="display: block; width: 100%; height: auto;">
+        <div aria-hidden="true" style="position: absolute; left: 31.75%; top: 29.49%; width: 37.03%; height: 43.88%; clip-path: polygon(1.4% 0, 98.7% 0, 100% 100%, 0 100%); background: #FFFFFF; color: #1A2F5A; display: flex; flex-direction: column;">
           <div style="background: #1A7A6E; color: #FFFFFF; padding: 0.8em 1.6em; display: flex; justify-content: space-between; align-items: center;">
             <div style="font-size: 1.5em; font-weight: 700;">Mijn verhaal</div>
             <div style="font-size: 0.8em; opacity: 0.85;">Rosa · Familie Van Dijk</div>
@@ -588,7 +585,7 @@ a{color:#1A7A6E}a:hover{color:#145F56}
             <h3 style="margin: 0; font-size: 22px; letter-spacing: -0.3px;">De hoofdpersoon komt erbij</h3>
           </div>
           <div style="background: #FFFFFF; border-radius: 22px; padding: 20px; box-shadow: 0 10px 30px rgba(26,47,90,0.08); height: 236px; box-sizing: border-box; display: flex; flex-direction: column;">
-            <div style="flex: 1;"><div style="font-size: 12px; color: #6B7280;">Aan: rosa@voorbeeld.nl</div><div style="font-size: 17px; font-weight: 700; margin: 6px 0 14px;">Je persoonlijke inloglink</div><div style="background: #E8711A; color: #FFFFFF; border-radius: 12px; padding: 12px; text-align: center; font-size: 17px; font-weight: 700;">Inloggen bij Clanoo</div></div>
+            <div style="flex: 1;"><div style="font-size: 12px; color: #6B7280;">Aan: rosa@voorbeeld.nl</div><div style="font-size: 17px; font-weight: 700; margin: 6px 0 14px;">Je persoonlijke inloglink</div><div style="background: #C2570C; color: #FFFFFF; border-radius: 12px; padding: 12px; text-align: center; font-size: 17px; font-weight: 700;">Inloggen bij Clanoo</div></div>
             <div style="display: flex; align-items: center; gap: 8px; border-top: 1px solid #EEF0F3; padding-top: 12px; font-size: 14px; font-weight: 700; color: #1A7A6E;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg><span>Werkt één keer · één uur geldig</span></div>
           </div>
           <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Geen wachtwoord om te onthouden. De inloglink komt alleen in de eigen mailbox, werkt één keer en vervalt na een uur.</p>
@@ -609,7 +606,7 @@ a{color:#1A7A6E}a:hover{color:#145F56}
           <div style="font-size: 18px; font-weight: 700; margin-top: 16px;">Oprichtersprijs</div>
           <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 14px; flex-wrap: wrap;"><span style="font-size: 52px; font-weight: 700; letter-spacing: -1.5px;">€69</span><span style="font-size: 17px; color: #4A5875;">het eerste jaar</span></div>
           <p style="margin: 8px 0 20px; font-size: 16px; line-height: 1.5; color: #4A5875;">Dat is €5,75 per maand. Je betaalt bij aanmelding voor het hele jaar, daarna €99 per jaar.</p>
-          <a href="/wachtlijst" style="margin-top: auto; display: block; text-align: center; background: #E8711A; color: #FFFFFF; text-decoration: none; font-size: 18px; font-weight: 700; padding: 15px; border-radius: 999px;">Reserveer je plek</a>
+          <a href="/wachtlijst" style="margin-top: auto; display: block; text-align: center; background: #C2570C; color: #FFFFFF; text-decoration: none; font-size: 18px; font-weight: 700; padding: 15px; border-radius: 999px;">Reserveer je plek</a>
         </div>
         <div style="flex: 1 1 260px; background: #FFFFFF; border-radius: 28px; padding: 32px; display: flex; flex-direction: column; box-sizing: border-box;">
           <div style="font-size: 18px; font-weight: 700;">Per jaar</div>
@@ -660,11 +657,12 @@ a{color:#1A7A6E}a:hover{color:#145F56}
     <div style="max-width: 1100px; margin: 0 auto; background: #1A7A6E; color: #FFFFFF; border-radius: 36px; padding: clamp(40px, 6vw, 72px); display: flex; flex-wrap: wrap; gap: 28px; align-items: center; justify-content: space-between;">
       <div style="flex: 1 1 420px;">
         <h2 style="margin: 0; font-size: clamp(30px, 4.4vw, 46px); line-height: 1.1; letter-spacing: -0.8px;">Clanoo start in januari 2027.</h2>
-        <p style="margin: 12px 0 0; font-size: 19px; line-height: 1.55; color: #D4EDE9;">Zet je familie op de wachtlijst en hoor als eerste wanneer je kunt beginnen.</p>
+        <p style="margin: 12px 0 0; font-size: 19px; line-height: 1.55; color: #FFFFFF;">Zet je familie op de wachtlijst en hoor als eerste wanneer je kunt beginnen.</p>
       </div>
       <a href="/wachtlijst" style="background: #FFFFFF; color: #1A7A6E; text-decoration: none; font-size: 18px; font-weight: 700; padding: 17px 30px; border-radius: 999px;">Op de wachtlijst</a>
     </div>
   </section>
+</main>
 
   <!-- Voet -->
   <footer style="border-top: 1px solid #ECEEF1; padding: 32px 24px 40px;">
@@ -685,7 +683,8 @@ a{color:#1A7A6E}a:hover{color:#145F56}
       knop=document.getElementById('wissel'), n=stippen.length, dia=0, v=0, stil=0,
       speelt=!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function teken(){
-    stippen.forEach(function(s,i){ s.style.width=i===dia?'44px':'8px'; s.querySelector('.vulling').style.width=i===dia?Math.round(v)+'%':'0%';
+    stippen.forEach(function(s,i){ s.querySelector('.spoor').style.width=i===dia?'44px':'8px';
+      s.querySelector('.vulling').style.transform='scaleX('+(i===dia?v/100:0)+')';
       if(i===dia) s.setAttribute('aria-current','true'); else s.removeAttribute('aria-current'); });
     knop.querySelector('.ic-pauze').style.display=speelt?'':'none';
     knop.querySelector('.ic-speel').style.display=speelt?'none':'';
@@ -694,6 +693,8 @@ a{color:#1A7A6E}a:hover{color:#145F56}
   function ga(i){ dia=(i+n)%n; v=0; stil=Date.now(); baan.scrollTo({left:dia*baan.clientWidth,behavior:'smooth'}); teken(); }
   stippen.forEach(function(s,i){ s.addEventListener('click',function(){ ga(i); }); });
   knop.addEventListener('click',function(){ speelt=!speelt; teken(); });
+  baan.addEventListener('keydown',function(e){ if(e.key==='ArrowRight'){ e.preventDefault(); speelt=false; ga(dia+1); } else if(e.key==='ArrowLeft'){ e.preventDefault(); speelt=false; ga(dia-1); } });
+  baan.addEventListener('focusin',function(){ speelt=false; teken(); });
   baan.addEventListener('scroll',function(){ if(Date.now()-stil<900) return;
     var i=Math.round(baan.scrollLeft/Math.max(1,baan.clientWidth)); if(i!==dia){ dia=i; v=0; teken(); } },{passive:true});
   window.addEventListener('resize',function(){ stil=Date.now(); baan.scrollTo({left:dia*baan.clientWidth}); });
