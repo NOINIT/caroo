@@ -28,7 +28,7 @@ export default function WachtlijstPagina({ searchParams }: { searchParams: { bro
   return (
     <div className="min-h-screen bg-white text-caroo-donker">
       <header className="max-w-5xl mx-auto px-5 pt-6 pb-2 flex items-center justify-between">
-        <CarooLogo size="md" />
+        <a href="/" aria-label="Naar de startpagina van Clanoo"><CarooLogo size="md" /></a>
         <span className="text-sm text-gray-500">Open op {MERK.lancering}</span>
       </header>
 
@@ -106,7 +106,8 @@ export default function WachtlijstPagina({ searchParams }: { searchParams: { bro
       <footer className="border-t border-gray-100">
         <div className="max-w-5xl mx-auto px-5 py-6 text-sm text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
           <span>{MERK.naam} is een initiatief van {MERK.moederbedrijf}, {MERK.plaats}</span>
-          <span>{MERK.contact}</span>
+          <a href={`mailto:${MERK.contact}`} className="hover:underline">{MERK.contact}</a>
+          <a href="/privacy" className="hover:underline">Privacy</a>
         </div>
       </footer>
     </div>

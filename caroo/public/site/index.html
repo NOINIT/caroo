@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clanoo, de familie-app voor zorg met liefde</title>
+<meta name="description" content="Clanoo brengt de familie samen rond de zorg voor een ouder of grootouder. Met een eigen, eenvoudig scherm voor de hoofdpersoon. Vanaf januari 2027.">
+<link rel="canonical" href="https://clanoo.nl/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="nl_NL">
+<meta property="og:site_name" content="Clanoo">
+<meta property="og:title" content="Clanoo, de familie-app voor zorg met liefde">
+<meta property="og:description" content="Clanoo brengt de familie samen rond de zorg voor een ouder of grootouder. Met een eigen, eenvoudig scherm voor de hoofdpersoon. Vanaf januari 2027.">
+<meta property="og:url" content="https://clanoo.nl/">
+<meta property="og:image" content="https://clanoo.nl/site/img/tablet.jpg">
+<meta name="theme-color" content="#1A7A6E">
+<link rel="icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="preload" href="/site/fonts/atkinson-hyperlegible-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/site/fonts/atkinson-hyperlegible-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Atkinson Hyperlegible';font-style:normal;font-weight:400;font-display:swap;src:url(/site/fonts/atkinson-hyperlegible-latin-ext-400-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Atkinson Hyperlegible';font-style:normal;font-weight:700;font-display:swap;src:url(/site/fonts/atkinson-hyperlegible-latin-ext-700-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Atkinson Hyperlegible';font-style:normal;font-weight:400;font-display:swap;src:url(/site/fonts/atkinson-hyperlegible-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Atkinson Hyperlegible';font-style:normal;font-weight:700;font-display:swap;src:url(/site/fonts/atkinson-hyperlegible-latin-700-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+body{margin:0;background:#FFFFFF}
+a{color:#1A7A6E}a:hover{color:#145F56}
+.dia-tekst{position:absolute;left:3%;top:7%;width:24%;text-align:left;color:#1A2F5A}
+@media (max-width:760px){.navlinks{display:none!important}.dia-tekst{position:static;width:auto;text-align:center;padding:12px 8px 0}}
+#baan::-webkit-scrollbar{display:none}
+.stip:focus-visible,#wissel:focus-visible,a:focus-visible{outline:3px solid #E8711A;outline-offset:3px}
+</style>
+</head>
+<body>
+<div style="font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; color: #1A2F5A; background: #FFFFFF; min-height: 100vh;">
+
+  <!-- Navigatie -->
+  <header style="border-bottom: 1px solid #ECEEF1; background: #FFFFFF;">
+    <nav style="max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px;">
+      <a href="/" style="display: flex; align-items: center; gap: 10px; text-decoration: none;" aria-label="Clanoo, naar boven">
+        <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="9" fill="#E8711A"></rect><path d="M24.5 9.5 A10 10 0 1 0 24.5 24.5" fill="none" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round"></path><circle cx="17" cy="17" r="3.6" fill="#FFFFFF"></circle></svg>
+        <span style="font-size: 22px; font-weight: 700; letter-spacing: -0.2px;"><span style="color: #1A7A6E;">Clan</span><span style="color: #E8711A;">oo</span></span>
+      </a>
+      <div class="navlinks" style="display: flex; flex-wrap: wrap; gap: 4px 22px; flex: 1 1 320px; min-width: 0; justify-content: center; font-size: 15px;">
+        <a href="#hoofdpersoon" style="color: #1A2F5A; text-decoration: none; padding: 10px 0;">Voor de hoofdpersoon</a>
+        <a href="#familie" style="color: #1A2F5A; text-decoration: none; padding: 10px 0;">Voor de familie</a>
+        <a href="#talen" style="color: #1A2F5A; text-decoration: none; padding: 10px 0;">Talen</a>
+        <a href="#prijs" style="color: #1A2F5A; text-decoration: none; padding: 10px 0;">Prijs</a>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center; margin-left: auto;">
+        <a href="/login" style="color: #1A2F5A; text-decoration: none; font-size: 15px; padding: 10px 6px;">Inloggen</a>
+        <a href="/wachtlijst" style="background: #E8711A; color: #FFFFFF; text-decoration: none; font-size: 15px; font-weight: 700; padding: 11px 18px; border-radius: 999px;">Op de wachtlijst</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Functies als iconenrij -->
+  <section aria-label="Wat Clanoo kan" style="background: #F7F8F9; border-bottom: 1px solid #ECEEF1;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 18px 16px 14px; display: flex; gap: 6px; overflow-x: auto; justify-content: safe center;">
+      <a href="#hoofdpersoon" style="flex: 0 0 auto; width: 104px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: #1A2F5A; padding: 8px 4px; border-radius: 14px;">
+          <span style="width: 52px; height: 52px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E3E7EB; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5M5 9.5V21h14V9.5M10 21v-6h4v6"></path></svg>
+          </span>
+          <span style="font-size: 13px; line-height: 1.25; text-align: center;">Ik wil bezoek</span>
+        </a>
+      
+        <a href="#hoofdpersoon" style="flex: 0 0 auto; width: 104px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: #1A2F5A; padding: 8px 4px; border-radius: 14px;">
+          <span style="width: 52px; height: 52px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E3E7EB; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19zM8 14.5c1.1 1.4 2.4 2 4 2s2.9-.6 4-2M9 9.5h.01M15 9.5h.01"></path></svg>
+          </span>
+          <span style="font-size: 13px; line-height: 1.25; text-align: center;">Hoe voel je je</span>
+        </a>
+      
+        <a href="#familie" style="flex: 0 0 auto; width: 104px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: #1A2F5A; padding: 8px 4px; border-radius: 14px;">
+          <span style="width: 52px; height: 52px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E3E7EB; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v15H4zM4 10h16M8.5 3v4M15.5 3v4"></path></svg>
+          </span>
+          <span style="font-size: 13px; line-height: 1.25; text-align: center;">Agenda</span>
+        </a>
+      
+        <a href="#familie" style="flex: 0 0 auto; width: 104px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: #1A2F5A; padding: 8px 4px; border-radius: 14px;">
+          <span style="width: 52px; height: 52px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E3E7EB; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 20.5a5 5 0 0 1-7-7l6-6a5 5 0 0 1 7 7zM7 10.5l6.5 6.5"></path></svg>
+          </span>
+          <span style="font-size: 13px; line-height: 1.25; text-align: center;">Medicijnen</span>
+        </a>
+      
+        <a href="#familie" style="flex: 0 0 auto; width: 104px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: #1A2F5A; padding: 8px 4px; border-radius: 14px;">
+          <span style="width: 52px; height: 52px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E3E7EB; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.5l2.2 11h10.6L20.5 7.5H6.5M9.5 20h.01M17 20h.01"></path></svg>
+          </span>
+          <span style="font-size: 13px; line-height: 1.25; text-align: center;">Boodschappen</span>
+        </a>
+      
+        <a href="#familie" style="flex: 0 0 auto; width: 104px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: #1A2F5A; padding: 8px 4px; border-radius: 14px;">
+          <span style="width: 52px; height: 52px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E3E7EB; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM8.5 10.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM20 15l-5-5-9 9"></path></svg>
+          </span>
+          <span style="font-size: 13px; line-height: 1.25; text-align: center;">Foto's</span>
+        </a>
+      
+        <a href="#verhaal" style="flex: 0 0 auto; width: 104px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: #1A2F5A; padding: 8px 4px; border-radius: 14px;">
+          <span style="width: 52px; height: 52px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E3E7EB; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"></path></svg>
+          </span>
+          <span style="font-size: 13px; line-height: 1.25; text-align: center;">Mijn verhaal</span>
+        </a>
+      
+        <a href="#hoofdpersoon" style="flex: 0 0 auto; width: 104px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: #1A2F5A; padding: 8px 4px; border-radius: 14px;">
+          <span style="width: 52px; height: 52px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E3E7EB; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"></path></svg>
+          </span>
+          <span style="font-size: 13px; line-height: 1.25; text-align: center;">Tips</span>
+        </a>
+      
+        <a href="#talen" style="flex: 0 0 auto; width: 104px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; color: #1A2F5A; padding: 8px 4px; border-radius: 14px;">
+          <span style="width: 52px; height: 52px; border-radius: 16px; background: #FFFFFF; border: 1px solid #E3E7EB; display: flex; align-items: center; justify-content: center;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19zM2.5 12h19M12 2.5c2.5 2.6 3.8 5.8 3.8 9.5s-1.3 6.9-3.8 9.5c-2.5-2.6-3.8-5.8-3.8-9.5s1.3-6.9 3.8-9.5z"></path></svg>
+          </span>
+          <span style="font-size: 13px; line-height: 1.25; text-align: center;">Vier talen</span>
+        </a>
+    </div>
+  </section>
+
+  <!-- Grote afbeelding: een verhaal om doorheen te swipen -->
+  <section id="top" aria-label="Zo werkt Clanoo, in vijf beelden" style="--b: min(1152px, calc(100vw - 48px)); background: #F7F7F9; padding: 24px 24px 8px;">
+    <div style="max-width: 1152px; margin: 0 auto;">
+      <div style="position: relative;">
+      <div id="baan" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;">
+        <div style="flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative;">
+          <div style="position: relative; width: var(--b); margin: 0 auto; font-size: calc(var(--b) * 0.012);">
+            <img src="/site/img/tablet.jpg" width="2304" height="1286" fetchpriority="high" alt="Twee handen houden een tablet vast met Clanoo erop" style="display: block; width: 100%; height: auto;">
+            <div style="position: absolute; left: 29.23%; top: 13.14%; width: 43.17%; height: 58.28%; border-radius: 0.9em; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column; color: #1A2F5A;">
+              <div style="background: #1A7A6E; color: #FFFFFF; padding: 0.9em 1.3em; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-size: 0.85em; opacity: 0.85;">Goedemiddag,</div>
+                  <div style="font-size: 1.7em; font-weight: 700; line-height: 1.1;">Rosa</div>
+                </div>
+                <div style="font-size: 0.8em; opacity: 0.85; text-align: right;">Dinsdag 27 oktober<br>Familie Van Dijk</div>
+              </div>
+              <div style="flex: 1; min-height: 0; padding: 0.8em 1em; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8em;">
+                <div style="border: 0.15em solid #1A7A6E; background: #E8F5F3; border-radius: 0.9em; padding: 0.9em 0.7em; display: flex; flex-direction: column; justify-content: center;">
+                  <div style="font-size: 1.15em; font-weight: 700; text-align: center; margin-bottom: 0.7em;">Hoe voel je je vandaag?</div>
+                  <div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.35em;">
+                    <div style="background: #FFFFFF; border-radius: 0.6em; padding: 0.45em 0.1em; display: flex; flex-direction: column; align-items: center; gap: 0.25em; border: 0.15em solid transparent;">
+                        <svg width="2em" height="2em" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#F7C548"></circle><circle cx="8.6" cy="10" r="1.3" fill="#1A2F5A"></circle><circle cx="15.4" cy="10" r="1.3" fill="#1A2F5A"></circle><path d="M7.5 13.5c1.2 2.2 2.7 3.2 4.5 3.2s3.3-1 4.5-3.2" fill="none" stroke="#1A2F5A" stroke-width="1.6" stroke-linecap="round"></path></svg>
+                        <span style="font-size: 0.55em; color: #4B5563; text-align: center; line-height: 1.15;">Heel goed</span>
+                      </div>
+                    
+                      <div style="background: #FFFFFF; border-radius: 0.6em; padding: 0.45em 0.1em; display: flex; flex-direction: column; align-items: center; gap: 0.25em; border: 0.15em solid #1A7A6E;">
+                        <svg width="2em" height="2em" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#F7C548"></circle><circle cx="8.6" cy="10" r="1.3" fill="#1A2F5A"></circle><circle cx="15.4" cy="10" r="1.3" fill="#1A2F5A"></circle><path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5" fill="none" stroke="#1A2F5A" stroke-width="1.6" stroke-linecap="round"></path></svg>
+                        <span style="font-size: 0.55em; color: #4B5563; text-align: center; line-height: 1.15;">Goed</span>
+                      </div>
+                    
+                      <div style="background: #FFFFFF; border-radius: 0.6em; padding: 0.45em 0.1em; display: flex; flex-direction: column; align-items: center; gap: 0.25em; border: 0.15em solid transparent;">
+                        <svg width="2em" height="2em" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#F7C548"></circle><circle cx="8.6" cy="10" r="1.3" fill="#1A2F5A"></circle><circle cx="15.4" cy="10" r="1.3" fill="#1A2F5A"></circle><path d="M8.5 15h7" fill="none" stroke="#1A2F5A" stroke-width="1.6" stroke-linecap="round"></path></svg>
+                        <span style="font-size: 0.55em; color: #4B5563; text-align: center; line-height: 1.15;">Gaat wel</span>
+                      </div>
+                    
+                      <div style="background: #FFFFFF; border-radius: 0.6em; padding: 0.45em 0.1em; display: flex; flex-direction: column; align-items: center; gap: 0.25em; border: 0.15em solid transparent;">
+                        <svg width="2em" height="2em" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#F7C548"></circle><circle cx="8.6" cy="10" r="1.3" fill="#1A2F5A"></circle><circle cx="15.4" cy="10" r="1.3" fill="#1A2F5A"></circle><path d="M8.5 16c1-.9 2.1-1.3 3.5-1.3s2.5.4 3.5 1.3" fill="none" stroke="#1A2F5A" stroke-width="1.6" stroke-linecap="round"></path></svg>
+                        <span style="font-size: 0.55em; color: #4B5563; text-align: center; line-height: 1.15;">Niet zo goed</span>
+                      </div>
+                    
+                      <div style="background: #FFFFFF; border-radius: 0.6em; padding: 0.45em 0.1em; display: flex; flex-direction: column; align-items: center; gap: 0.25em; border: 0.15em solid transparent;">
+                        <svg width="2em" height="2em" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#F7C548"></circle><circle cx="8.6" cy="10" r="1.3" fill="#1A2F5A"></circle><circle cx="15.4" cy="10" r="1.3" fill="#1A2F5A"></circle><path d="M7.5 17c1.2-1.8 2.7-2.6 4.5-2.6s3.3.8 4.5 2.6" fill="none" stroke="#1A2F5A" stroke-width="1.6" stroke-linecap="round"></path></svg>
+                        <span style="font-size: 0.55em; color: #4B5563; text-align: center; line-height: 1.15;">Slecht</span>
+                      </div>
+                  </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.9em;">
+                  <div style="flex: 1; background: #E8711A; color: #FFFFFF; border-radius: 0.9em; padding: 0.8em; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <svg width="2.1em" height="2.1em" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path><path d="M10 21v-6h4v6"></path></svg>
+                    <div style="font-size: 1.55em; font-weight: 700; margin-top: 0.15em;">Ik wil bezoek</div>
+                    <div style="font-size: 0.75em; opacity: 0.9;">Je familie krijgt het meteen te zien</div>
+                  </div>
+                  <div style="border: 0.08em solid #E5E7EB; border-radius: 0.9em; padding: 0.7em 0.9em;">
+                    <div style="font-size: 1em; font-weight: 700; margin-bottom: 0.35em;">Vandaag</div>
+                    <div style="display: flex; gap: 0.7em; font-size: 0.85em; margin-bottom: 0.2em;"><span style="color: #1A7A6E; font-weight: 700;">10:30</span><span>Huisarts</span></div>
+                    <div style="display: flex; gap: 0.7em; font-size: 0.85em;"><span style="color: #1A7A6E; font-weight: 700;">15:00</span><span>Koffie met Ans</span></div>
+                  </div>
+                </div>
+              </div>
+              <div style="border-top: 0.08em solid #E5E7EB; padding: 0.45em 0.6em 0.5em; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));"><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #1A7A6E;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5M5 9.5V21h14V9.5M10 21v-6h4v6"></path></svg><span style="font-size: 0.6em; font-weight: 700;">Thuis</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v15H4zM4 10h16M8.5 3v4M15.5 3v4"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Mijn dag</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.5l2.2 11h10.6L20.5 7.5H6.5M9.5 20h.01M17 20h.01"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Boodschap</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM8.5 10.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM20 15l-5-5-9 9"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Foto's</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Verhaal</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Tip</span></div></div>
+            </div>
+          </div>
+          <div class="dia-tekst">
+            <div style="font-size: 14px; font-weight: 700; color: #E8711A;">1 van 5</div>
+            <div style="font-size: clamp(20px, 2.3vw, 28px); line-height: 1.15; font-weight: 700; margin-top: 4px;">Rosa heeft zin in gezelschap</div>
+            <div style="font-size: clamp(15px, 1.35vw, 17px); line-height: 1.45; color: #4A5875; margin-top: 8px;">Eén tik op Ik wil bezoek. Meer hoeft ze niet te doen.</div>
+          </div>
+        </div>
+        <div style="flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative;">
+          <div style="position: relative; width: var(--b); margin: 0 auto;">
+            <img src="/site/img/telefoon.jpg" width="1790" height="1000" loading="lazy" alt="Een hand tikt op Ik kom langs in Clanoo op een telefoon" style="display: block; width: 100%; height: auto;">
+            <div style="position: absolute; left: 38.72%; top: 8.6%; width: 21.45%; height: 84%; border-radius: 9%/4.2%; overflow: hidden; background: #F3F4F6; color: #1A2F5A; font-size: calc(var(--b) * 0.0107);">
+              <div style="position: absolute; left: 0; right: 0; top: 0; height: 6.6em; background: #1A7A6E; color: #FFFFFF; padding: 2.4em 1em 0; box-sizing: border-box;">
+                <div style="font-size: 0.7em; opacity: 0.8;">‹ Dashboard</div>
+                <div style="font-size: 1.15em; font-weight: 700;">Familie Van Dijk</div>
+              </div>
+              <div style="position: absolute; left: 0.9em; right: 0.9em; top: 7.6em; background: #FFFFFF; border-radius: 0.8em; padding: 0.8em; display: flex; gap: 0.7em; align-items: center;">
+                <svg width="2.6em" height="2.6em" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#F7C548"></circle><circle cx="8.6" cy="10" r="1.3" fill="#1A2F5A"></circle><circle cx="15.4" cy="10" r="1.3" fill="#1A2F5A"></circle><path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5" fill="none" stroke="#1A2F5A" stroke-width="1.6" stroke-linecap="round"></path></svg>
+                <div><div style="font-size: 0.72em; color: #6B7280;">Rosa voelt zich vandaag</div><div style="font-size: 1em; font-weight: 700;">Goed</div></div>
+              </div>
+              <div style="position: absolute; left: 0.9em; right: 0.9em; top: 13.6em; background: #FDF2EC; border: 0.12em solid #E8711A; border-radius: 0.8em; padding: 0.9em 0.8em; box-sizing: border-box; height: 10.6em;">
+                <div style="font-size: 0.95em; font-weight: 700;">Rosa wil graag bezoek</div>
+                <div style="font-size: 0.7em; color: #6B7280; margin-top: 0.2em;">Net gevraagd</div>
+                <div style="position: absolute; left: 0.8em; right: 0.8em; bottom: 0.9em; height: 3.2em; background: #1A7A6E; color: #FFFFFF; border-radius: 0.6em; display: flex; align-items: center; justify-content: center; font-size: 0.95em; font-weight: 700;">Ik kom langs</div>
+              </div>
+              <div style="position: absolute; left: 0.9em; right: 0.9em; top: 25.4em; background: #FFFFFF; border-radius: 0.8em; padding: 0.8em;">
+                <div style="font-size: 0.8em; font-weight: 700; margin-bottom: 0.3em;">Komende afspraken</div>
+                <div style="font-size: 0.7em; color: #4B5563;">Do 29 okt · 10:30 Huisarts</div>
+              </div>
+            </div>
+            <img src="/site/img/vinger.png" alt="" aria-hidden="true" style="position: absolute; left: 38.72%; top: 8.6%; width: 21.45%; height: 84%; pointer-events: none;">
+          </div>
+          <div class="dia-tekst">
+            <div style="font-size: 14px; font-weight: 700; color: #E8711A;">2 van 5</div>
+            <div style="font-size: clamp(20px, 2.3vw, 28px); line-height: 1.15; font-weight: 700; margin-top: 4px;">Zoon Nick ziet het meteen</div>
+            <div style="font-size: clamp(15px, 1.35vw, 17px); line-height: 1.45; color: #4A5875; margin-top: 8px;">Op zijn telefoon, waar hij ook is. Hij ziet ook hoe Rosa zich vandaag voelt.</div>
+          </div>
+        </div>
+        <div style="flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative;">
+          <div style="position: relative; width: var(--b); margin: 0 auto;">
+            <img src="/site/img/telefoon.jpg" width="1790" height="1000" loading="lazy" alt="Een hand kiest Vanavond in Clanoo op een telefoon" style="display: block; width: 100%; height: auto;">
+            <div style="position: absolute; left: 38.72%; top: 8.6%; width: 21.45%; height: 84%; border-radius: 9%/4.2%; overflow: hidden; background: #F3F4F6; color: #1A2F5A; font-size: calc(var(--b) * 0.0107);">
+              <div style="position: absolute; left: 0; right: 0; top: 0; height: 6.6em; background: #1A7A6E; color: #FFFFFF; padding: 2.4em 1em 0; box-sizing: border-box;">
+                <div style="font-size: 0.7em; opacity: 0.8;">‹ Dashboard</div>
+                <div style="font-size: 1.15em; font-weight: 700;">Familie Van Dijk</div>
+              </div>
+              <div style="position: absolute; left: 0.9em; right: 0.9em; top: 7.6em;">
+                <div style="font-size: 0.95em; font-weight: 700;">Rosa wil graag bezoek</div>
+                <div style="font-size: 0.8em; color: #4B5563; margin-top: 0.5em;">Wanneer kom je ongeveer?</div>
+              </div>
+              <div style="position: absolute; left: 0.9em; right: 0.9em; top: 11.4em; height: 2.6em; border-radius: 0.6em; background: #FFFFFF; color: #1A2F5A; border: 0.12em solid #1A7A6E; display: flex; align-items: center; justify-content: center; font-weight: 700;"><span style="font-size: 0.95em;">Binnen een uur</span></div><div style="position: absolute; left: 0.9em; right: 0.9em; top: 14.7em; height: 2.6em; border-radius: 0.6em; background: #FFFFFF; color: #1A2F5A; border: 0.12em solid #1A7A6E; display: flex; align-items: center; justify-content: center; font-weight: 700;"><span style="font-size: 0.95em;">Vanmiddag</span></div><div style="position: absolute; left: 0.9em; right: 0.9em; top: 18.0em; height: 2.6em; border-radius: 0.6em; background: #1A7A6E; color: #FFFFFF; border: 0.12em solid #1A7A6E; display: flex; align-items: center; justify-content: center; font-weight: 700;"><span style="font-size: 0.95em;">Vanavond</span></div><div style="position: absolute; left: 0.9em; right: 0.9em; top: 21.3em; height: 2.6em; border-radius: 0.6em; background: #FFFFFF; color: #1A2F5A; border: 0.12em solid #1A7A6E; display: flex; align-items: center; justify-content: center; font-weight: 700;"><span style="font-size: 0.95em;">Morgen</span></div>
+              <div style="position: absolute; left: 0.9em; right: 0.9em; top: 24.9em; color: #6B7280;"><span style="font-size: 0.7em;">Of kies zelf een tijd</span></div>
+              <div style="position: absolute; left: 0.9em; right: 0.9em; top: 26.4em; display: flex; gap: 0.5em;"><div style="flex: 1; height: 2.5em; background: #FFFFFF; border: 0.08em solid #D1D5DB; border-radius: 0.6em; display: flex; align-items: center; padding: 0 0.7em; color: #9CA3AF;"><span style="font-size: 0.85em;">--:--</span></div><div style="height: 2.5em; background: #A3CFC9; color: #FFFFFF; border-radius: 0.6em; display: flex; align-items: center; padding: 0 0.7em; font-weight: 700;"><span style="font-size: 0.75em;">Vandaag rond ...</span></div></div>
+            </div>
+            <img src="/site/img/vinger.png" alt="" aria-hidden="true" style="position: absolute; left: 38.72%; top: 8.6%; width: 21.45%; height: 84%; pointer-events: none;">
+          </div>
+          <div class="dia-tekst">
+            <div style="font-size: 14px; font-weight: 700; color: #E8711A;">3 van 5</div>
+            <div style="font-size: clamp(20px, 2.3vw, 28px); line-height: 1.15; font-weight: 700; margin-top: 4px;">Nick laat weten wanneer hij komt</div>
+            <div style="font-size: clamp(15px, 1.35vw, 17px); line-height: 1.45; color: #4A5875; margin-top: 8px;">Hij tikt op Vanavond. Hij had ook een precieze tijd kunnen kiezen.</div>
+          </div>
+        </div>
+        <div style="flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative;">
+          <div style="position: relative; width: var(--b); margin: 0 auto; font-size: calc(var(--b) * 0.012);">
+            <img src="/site/img/tablet.jpg" width="2304" height="1286" loading="lazy" alt="Twee handen houden een tablet vast met Clanoo erop" style="display: block; width: 100%; height: auto;">
+            <div style="position: absolute; left: 29.23%; top: 13.14%; width: 43.17%; height: 58.28%; border-radius: 0.9em; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column; color: #1A2F5A;">
+              <div style="background: #1A7A6E; color: #FFFFFF; padding: 0.9em 1.3em; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-size: 0.85em; opacity: 0.85;">Goedemiddag,</div>
+                  <div style="font-size: 1.7em; font-weight: 700; line-height: 1.1;">Rosa</div>
+                </div>
+                <div style="font-size: 0.8em; opacity: 0.85; text-align: right;">Dinsdag 27 oktober<br>Familie Van Dijk</div>
+              </div>
+              <div style="flex: 1; min-height: 0; padding: 0.8em 1em; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8em;">
+                <div style="border: 0.15em solid #1A7A6E; background: #E8F5F3; border-radius: 0.9em; padding: 0.9em 1em; display: flex; align-items: center; gap: 0.9em;">
+                  <svg width="4.2em" height="4.2em" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#F7C548"></circle><circle cx="8.6" cy="10" r="1.3" fill="#1A2F5A"></circle><circle cx="15.4" cy="10" r="1.3" fill="#1A2F5A"></circle><path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5" fill="none" stroke="#1A2F5A" stroke-width="1.6" stroke-linecap="round"></path></svg>
+                  <div>
+                    <div style="font-size: 0.8em; color: #4B5563;">Vandaag voel je je</div>
+                    <div style="font-size: 1.6em; font-weight: 700;">Goed</div>
+                    <div style="font-size: 0.75em; color: #1A7A6E;">Je familie ziet dit ook</div>
+                  </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.9em;">
+                  <div style="flex: 1; background: #FDF2EC; border: 0.15em solid #E8711A; border-radius: 0.9em; padding: 0.8em; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <svg width="2.1em" height="2.1em" viewBox="0 0 24 24" fill="none" stroke="#E8711A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.4-7.5-10A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.9c0 5.6-7.5 10-7.5 10z"></path></svg>
+                    <div style="font-size: 1.45em; font-weight: 700; margin-top: 0.15em;">Nick komt langs!</div>
+                    <div style="font-size: 0.95em; font-weight: 700; color: #1A2F5A;">Vanavond</div>
+                  </div>
+                  <div style="border: 0.08em solid #E5E7EB; border-radius: 0.9em; padding: 0.7em 0.9em;">
+                    <div style="font-size: 1em; font-weight: 700; margin-bottom: 0.35em;">Vandaag</div>
+                    <div style="display: flex; gap: 0.7em; font-size: 0.85em; margin-bottom: 0.2em;"><span style="color: #1A7A6E; font-weight: 700;">10:30</span><span>Huisarts</span></div>
+                    <div style="display: flex; gap: 0.7em; font-size: 0.85em;"><span style="color: #1A7A6E; font-weight: 700;">15:00</span><span>Koffie met Ans</span></div>
+                  </div>
+                </div>
+              </div>
+              <div style="border-top: 0.08em solid #E5E7EB; padding: 0.45em 0.6em 0.5em; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));"><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #1A7A6E;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5M5 9.5V21h14V9.5M10 21v-6h4v6"></path></svg><span style="font-size: 0.6em; font-weight: 700;">Thuis</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v15H4zM4 10h16M8.5 3v4M15.5 3v4"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Mijn dag</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.5l2.2 11h10.6L20.5 7.5H6.5M9.5 20h.01M17 20h.01"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Boodschap</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM8.5 10.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM20 15l-5-5-9 9"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Foto's</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Verhaal</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Tip</span></div></div>
+            </div>
+          </div>
+          <div class="dia-tekst">
+            <div style="font-size: 14px; font-weight: 700; color: #E8711A;">4 van 5</div>
+            <div style="font-size: clamp(20px, 2.3vw, 28px); line-height: 1.15; font-weight: 700; margin-top: 4px;">En Rosa weet waar ze naar uitkijkt</div>
+            <div style="font-size: clamp(15px, 1.35vw, 17px); line-height: 1.45; color: #4A5875; margin-top: 8px;">Geen gebel heen en weer. Wel bezoek.</div>
+          </div>
+        </div>
+        <div style="flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative;">
+          <div style="position: relative; width: var(--b); margin: 0 auto; font-size: calc(var(--b) * 0.012);">
+            <img src="/site/img/tablet.jpg" width="2304" height="1286" loading="lazy" alt="Twee handen houden een tablet vast met de boodschappenlijst van Clanoo" style="display: block; width: 100%; height: auto;">
+            <div style="position: absolute; left: 29.23%; top: 13.14%; width: 43.17%; height: 58.28%; border-radius: 0.9em; overflow: hidden; background: #FFFFFF; display: flex; flex-direction: column; color: #1A2F5A;">
+              <div style="background: #1A7A6E; color: #FFFFFF; padding: 0.9em 1.3em; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-size: 0.85em; opacity: 0.85;">Goedemiddag,</div>
+                  <div style="font-size: 1.7em; font-weight: 700; line-height: 1.1;">Rosa</div>
+                </div>
+                <div style="font-size: 0.8em; opacity: 0.85; text-align: right;">Dinsdag 27 oktober<br>Familie Van Dijk</div>
+              </div>
+              <div style="flex: 1; min-height: 0; padding: 0.8em 1.1em; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6em 1.2em; align-content: start;">
+                <div style="grid-column: 1 / -1; display: flex; gap: 0.5em;">
+                  <div style="flex: 1; border: 0.14em solid #1A7A6E; border-radius: 0.6em; padding: 0.55em 0.7em; font-size: 0.95em;">Appelmoes<span style="display: inline-block; width: 0.08em; height: 1em; background: #1A2F5A; vertical-align: -0.15em; margin-left: 0.1em;"></span></div>
+                  <div style="background: #1A7A6E; color: #FFFFFF; border-radius: 0.6em; padding: 0 0.9em; display: flex; align-items: center; font-size: 1.2em; font-weight: 700;">＋</div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.4em;">
+                  <div style="font-size: 1em; font-weight: 700;">Nog halen (3)</div>
+                  <div style="background: #FFFFFF; border: 0.08em solid #E5E7EB; border-radius: 0.6em; padding: 0.5em 0.7em; display: flex; align-items: center; gap: 0.6em; font-size: 0.95em;"><span style="width: 1.3em; height: 1.3em; border: 0.14em solid #1A7A6E; border-radius: 0.3em; flex: 0 0 auto;"></span><span>Melk</span></div><div style="background: #FFFFFF; border: 0.08em solid #E5E7EB; border-radius: 0.6em; padding: 0.5em 0.7em; display: flex; align-items: center; gap: 0.6em; font-size: 0.95em;"><span style="width: 1.3em; height: 1.3em; border: 0.14em solid #1A7A6E; border-radius: 0.3em; flex: 0 0 auto;"></span><span>Brood</span></div><div style="background: #FFFFFF; border: 0.08em solid #E5E7EB; border-radius: 0.6em; padding: 0.5em 0.7em; display: flex; align-items: center; gap: 0.6em; font-size: 0.95em;"><span style="width: 1.3em; height: 1.3em; border: 0.14em solid #1A7A6E; border-radius: 0.3em; flex: 0 0 auto;"></span><span>Koffie</span></div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.4em;">
+                  <div style="font-size: 1em; font-weight: 700; color: #6B7280;">Eerder gekocht</div>
+                  <div style="background: #F9FAFB; border: 0.08em solid #F3F4F6; color: #6B7280; border-radius: 0.6em; padding: 0.5em 0.7em; display: flex; align-items: center; gap: 0.6em; font-size: 0.95em;"><span style="width: 1.3em; height: 1.3em; background: #E8F5F3; color: #1A7A6E; border-radius: 0.3em; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; font-size: 0.8em;">✓</span><span>Pindakaas</span><span style="margin-left: auto; font-size: 0.75em; color: #1A7A6E; font-weight: 700;">＋ opnieuw</span></div><div style="background: #F9FAFB; border: 0.08em solid #F3F4F6; color: #6B7280; border-radius: 0.6em; padding: 0.5em 0.7em; display: flex; align-items: center; gap: 0.6em; font-size: 0.95em;"><span style="width: 1.3em; height: 1.3em; background: #E8F5F3; color: #1A7A6E; border-radius: 0.3em; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; font-size: 0.8em;">✓</span><span>Theezakjes</span><span style="margin-left: auto; font-size: 0.75em; color: #1A7A6E; font-weight: 700;">＋ opnieuw</span></div>
+                </div>
+              </div>
+              <div style="border-top: 0.08em solid #E5E7EB; padding: 0.45em 0.6em 0.5em; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));"><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5M5 9.5V21h14V9.5M10 21v-6h4v6"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Thuis</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v15H4zM4 10h16M8.5 3v4M15.5 3v4"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Mijn dag</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #1A7A6E;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.5l2.2 11h10.6L20.5 7.5H6.5M9.5 20h.01M17 20h.01"></path></svg><span style="font-size: 0.6em; font-weight: 700;">Boodschap</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM8.5 10.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM20 15l-5-5-9 9"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Foto's</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Verhaal</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 0.15em; color: #9CA3AF;"><svg width="1.35em" height="1.35em" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"></path></svg><span style="font-size: 0.6em; font-weight: 400;">Tip</span></div></div>
+            </div>
+          </div>
+          <div class="dia-tekst">
+            <div style="font-size: 14px; font-weight: 700; color: #E8711A;">5 van 5</div>
+            <div style="font-size: clamp(20px, 2.3vw, 28px); line-height: 1.15; font-weight: 700; margin-top: 4px;">Rosa doet zelf mee</div>
+            <div style="font-size: clamp(15px, 1.35vw, 17px); line-height: 1.45; color: #4A5875; margin-top: 8px;">Ze zet appelmoes op de boodschappenlijst, bekijkt nieuwe foto's van de kleinkinderen en spreekt een herinnering in. Haar Clanoo, op haar manier.</div>
+          </div>
+        </div>
+      </div>
+      </div>
+      <div style="display: flex; justify-content: center; align-items: center; gap: 12px; padding: 14px 0 6px;">
+        <div style="display: flex; align-items: center; gap: 10px; background: #E8E8ED; border-radius: 999px; padding: 0 22px; height: 52px;">
+          <button type="button" class="stip" aria-label="Beeld 1 van 5" style="width: 44px; height: 8px; transition: width .35s ease; border-radius: 999px; border: 0; padding: 0; background: #A1A1A6; overflow: hidden; cursor: pointer; display: flex;"><span class="vulling" style="display: block; height: 100%; width: 0%; background: #1D1D1F; border-radius: 999px;"></span></button>
+          
+            <button type="button" class="stip" aria-label="Beeld 2 van 5" style="width: 8px; height: 8px; transition: width .35s ease; border-radius: 999px; border: 0; padding: 0; background: #A1A1A6; overflow: hidden; cursor: pointer; display: flex;"><span class="vulling" style="display: block; height: 100%; width: 0%; background: #1D1D1F; border-radius: 999px;"></span></button>
+          
+            <button type="button" class="stip" aria-label="Beeld 3 van 5" style="width: 8px; height: 8px; transition: width .35s ease; border-radius: 999px; border: 0; padding: 0; background: #A1A1A6; overflow: hidden; cursor: pointer; display: flex;"><span class="vulling" style="display: block; height: 100%; width: 0%; background: #1D1D1F; border-radius: 999px;"></span></button>
+          
+            <button type="button" class="stip" aria-label="Beeld 4 van 5" style="width: 8px; height: 8px; transition: width .35s ease; border-radius: 999px; border: 0; padding: 0; background: #A1A1A6; overflow: hidden; cursor: pointer; display: flex;"><span class="vulling" style="display: block; height: 100%; width: 0%; background: #1D1D1F; border-radius: 999px;"></span></button>
+          
+            <button type="button" class="stip" aria-label="Beeld 5 van 5" style="width: 8px; height: 8px; transition: width .35s ease; border-radius: 999px; border: 0; padding: 0; background: #A1A1A6; overflow: hidden; cursor: pointer; display: flex;"><span class="vulling" style="display: block; height: 100%; width: 0%; background: #1D1D1F; border-radius: 999px;"></span></button>
+        </div>
+        <button type="button" id="wissel" aria-label="Pauzeren" style="width: 52px; height: 52px; border-radius: 50%; border: 0; background: #E8E8ED; color: #1D1D1F; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+          <svg class="ic-pauze" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1.2" fill="#1D1D1F"></rect><rect x="14" y="4" width="4" height="16" rx="1.2" fill="#1D1D1F"></rect></svg>
+          <svg class="ic-speel" style="display:none" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z" fill="#1D1D1F"></path></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Openingskop -->
+  <section style="background: #F7F7F9; padding: 24px 24px 96px; text-align: center;">
+    <p style="margin: 0 0 14px; font-size: 16px; font-weight: 700; color: #E8711A; letter-spacing: 0.4px;">Vanaf januari 2027</p>
+    <h1 style="margin: 0 auto; max-width: 860px; font-size: clamp(40px, 7vw, 76px); line-height: 1.04; letter-spacing: -1.5px; font-weight: 700;">Zorg mét je,<br>niet over je.</h1>
+    <p style="margin: 22px auto 0; max-width: 640px; font-size: clamp(18px, 2.2vw, 22px); line-height: 1.5; color: #4A5875;">De familie-app voor zorg met liefde. De persoon om wie het draait beslist mee, en wat die nodig heeft mag er gewoon zijn.</p>
+    <div style="margin-top: 30px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;">
+      <a href="/wachtlijst" style="background: #E8711A; color: #FFFFFF; text-decoration: none; font-size: 18px; font-weight: 700; padding: 16px 28px; border-radius: 999px;">Zet me op de wachtlijst</a>
+      <a href="#hoe" style="background: #FFFFFF; color: #1A7A6E; text-decoration: none; font-size: 18px; font-weight: 700; padding: 15px 27px; border-radius: 999px; border: 1.5px solid #1A7A6E;">Zo werkt het</a>
+    </div>
+    <p style="margin: 16px 0 0; font-size: 15px; color: #5B6780;">Oprichtersprijs voor de eerste 100 families: €69 het eerste jaar.</p>
+  </section>
+
+  <!-- Hoofdpersoon -->
+  <section id="hoofdpersoon" style="background: #FDF6F0; padding: 96px 24px;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <p style="margin: 0 0 10px; font-size: 16px; font-weight: 700; color: #E8711A;">Voor de hoofdpersoon</p>
+      <h2 style="margin: 0; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; letter-spacing: -1px; max-width: 720px;">Wat jij nodig hebt, telt mee.</h2>
+      <p style="margin: 18px 0 0; font-size: 20px; line-height: 1.55; color: #4A5875; max-width: 620px;">Clanoo begint bij de persoon om wie het draait. Grote knoppen en duidelijke letters. Geen wachtwoord, wel veilig. Je logt in met een persoonlijke link die alleen in jouw mailbox komt en maar één keer werkt.</p>
+      <div style="margin-top: 48px; display: flex; flex-wrap: wrap; gap: 20px;">
+
+        <div style="flex: 2 1 560px; min-width: 0; background: #E8711A; color: #FFFFFF; border-radius: 32px; padding: clamp(28px, 4vw, 48px); display: flex; flex-wrap: wrap; gap: 32px; align-items: center; justify-content: space-between; min-height: 340px; box-sizing: border-box;">
+          <div style="flex: 1 1 260px;">
+            <h3 style="margin: 0; font-size: clamp(30px, 3.6vw, 44px); line-height: 1.05; letter-spacing: -0.8px;">Zin in bezoek?<br>Eén tik.</h3>
+            <p style="margin: 16px 0 0; font-size: 18px; line-height: 1.5; color: #FFE8D6; max-width: 340px;">De familie ziet het meteen. Wie komt, laat weten wanneer.</p>
+          </div>
+          <div style="flex: 0 1 300px; background: #FFFFFF; color: #1A2F5A; border-radius: 26px; padding: 30px 24px; text-align: center; box-shadow: 0 18px 40px rgba(120,50,0,0.22);">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#E8711A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path><path d="M10 21v-6h4v6"></path></svg>
+            <div style="font-size: 32px; font-weight: 700; margin-top: 6px;">Ik wil bezoek</div>
+          </div>
+        </div>
+
+        <div style="flex: 1 1 320px; min-width: 0; background: #FFFFFF; border-radius: 32px; padding: clamp(28px, 3vw, 40px); display: flex; flex-direction: column; justify-content: space-between; gap: 28px; min-height: 340px; box-sizing: border-box;">
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;"><div style="width: 64px; height: 64px; border-radius: 50%;  flex: 0 0 auto;"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#F7C548"></circle><circle cx="8.6" cy="10" r="1.3" fill="#1A2F5A"></circle><circle cx="15.4" cy="10" r="1.3" fill="#1A2F5A"></circle><path d="M7.5 13.5c1.2 2.2 2.7 3.2 4.5 3.2s3.3-1 4.5-3.2" fill="none" stroke="#1A2F5A" stroke-width="1.5" stroke-linecap="round"></path></svg></div><div style="width: 64px; height: 64px; border-radius: 50%; box-shadow: 0 0 0 4px #1A7A6E; flex: 0 0 auto;"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#F7C548"></circle><circle cx="8.6" cy="10" r="1.3" fill="#1A2F5A"></circle><circle cx="15.4" cy="10" r="1.3" fill="#1A2F5A"></circle><path d="M8.5 14.5c1 1 2.1 1.5 3.5 1.5s2.5-.5 3.5-1.5" fill="none" stroke="#1A2F5A" stroke-width="1.5" stroke-linecap="round"></path></svg></div><div style="width: 64px; height: 64px; border-radius: 50%;  flex: 0 0 auto;"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#F7C548"></circle><circle cx="8.6" cy="10" r="1.3" fill="#1A2F5A"></circle><circle cx="15.4" cy="10" r="1.3" fill="#1A2F5A"></circle><path d="M8.5 15h7" fill="none" stroke="#1A2F5A" stroke-width="1.5" stroke-linecap="round"></path></svg></div><div style="width: 64px; height: 64px; border-radius: 50%;  flex: 0 0 auto;"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#F7C548"></circle><circle cx="8.6" cy="10" r="1.3" fill="#1A2F5A"></circle><circle cx="15.4" cy="10" r="1.3" fill="#1A2F5A"></circle><path d="M8.5 16c1-.9 2.1-1.3 3.5-1.3s2.5.4 3.5 1.3" fill="none" stroke="#1A2F5A" stroke-width="1.5" stroke-linecap="round"></path></svg></div><div style="width: 64px; height: 64px; border-radius: 50%;  flex: 0 0 auto;"><svg width="64" height="64" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#F7C548"></circle><circle cx="8.6" cy="10" r="1.3" fill="#1A2F5A"></circle><circle cx="15.4" cy="10" r="1.3" fill="#1A2F5A"></circle><path d="M7.5 17c1.2-1.8 2.7-2.6 4.5-2.6s3.3.8 4.5 2.6" fill="none" stroke="#1A2F5A" stroke-width="1.5" stroke-linecap="round"></path></svg></div></div>
+          <div>
+            <h3 style="margin: 0; font-size: clamp(26px, 2.8vw, 34px); line-height: 1.1; letter-spacing: -0.5px;">Hoe gaat het vandaag?</h3>
+            <p style="margin: 12px 0 0; font-size: 17px; line-height: 1.5; color: #4A5875;">Eén smiley, en veranderen mag als je dag anders loopt. Geen formulier, geen vragenlijst.</p>
+          </div>
+        </div>
+
+        <div style="flex: 1 1 320px; min-width: 0; background: #1A2F5A; color: #FFFFFF; border-radius: 32px; padding: clamp(28px, 3vw, 40px); display: flex; flex-direction: column; justify-content: space-between; gap: 28px; min-height: 340px; box-sizing: border-box;">
+          <div style="background: #24407A; border-radius: 20px; padding: 18px 20px; display: flex; align-items: center; gap: 14px;">
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#F4A261" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3.5 6.5 8.5 6.5 8.5-6.5"></path></svg>
+            <div>
+              <div style="font-size: 16px; font-weight: 700;">Jouw inloglink</div>
+              <div style="font-size: 14px; color: #C9D2E6;">Werkt één keer · alleen in jouw mailbox</div>
+            </div>
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: clamp(26px, 2.8vw, 34px); line-height: 1.1; letter-spacing: -0.5px;">Geen wachtwoord.<br>Wel veilig.</h3>
+            <p style="margin: 12px 0 0; font-size: 17px; line-height: 1.5; color: #C9D2E6;">De link komt alleen bij jou binnen en vervalt na een uur.</p>
+          </div>
+        </div>
+
+        <div style="flex: 2 1 560px; min-width: 0; background: #E8F5F3; border-radius: 32px; padding: clamp(28px, 4vw, 48px); display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-end; justify-content: space-between; min-height: 340px; box-sizing: border-box;">
+          <div style="flex: 1 1 260px;">
+            <h3 style="margin: 0; font-size: clamp(30px, 3.6vw, 44px); line-height: 1.05; letter-spacing: -0.8px;">Letters zo groot<br>als je wilt.</h3>
+            <p style="margin: 16px 0 0; font-size: 18px; line-height: 1.5; color: #4A5875; max-width: 360px;">Een lettertype dat ook bij slecht zien goed leesbaar is. Geluid aan of uit, jij kiest.</p>
+          </div>
+          <div style="display: flex; align-items: flex-end; gap: clamp(10px, 3vw, 18px); color: #1A7A6E; font-weight: 700; line-height: 0.8;">
+            <span style="font-size: clamp(24px, 6vw, 36px); opacity: 0.45;">Aa</span>
+            <span style="font-size: clamp(36px, 9vw, 56px); opacity: 0.65;">Aa</span>
+            <span style="font-size: clamp(52px, 14vw, 84px); opacity: 0.85;">Aa</span>
+            <span style="font-size: clamp(72px, 20vw, 120px);">Aa</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Mijn verhaal -->
+  <section id="verhaal" style="padding: 96px 24px; background: #FFFFFF;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <p style="margin: 0 0 10px; font-size: 16px; font-weight: 700; color: #E8711A;">Mijn verhaal</p>
+      <h2 style="margin: 0; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; letter-spacing: -1px;">Haar verhalen blijven bewaard.</h2>
+      <p style="margin: 18px 0 0; font-size: 20px; line-height: 1.55; color: #4A5875; max-width: 560px;">Rosa vertelt over vroeger, gewoon hardop. Clanoo zet haar woorden op papier. Typen hoeft niet.</p>
+
+      <div style="position: relative; margin-top: 44px; border-radius: 32px; overflow: hidden; font-size: calc(min(1100px, 100vw - 48px) * 0.0109);">
+        <img src="/site/img/keuken.jpg" width="2200" height="1229" loading="lazy" alt="Oude handen houden aan de keukentafel een tablet vast met Mijn verhaal open" style="display: block; width: 100%; height: auto;">
+        <div style="position: absolute; left: 31.75%; top: 29.49%; width: 37.03%; height: 43.88%; clip-path: polygon(1.4% 0, 98.7% 0, 100% 100%, 0 100%); background: #FFFFFF; color: #1A2F5A; display: flex; flex-direction: column;">
+          <div style="background: #1A7A6E; color: #FFFFFF; padding: 0.8em 1.6em; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 1.5em; font-weight: 700;">Mijn verhaal</div>
+            <div style="font-size: 0.8em; opacity: 0.85;">Rosa · Familie Van Dijk</div>
+          </div>
+          <div style="flex: 1; min-height: 0; padding: 1em 1.6em; display: flex; gap: 1.2em;">
+            <div style="flex: 0 0 32%; display: flex; flex-direction: column; gap: 0.8em;">
+              <div style="flex: 1; background: #E8711A; color: #FFFFFF; border-radius: 0.9em; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4em; text-align: center;">
+                <div style="width: 3.6em; height: 3.6em; border-radius: 50%; background: rgba(255,255,255,0.22); display: flex; align-items: center; justify-content: center;"><svg width="2em" height="2em" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5.5 11a6.5 6.5 0 0 0 13 0"></path><path d="M12 17.5V21"></path></svg></div>
+                <div style="font-size: 1.15em; font-weight: 700;">Ik luister...</div>
+                <div style="font-size: 0.75em; opacity: 0.9;">Tik om te stoppen</div>
+              </div>
+              <div style="border: 0.1em solid #E5E7EB; border-radius: 0.9em; padding: 0.6em 0.8em; font-size: 0.8em; color: #6B7280;">Liever typen? Tik hier.</div>
+            </div>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.7em;">
+              <div style="background: #FDF6F0; border-radius: 0.9em; padding: 0.9em 1em;">
+                <div style="font-size: 0.75em; color: #6B7280; margin-bottom: 0.3em;">Nu aan het vertellen</div>
+                <div style="font-size: 1.05em; line-height: 1.45;">Op mijn twintigste fietste ik elke zaterdag naar de markt in Dordrecht. Daar heb ik opa leren kennen, bij de kaaskraam<span style="display: inline-block; width: 0.08em; height: 1em; background: #1A2F5A; vertical-align: -0.15em; margin-left: 0.1em;"></span></div>
+              </div>
+              <div style="font-size: 0.85em; font-weight: 700;">Eerdere verhalen</div>
+              <div style="border: 0.1em solid #E5E7EB; border-radius: 0.8em; padding: 0.55em 0.8em; font-size: 0.8em;"><span style="color: #6B7280;">3 oktober · </span>Mijn tip voor appeltaart</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 44px; display: flex; flex-wrap: wrap; gap: 28px;">
+        <div style="flex: 1 1 280px; display: flex; gap: 16px; align-items: flex-start;">
+          <span style="flex: 0 0 auto; width: 48px; height: 48px; border-radius: 14px; background: #FDF2EC; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8711A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5.5 11a6.5 6.5 0 0 0 13 0"></path><path d="M12 17.5V21"></path></svg></span>
+          <div><h3 style="margin: 2px 0 4px; font-size: 20px;">Inspreken of typen</h3><p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Tik op de microfoon en vertel, of typ het zelf. Clanoo bewaart het.</p></div>
+        </div>
+        <div style="flex: 1 1 280px; display: flex; gap: 16px; align-items: flex-start;">
+          <span style="flex: 0 0 auto; width: 48px; height: 48px; border-radius: 14px; background: #FDF2EC; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8711A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5h6a2 2 0 0 1 2 2v13a1.5 1.5 0 0 0-1.5-1.5H4zM20 4.5h-6a2 2 0 0 0-2 2v13a1.5 1.5 0 0 1 1.5-1.5H20z"></path></svg></span>
+          <div><h3 style="margin: 2px 0 4px; font-size: 20px;">Voor de hele familie</h3><p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Kinderen en kleinkinderen lezen haar verhalen terug, wanneer ze maar willen.</p></div>
+        </div>
+        <div style="flex: 1 1 280px; display: flex; gap: 16px; align-items: flex-start;">
+          <span style="flex: 0 0 auto; width: 48px; height: 48px; border-radius: 14px; background: #FDF2EC; display: flex; align-items: center; justify-content: center;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E8711A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"></path></svg></span>
+          <div><h3 style="margin: 2px 0 4px; font-size: 20px;">Altijd van jullie</h3><p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Download alle verhalen als boekje, wanneer je maar wilt. Stoppen jullie ooit met Clanoo, dan nemen jullie ze mee. Alles staat veilig opgeslagen in Europa.</p><a href="/privacy" style="display: inline-block; margin-top: 8px; font-size: 16px; font-weight: 700; color: #1A7A6E;">Wat de Europese privacywet voor jullie betekent ›</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Familie -->
+  <section id="familie" style="padding: 96px 24px; background: #FFFFFF;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <p style="margin: 0 0 10px; font-size: 16px; font-weight: 700; color: #1A7A6E;">Voor de familie</p>
+      <h2 style="margin: 0; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; letter-spacing: -1px; max-width: 760px;">Alle zorg op één plek. Niemand hoeft alles alleen te onthouden.</h2>
+      <div style="margin-top: 44px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px;">
+        <div style="background: #F7F8F9; border-radius: 24px; padding: 28px; display: flex; gap: 18px; align-items: flex-start;">
+            <span style="flex: 0 0 auto; width: 52px; height: 52px; border-radius: 16px; background: #E8F5F3; display: flex; align-items: center; justify-content: center;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h16v15H4zM4 10h16M8.5 3v4M15.5 3v4"></path></svg>
+            </span>
+            <div>
+              <h3 style="margin: 2px 0 6px; font-size: 21px;">Agenda in kleuren</h3>
+              <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Huisarts, verjaardag of koffie-afspraak. Iedereen ziet wat er komt.</p>
+            </div>
+          </div>
+        
+          <div style="background: #F7F8F9; border-radius: 24px; padding: 28px; display: flex; gap: 18px; align-items: flex-start;">
+            <span style="flex: 0 0 auto; width: 52px; height: 52px; border-radius: 16px; background: #E8F5F3; display: flex; align-items: center; justify-content: center;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"></path></svg>
+            </span>
+            <div>
+              <h3 style="margin: 2px 0 6px; font-size: 21px;">Taken verdelen</h3>
+              <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Wie brengt oma naar de kapper? Zet het erin en kies wie het doet.</p>
+            </div>
+          </div>
+        
+          <div style="background: #F7F8F9; border-radius: 24px; padding: 28px; display: flex; gap: 18px; align-items: flex-start;">
+            <span style="flex: 0 0 auto; width: 52px; height: 52px; border-radius: 16px; background: #E8F5F3; display: flex; align-items: center; justify-content: center;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 20.5a5 5 0 0 1-7-7l6-6a5 5 0 0 1 7 7zM7 10.5l6.5 6.5"></path></svg>
+            </span>
+            <div>
+              <h3 style="margin: 2px 0 6px; font-size: 21px;">Medicijnen afvinken</h3>
+              <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Per tijdstip zien of de medicijnen genomen zijn.</p>
+            </div>
+          </div>
+        
+          <div style="background: #F7F8F9; border-radius: 24px; padding: 28px; display: flex; gap: 18px; align-items: flex-start;">
+            <span style="flex: 0 0 auto; width: 52px; height: 52px; border-radius: 16px; background: #E8F5F3; display: flex; align-items: center; justify-content: center;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.5l2.2 11h10.6L20.5 7.5H6.5M9.5 20h.01M17 20h.01"></path></svg>
+            </span>
+            <div>
+              <h3 style="margin: 2px 0 6px; font-size: 21px;">Boodschappenlijst</h3>
+              <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Wat op is, komt op de lijst. Wie langsgaat, neemt het mee.</p>
+            </div>
+          </div>
+        
+          <div style="background: #F7F8F9; border-radius: 24px; padding: 28px; display: flex; gap: 18px; align-items: flex-start;">
+            <span style="flex: 0 0 auto; width: 52px; height: 52px; border-radius: 16px; background: #E8F5F3; display: flex; align-items: center; justify-content: center;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM8.5 10.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM20 15l-5-5-9 9"></path></svg>
+            </span>
+            <div>
+              <h3 style="margin: 2px 0 6px; font-size: 21px;">Foto's delen</h3>
+              <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">De kleinkinderen, de tuin, het verjaardagsfeest. Meteen op de tablet thuis.</p>
+            </div>
+          </div>
+        
+          <div style="background: #F7F8F9; border-radius: 24px; padding: 28px; display: flex; gap: 18px; align-items: flex-start;">
+            <span style="flex: 0 0 auto; width: 52px; height: 52px; border-radius: 16px; background: #E8F5F3; display: flex; align-items: center; justify-content: center;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5h6a2 2 0 0 1 2 2v13a1.5 1.5 0 0 0-1.5-1.5H4zM20 4.5h-6a2 2 0 0 0-2 2v13a1.5 1.5 0 0 1 1.5-1.5H20z"></path></svg>
+            </span>
+            <div>
+              <h3 style="margin: 2px 0 6px; font-size: 21px;">Dagboek</h3>
+              <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Korte notities over hoe het gaat, zodat de volgende die komt het weet.</p>
+            </div>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Talen -->
+  <section id="talen" style="background: #1A2F5A; color: #FFFFFF; padding: 96px 24px;">
+    <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 40px; align-items: center;">
+      <div style="flex: 1 1 380px;">
+        <p style="margin: 0 0 10px; font-size: 16px; font-weight: 700; color: #F4A261;">Talen</p>
+        <h2 style="margin: 0; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; letter-spacing: -1px;">In de taal van thuis.</h2>
+        <p style="margin: 18px 0 0; font-size: 20px; line-height: 1.55; color: #D5DBE8; max-width: 520px;">Iedereen kiest zijn eigen taal. Vraagt oma in het Turks om bezoek, dan krijgt haar kleinzoon de melding in het Nederlands.</p>
+      </div>
+      <div style="flex: 1 1 340px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px;">
+        <div style="background: #24407A; border-radius: 20px; padding: 24px; font-size: 24px; font-weight: 700;">Nederlands</div>
+        <div style="background: #24407A; border-radius: 20px; padding: 24px; font-size: 24px; font-weight: 700;">English</div>
+        <div style="background: #24407A; border-radius: 20px; padding: 24px; font-size: 24px; font-weight: 700;">Türkçe</div>
+        <div style="background: #24407A; border-radius: 20px; padding: 24px; font-size: 26px; font-weight: 700; text-align: right;" lang="ar" dir="rtl">العربية</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Zo werkt het -->
+  <section id="hoe" style="padding: 104px 24px; background: #F7F7F9;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <h2 style="margin: 0; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; letter-spacing: -1px;">In drie stappen samen.</h2>
+      <p style="margin: 16px 0 0; font-size: 20px; line-height: 1.55; color: #4A5875; max-width: 600px;">Wie er in jullie groep komt, bepalen jullie zelf. Niemand anders.</p>
+      <div style="margin-top: 52px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px 32px;">
+        <div style="display: flex; flex-direction: column; gap: 22px;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <span style="width: 44px; height: 44px; border-radius: 50%; background: #1A7A6E; color: #FFFFFF; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: 0 0 auto;">1</span>
+            <h3 style="margin: 0; font-size: 22px; letter-spacing: -0.3px;">Start een zorggroep</h3>
+          </div>
+          <div style="background: #FFFFFF; border-radius: 22px; padding: 20px; box-shadow: 0 10px 30px rgba(26,47,90,0.08); height: 236px; box-sizing: border-box; display: flex; flex-direction: column;">
+            <div style="flex: 1;"><div style="font-size: 12px; color: #6B7280; margin-bottom: 4px;">Naam van de zorggroep</div><div style="border: 1.5px solid #1A7A6E; border-radius: 10px; padding: 9px 12px; font-size: 16px; margin-bottom: 10px;">Familie Van Dijk</div><div style="display: inline-flex; align-items: center; gap: 6px; background: #FDF2EC; color: #B4510C; border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 700;">Jij bent beheerder</div></div>
+            <div style="display: flex; align-items: center; gap: 8px; border-top: 1px solid #EEF0F3; padding-top: 12px; font-size: 14px; font-weight: 700; color: #1A7A6E;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg><span>Alleen de beheerder nodigt uit</span></div>
+          </div>
+          <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Eén familielid maakt de groep aan, met een eigen account. Die beheert wie erbij mag.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 22px;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <span style="width: 44px; height: 44px; border-radius: 50%; background: #1A7A6E; color: #FFFFFF; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: 0 0 auto;">2</span>
+            <h3 style="margin: 0; font-size: 22px; letter-spacing: -0.3px;">De familie doet mee</h3>
+          </div>
+          <div style="background: #FFFFFF; border-radius: 22px; padding: 20px; box-shadow: 0 10px 30px rgba(26,47,90,0.08); height: 236px; box-sizing: border-box; display: flex; flex-direction: column;">
+            <div style="flex: 1;"><div style="font-size: 12px; color: #6B7280; margin-bottom: 4px;">E-mailadres</div><div style="border: 1.5px solid #D1D5DB; border-radius: 10px; padding: 9px 12px; font-size: 16px; margin-bottom: 10px;">nick@voorbeeld.nl</div><div style="font-size: 12px; color: #6B7280; margin-bottom: 4px;">Kies een wachtwoord</div><div style="border: 1.5px solid #1A7A6E; border-radius: 10px; padding: 9px 12px; font-size: 16px; margin-bottom: 10px;"><span style="letter-spacing: 3px;">••••••••••</span></div></div>
+            <div style="display: flex; align-items: center; gap: 8px; border-top: 1px solid #EEF0F3; padding-top: 12px; font-size: 14px; font-weight: 700; color: #1A7A6E;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg><span>E-mail bevestigd · eigen wachtwoord</span></div>
+          </div>
+          <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Iedereen krijgt een persoonlijke uitnodiging die 7 dagen geldig is. Meedoen kan alleen met een eigen account: e-mailadres bevestigen en een wachtwoord kiezen.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 22px;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <span style="width: 44px; height: 44px; border-radius: 50%; background: #E8711A; color: #FFFFFF; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: 0 0 auto;">3</span>
+            <h3 style="margin: 0; font-size: 22px; letter-spacing: -0.3px;">De hoofdpersoon komt erbij</h3>
+          </div>
+          <div style="background: #FFFFFF; border-radius: 22px; padding: 20px; box-shadow: 0 10px 30px rgba(26,47,90,0.08); height: 236px; box-sizing: border-box; display: flex; flex-direction: column;">
+            <div style="flex: 1;"><div style="font-size: 12px; color: #6B7280;">Aan: rosa@voorbeeld.nl</div><div style="font-size: 17px; font-weight: 700; margin: 6px 0 14px;">Je persoonlijke inloglink</div><div style="background: #E8711A; color: #FFFFFF; border-radius: 12px; padding: 12px; text-align: center; font-size: 17px; font-weight: 700;">Inloggen bij Clanoo</div></div>
+            <div style="display: flex; align-items: center; gap: 8px; border-top: 1px solid #EEF0F3; padding-top: 12px; font-size: 14px; font-weight: 700; color: #1A7A6E;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg><span>Werkt één keer · één uur geldig</span></div>
+          </div>
+          <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Geen wachtwoord om te onthouden. De inloglink komt alleen in de eigen mailbox, werkt één keer en vervalt na een uur.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prijs -->
+  <section id="prijs" style="background: #E8F5F3; padding: 96px 24px;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <p style="margin: 0 0 10px; font-size: 16px; font-weight: 700; color: #1A7A6E;">Prijs</p>
+      <h2 style="margin: 0; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; letter-spacing: -1px; max-width: 760px;">Eén prijs voor de hele familie.</h2>
+      <p style="margin: 18px 0 0; font-size: 20px; line-height: 1.55; color: #4A5875; max-width: 620px;">Zoveel familieleden als je wilt, en Rosa betaalt niets. Opzeggen kan altijd.</p>
+      <div style="margin-top: 44px; display: flex; flex-wrap: wrap; gap: 20px; align-items: stretch;">
+        <div style="flex: 1 1 300px; background: #FFFFFF; border-radius: 28px; padding: 32px; border: 2px solid #E8711A; display: flex; flex-direction: column; box-sizing: border-box;">
+          <span style="align-self: flex-start; background: #FDF2EC; color: #B4510C; font-size: 14px; font-weight: 700; padding: 6px 12px; border-radius: 999px;">Alleen voor de eerste 100 families</span>
+          <div style="font-size: 18px; font-weight: 700; margin-top: 16px;">Oprichtersprijs</div>
+          <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 14px; flex-wrap: wrap;"><span style="font-size: 52px; font-weight: 700; letter-spacing: -1.5px;">€69</span><span style="font-size: 17px; color: #4A5875;">het eerste jaar</span></div>
+          <p style="margin: 8px 0 20px; font-size: 16px; line-height: 1.5; color: #4A5875;">Dat is €5,75 per maand. Je betaalt bij aanmelding voor het hele jaar, daarna €99 per jaar.</p>
+          <a href="/wachtlijst" style="margin-top: auto; display: block; text-align: center; background: #E8711A; color: #FFFFFF; text-decoration: none; font-size: 18px; font-weight: 700; padding: 15px; border-radius: 999px;">Reserveer je plek</a>
+        </div>
+        <div style="flex: 1 1 260px; background: #FFFFFF; border-radius: 28px; padding: 32px; display: flex; flex-direction: column; box-sizing: border-box;">
+          <div style="font-size: 18px; font-weight: 700;">Per jaar</div>
+          <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 14px; flex-wrap: wrap;"><span style="font-size: 52px; font-weight: 700; letter-spacing: -1.5px;">€99</span><span style="font-size: 17px; color: #4A5875;">per jaar</span></div>
+          <p style="margin: 8px 0 0; font-size: 16px; line-height: 1.5; color: #4A5875;">Dat is €8,25 per maand. Je bespaart ruim €20 ten opzichte van per maand betalen.</p>
+        </div>
+        <div style="flex: 1 1 260px; background: #FFFFFF; border-radius: 28px; padding: 32px; display: flex; flex-direction: column; box-sizing: border-box;">
+          <div style="font-size: 18px; font-weight: 700;">Per maand</div>
+          <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 14px; flex-wrap: wrap;"><span style="font-size: 52px; font-weight: 700; letter-spacing: -1.5px;">€9,99</span><span style="font-size: 17px; color: #4A5875;">per maand</span></div>
+          <p style="margin: 8px 0 0; font-size: 16px; line-height: 1.5; color: #4A5875;">Maandelijks opzegbaar.</p>
+        </div>
+      </div>
+      <p style="margin: 22px 0 0; font-size: 16px; color: #4A5875;">Zijn de oprichtersplekken vol? Dan probeer je Clanoo eerst 30 dagen gratis.</p>
+    </div>
+  </section>
+
+  <!-- Privacy -->
+  <section style="padding: 96px 24px; background: #FFFFFF;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="max-width: 760px;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6L12 3z"></path><path d="m9 12 2 2 4-4"></path></svg>
+        <h2 style="margin: 14px 0 0; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; letter-spacing: -1px;">Privé blijft privé.</h2>
+        <p style="margin: 18px 0 0; font-size: 20px; line-height: 1.55; color: #4A5875;">In Clanoo staat wat er echt toe doet: hoe Rosa zich voelt, welke medicijnen ze neemt, de verhalen van haar leven. Zulke informatie hoort niet op straat te liggen.</p>
+      </div>
+      <div style="margin-top: 40px; display: flex; flex-wrap: wrap; gap: 18px;">
+        <div style="flex: 1 1 280px; background: #F7F8F9; border-radius: 24px; padding: 28px; text-align: left;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"></circle><path d="M3 20c0-3.6 2.7-6 6-6s6 2.4 6 6"></path><circle cx="17" cy="9" r="2.6"></circle><path d="M16 14.2c2.9.2 5 2.4 5 5.8"></path></svg>
+          <h3 style="margin: 16px 0 8px; font-size: 21px;">Alleen jullie groep</h3>
+          <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Wie niet is uitgenodigd, ziet niets. De beheerder bepaalt wie erbij mag.</p>
+        </div>
+        <div style="flex: 1 1 280px; background: #F7F8F9; border-radius: 24px; padding: 28px; text-align: left;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><path d="M12 5.5v.01M15.3 6.4v.01M17.6 8.7v.01M18.5 12v.01M17.6 15.3v.01M15.3 17.6v.01M12 18.5v.01M8.7 17.6v.01M6.4 15.3v.01M5.5 12v.01M6.4 8.7v.01M8.7 6.4v.01"></path></svg>
+          <h3 style="margin: 16px 0 8px; font-size: 21px;">Opgeslagen in Europa</h3>
+          <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Daar geldt de AVG, een van de strengste privacywetten ter wereld. Je mag altijd inzien, aanpassen of laten wissen wat er over je staat.</p>
+        </div>
+        <div style="flex: 1 1 280px; background: #F7F8F9; border-radius: 24px; padding: 28px; text-align: left;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1A7A6E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"></circle><path d="M5.3 5.3l13.4 13.4"></path></svg>
+          <h3 style="margin: 16px 0 8px; font-size: 21px;">Geen reclame, geen handel</h3>
+          <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #4A5875;">Jullie betalen voor Clanoo, dus jullie gegevens zijn niet ons verdienmodel. We tonen geen advertenties en verkopen niets door.</p>
+        </div>
+      </div>
+      <a href="/privacy" style="display: inline-block; margin-top: 24px; font-size: 17px; font-weight: 700; color: #1A7A6E;">Lees wat de Europese privacywet voor jullie betekent ›</a>
+    </div>
+  </section>
+
+  <!-- Afsluiter -->
+  <section style="padding: 0 24px 96px; background: #FFFFFF;">
+    <div style="max-width: 1100px; margin: 0 auto; background: #1A7A6E; color: #FFFFFF; border-radius: 36px; padding: clamp(40px, 6vw, 72px); display: flex; flex-wrap: wrap; gap: 28px; align-items: center; justify-content: space-between;">
+      <div style="flex: 1 1 420px;">
+        <h2 style="margin: 0; font-size: clamp(30px, 4.4vw, 46px); line-height: 1.1; letter-spacing: -0.8px;">Clanoo start in januari 2027.</h2>
+        <p style="margin: 12px 0 0; font-size: 19px; line-height: 1.55; color: #D4EDE9;">Zet je familie op de wachtlijst en hoor als eerste wanneer je kunt beginnen.</p>
+      </div>
+      <a href="/wachtlijst" style="background: #FFFFFF; color: #1A7A6E; text-decoration: none; font-size: 18px; font-weight: 700; padding: 17px 30px; border-radius: 999px;">Op de wachtlijst</a>
+    </div>
+  </section>
+
+  <!-- Voet -->
+  <footer style="border-top: 1px solid #ECEEF1; padding: 32px 24px 40px;">
+    <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 14px 32px; justify-content: space-between; font-size: 15px; color: #5B6780;">
+      <span>Clanoo is een merk van NOINIT, Dordrecht</span>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px 24px;">
+        <a href="mailto:hallo@noinit.nl" style="color: #1A7A6E;">hallo@noinit.nl</a>
+        <a href="/privacy" style="color: #1A7A6E;">Privacy</a>
+        <a href="/login" style="color: #1A7A6E;">Inloggen</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var baan=document.getElementById('baan'), stippen=[].slice.call(document.querySelectorAll('.stip')),
+      knop=document.getElementById('wissel'), n=stippen.length, dia=0, v=0, stil=0,
+      speelt=!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function teken(){
+    stippen.forEach(function(s,i){ s.style.width=i===dia?'44px':'8px'; s.querySelector('.vulling').style.width=i===dia?Math.round(v)+'%':'0%';
+      if(i===dia) s.setAttribute('aria-current','true'); else s.removeAttribute('aria-current'); });
+    knop.querySelector('.ic-pauze').style.display=speelt?'':'none';
+    knop.querySelector('.ic-speel').style.display=speelt?'none':'';
+    knop.setAttribute('aria-label',speelt?'Pauzeren':'Afspelen');
+  }
+  function ga(i){ dia=(i+n)%n; v=0; stil=Date.now(); baan.scrollTo({left:dia*baan.clientWidth,behavior:'smooth'}); teken(); }
+  stippen.forEach(function(s,i){ s.addEventListener('click',function(){ ga(i); }); });
+  knop.addEventListener('click',function(){ speelt=!speelt; teken(); });
+  baan.addEventListener('scroll',function(){ if(Date.now()-stil<900) return;
+    var i=Math.round(baan.scrollLeft/Math.max(1,baan.clientWidth)); if(i!==dia){ dia=i; v=0; teken(); } },{passive:true});
+  window.addEventListener('resize',function(){ stil=Date.now(); baan.scrollTo({left:dia*baan.clientWidth}); });
+  var zichtbaar=true;
+  if('IntersectionObserver' in window) new IntersectionObserver(function(e){ zichtbaar=e[0].isIntersecting; }).observe(baan);
+  setInterval(function(){ if(!speelt||!zichtbaar||document.hidden) return; v+=200/6000*100; if(v>=100) ga(dia+1); else teken(); },200);
+  teken();
+})();
+</script>
+</body>
+</html>

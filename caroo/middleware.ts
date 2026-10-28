@@ -14,9 +14,16 @@ const PUBLIC_ROUTES = [
   '/manifest.webmanifest',
   '/icons',
   '/wachtlijst',
+  '/privacy',
+  '/site',
 ]
 
+// Statische websitepagina's: geen sessiecontrole nodig
+const WEBSITE = ['/', '/privacy']
+
 export async function middleware(request: NextRequest) {
+  if (WEBSITE.includes(request.nextUrl.pathname)) return NextResponse.next()
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -56,6 +63,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|site/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|woff2)$).*)',
   ],
 }
