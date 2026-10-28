@@ -8,6 +8,7 @@ import { uitloggen } from '@/app/auth/actions'
 import AbonnementKnop from './AbonnementKnop'
 import { FamilieSignalen } from '@/components/familie/FamilieSignalen'
 import { vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
+import { toegangVan } from '@/lib/opzeggen'
 
 export default async function GroepPage({
   params,
@@ -28,7 +29,7 @@ export default async function GroepPage({
   // Haal groepinfo op
   const { data: groep } = await supabase
     .from('zorggroepen')
-    .select('id, naam, betaald, eigenaar_id')
+    .select('id, naam, betaald, eigenaar_id, gestopt_op')
     .eq('id', params.id)
     .single()
 
@@ -106,6 +107,7 @@ export default async function GroepPage({
   const isEigenaar = groep.eigenaar_id === user.id
   const welkom = searchParams.welkom === 'true'
   const { t, taal } = await getT()
+  const nazorg = toegangVan(groep)
 
   return (
     <div className="max-w-md mx-auto min-h-screen pb-24">
@@ -137,8 +139,18 @@ export default async function GroepPage({
         </div>
       )}
 
+      {/* Abonnement gestopt: nog even de verhalen downloaden */}
+      {nazorg.toegang === 'nazorg' && nazorg.tot && (
+        <div className="bg-caroo-oranje-licht border-b border-caroo-oranje px-4 py-3">
+          <p className="text-caroo-donker text-sm font-medium">
+            {t('boekje.gestopt', { datum: datum(taal, nazorg.tot, { day: 'numeric', month: 'long', year: 'numeric' }) })}{' '}
+            <Link href={`/groep/${groep.id}/boekje`} className="underline">{t('boekje.knop')}</Link>
+          </p>
+        </div>
+      )}
+
       {/* Niet betaald banner */}
-      {!groep.betaald && (
+      {nazorg.toegang === 'geen' && (
         <div className="bg-orange-50 border-b border-orange-200 px-4 py-3">
           <p className="text-orange-800 text-sm font-medium">
             {t('groep.nietGeactiveerd')}{' '}
@@ -166,20 +178,24 @@ export default async function GroepPage({
             { href: `/groep/${params.id}/medicijnen`, emoji: '💊', label: t('groep.tegels.medicijnen') },
             { href: `/groep/${params.id}/dagboek`, emoji: '📔', label: t('groep.tegels.dagboek') },
             { href: `/groep/${params.id}/fotos`, emoji: '📸', label: t('groep.tegels.fotos') },
+            { href: `/groep/${params.id}/boekje`, emoji: '📖', label: t('groep.tegels.verhalen'), altijd: true },
             ...(isBeheerder
               ? [{ href: `/groep/${params.id}/beheer`, emoji: '⚙️', label: t('groep.tegels.beheer') }]
               : []),
-          ].map(item => (
+          ].map((item: { href: string; emoji: string; label: string; altijd?: boolean }) => {
+            const open = groep.betaald || (item.altijd && nazorg.toegang === 'nazorg')
+            return (
             <Link
               key={item.href}
-              href={groep.betaald ? item.href : '#'}
+              href={open ? item.href : '#'}
               className={`caroo-card flex flex-col items-center justify-center py-4 text-center gap-1
-                ${!groep.betaald ? 'opacity-50 cursor-not-allowed' : 'hover:border-caroo-groen transition-colors'}`}
+                ${!open ? 'opacity-50 cursor-not-allowed' : 'hover:border-caroo-groen transition-colors'}`}
             >
               <span className="text-2xl">{item.emoji}</span>
               <span className="text-xs font-medium text-gray-700">{item.label}</span>
             </Link>
-          ))}
+            )
+          })}
         </div>
 
         {/* Tips en levenslessen */}

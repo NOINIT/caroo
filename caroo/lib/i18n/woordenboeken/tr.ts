@@ -116,6 +116,7 @@ export const tr: Woordenboek = {
     geenSpraakMelding: 'Maalesef bu tarayıcıda ses tanıma kullanılamıyor.',
     opslaan: '💾 Kaydet',
     eerder: 'Önceki hikâyeler',
+    boekje: '📖 Tüm hikâyelerim kitapçık olarak',
   },
 
   boodschappen: {
@@ -333,6 +334,7 @@ export const tr: Woordenboek = {
       dagboek: 'Günlük',
       fotos: 'Fotoğraflar',
       beheer: 'Yönetim',
+      verhalen: 'Hikâyeler',
     },
     tips: 'Tavsiyeler ve hayat dersleri',
     openTaken: 'Açık görevler',
@@ -524,5 +526,18 @@ export const tr: Woordenboek = {
   meta: {
     titel: 'Clanoo — Birbirimize bakalım',
     omschrijving: 'Aile bakım verenleri ve yaşlılar için uygulama. Bakımı koordine edin, ilaçları takip edin ve anıları paylaşın.',
+  },
+
+  boekje: {
+    titel: '{naam} anlatıyor',
+    uitleg: 'İndir’e dokunun, ardından yazdırırken PDF olarak kaydet’i seçin. Böylece kitapçığı her zaman saklarsınız.',
+    download: '📄 PDF olarak indir',
+    leeg: 'Henüz hikâye veya tavsiye yok. Ana kişi bir şey anlattığında burada görünür.',
+    verhalen: 'Hikâyeler',
+    tips: 'Tavsiyeler ve hayat dersleri',
+    ingesproken: 'sesle anlatıldı',
+    gemaaktMet: 'Clanoo ile saklandı',
+    knop: 'Hikâyeleri kitapçık olarak indir',
+    gestopt: 'Aboneliğiniz sona erdi. Hikâyeleri {datum} tarihine kadar indirebilirsiniz.',
   },
 }

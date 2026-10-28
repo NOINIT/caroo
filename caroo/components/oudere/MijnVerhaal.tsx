@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useT } from '@/lib/i18n/client'
+import Link from 'next/link'
 
 interface Props {
   groepId: string
@@ -184,6 +185,13 @@ export function MijnVerhaal({ groepId }: Props) {
           {t('verhaal.opslaan')}
         </button>
       </div>
+
+      <Link
+        href={`/groep/${groepId}/boekje`}
+        className="block w-full text-center py-4 mb-6 rounded-caroo border-2 border-caroo-groen text-caroo-groen text-ou-base font-bold"
+      >
+        {t('verhaal.boekje')}
+      </Link>
 
       {/* Eerdere verhalen */}
       {entries.length > 0 && (

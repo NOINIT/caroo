@@ -21,7 +21,7 @@ export default async function AppLayout({
     .maybeSingle()
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 print:bg-white print:min-h-0">
       <VoorkeurenToepasser
         lettergrootte={voorkeuren?.lettergrootte || 'normaal'}
         geluid={voorkeuren?.geluid ?? true}

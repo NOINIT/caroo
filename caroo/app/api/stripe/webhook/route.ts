@@ -39,6 +39,7 @@ export async function POST(request: Request) {
         .from('zorggroepen')
         .update({
           betaald: true,
+          gestopt_op: null,
           stripe_session_id: session.id,
           stripe_subscription_id: session.subscription ?? null,
         })
@@ -61,7 +62,8 @@ export async function POST(request: Request) {
 
     const { error } = await supabase
       .from('zorggroepen')
-      .update({ betaald: false })
+      // Gestopt: de familie kan nog 30 dagen de verhalen downloaden (zie lib/opzeggen.ts)
+      .update({ betaald: false, gestopt_op: new Date().toISOString() })
       .eq('stripe_subscription_id', subscriptionId)
 
     if (error) {

@@ -120,6 +120,7 @@ export const ar: Woordenboek = {
     geenSpraakMelding: 'للأسف، التعرّف على الصوت غير متاح في هذا المتصفح.',
     opslaan: '💾 حفظ',
     eerder: 'حكايات سابقة',
+    boekje: '📖 كل حكاياتي في كتيّب',
   },
 
   boodschappen: {
@@ -337,6 +338,7 @@ export const ar: Woordenboek = {
       dagboek: 'اليوميات',
       fotos: 'الصور',
       beheer: 'الإدارة',
+      verhalen: 'الحكايات',
     },
     tips: 'نصائح ودروس من الحياة',
     openTaken: 'مهام مفتوحة',
@@ -528,5 +530,18 @@ export const ar: Woordenboek = {
   meta: {
     titel: 'Clanoo — نرعى بعضنا',
     omschrijving: 'تطبيق لمقدّمي الرعاية من العائلة ولكبار السن. نسّق الرعاية، وتابع الأدوية، وشارك الذكريات.',
+  },
+
+  boekje: {
+    titel: 'حكايات {naam}',
+    uitleg: 'اضغط على تنزيل، ثم اختر الحفظ بصيغة PDF عند الطباعة. هكذا تحتفظون بالكتيّب إلى الأبد.',
+    download: '📄 تنزيل بصيغة PDF',
+    leeg: 'لا توجد حكايات أو نصائح بعد. عندما يروي الشخص الرئيسي شيئًا، سيظهر هنا.',
+    verhalen: 'الحكايات',
+    tips: 'نصائح ودروس من الحياة',
+    ingesproken: 'مسجّلة بالصوت',
+    gemaaktMet: 'محفوظ في Clanoo',
+    knop: 'تنزيل الحكايات في كتيّب',
+    gestopt: 'انتهى اشتراككم. يمكنكم تنزيل الحكايات حتى {datum}.',
   },
 }

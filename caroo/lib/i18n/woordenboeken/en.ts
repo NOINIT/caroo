@@ -116,6 +116,7 @@ export const en: Woordenboek = {
     geenSpraakMelding: "Sorry, speech recognition isn't available in this browser.",
     opslaan: '💾 Save',
     eerder: 'Earlier stories',
+    boekje: '📖 All my stories as a booklet',
   },
 
   boodschappen: {
@@ -333,6 +334,7 @@ export const en: Woordenboek = {
       dagboek: 'Diary',
       fotos: 'Photos',
       beheer: 'Manage',
+      verhalen: 'Stories',
     },
     tips: 'Tips and life lessons',
     openTaken: 'Open tasks',
@@ -524,5 +526,18 @@ export const en: Woordenboek = {
   meta: {
     titel: 'Clanoo — Caring for each other',
     omschrijving: 'The app for family carers and older people. Coordinate care, keep track of medicines and share memories.',
+  },
+
+  boekje: {
+    titel: 'The stories of {naam}',
+    uitleg: 'Tap Download, then choose Save as PDF when printing. That way you keep the booklet forever.',
+    download: '📄 Download as PDF',
+    leeg: 'There are no stories or tips yet. As soon as the main person shares something, it will appear here.',
+    verhalen: 'Stories',
+    tips: 'Tips and life lessons',
+    ingesproken: 'spoken',
+    gemaaktMet: 'Kept with Clanoo',
+    knop: 'Download the stories as a booklet',
+    gestopt: 'Your subscription has ended. You can still download the stories until {datum}.',
   },
 }

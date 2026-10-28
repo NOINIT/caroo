@@ -117,6 +117,7 @@ export const nl = {
     geenSpraakMelding: 'Spraakherkenning is helaas niet beschikbaar in deze browser.',
     opslaan: '💾 Opslaan',
     eerder: 'Eerdere verhalen',
+    boekje: '📖 Al mijn verhalen als boekje',
   },
 
   boodschappen: {
@@ -335,6 +336,7 @@ export const nl = {
       dagboek: 'Dagboek',
       fotos: "Foto's",
       beheer: 'Beheer',
+      verhalen: 'Verhalen',
     },
     tips: 'Tips en levenslessen',
     openTaken: 'Open taken',
@@ -526,5 +528,18 @@ export const nl = {
   meta: {
     titel: 'Clanoo — Zorg voor elkaar',
     omschrijving: 'De app voor mantelzorgers en ouderen. Coördineer zorg, houd medicijnen bij en deel herinneringen.',
+  },
+
+  boekje: {
+    titel: 'De verhalen van {naam}',
+    uitleg: 'Tik op Download. Kies daarna bij het printen voor Opslaan als PDF. Zo bewaren jullie het boekje voor altijd.',
+    download: '📄 Download als PDF',
+    leeg: 'Er zijn nog geen verhalen of tips. Zodra de hoofdpersoon iets vertelt, komt het hier.',
+    verhalen: 'Verhalen',
+    tips: 'Tips en levenslessen',
+    ingesproken: 'ingesproken',
+    gemaaktMet: 'Bewaard met Clanoo',
+    knop: 'Download de verhalen als boekje',
+    gestopt: 'Jullie abonnement is gestopt. Tot en met {datum} kun je de verhalen nog downloaden.',
   },
 }
