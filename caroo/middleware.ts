@@ -13,6 +13,7 @@ const PUBLIC_ROUTES = [
   '/sw.js',
   '/manifest.webmanifest',
   '/icons',
+  '/wachtlijst',
 ]
 
 export async function middleware(request: NextRequest) {
