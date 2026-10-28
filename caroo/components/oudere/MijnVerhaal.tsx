@@ -119,7 +119,7 @@ export function MijnVerhaal({ groepId }: Props) {
   }
 
   return (
-    <div className="px-4 py-6">
+    <div className="px-4 py-6 md:px-8">
       <h2 className="text-ou-xl font-bold text-caroo-donker mb-2">{t('verhaal.titel')}</h2>
       <p className="text-ou-sm text-gray-600 mb-5">
         {t('verhaal.uitleg')}

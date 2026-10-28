@@ -102,14 +102,16 @@ export function Thuis({
   const gekozen = stemmingInfo(stemming)
 
   return (
-    <div className="px-4 py-5 space-y-5">
-      <p className="text-ou-base text-gray-600">{hoofdletter(vandaagTekst)}</p>
+    <div className="px-4 py-5 space-y-5 md:px-8 md:py-7 md:space-y-6">
+      <p className="text-ou-base md:text-ou-lg text-gray-600">{hoofdletter(vandaagTekst)}</p>
 
+      {/* Op een liggende tablet: stemming en bezoek naast elkaar */}
+      <div className="space-y-5 md:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-6">
       {/* Stemming van vandaag */}
-      <section className="rounded-caroo-lg bg-caroo-groen-licht border-2 border-caroo-groen p-5">
+      <section className="rounded-caroo-lg bg-caroo-groen-licht border-2 border-caroo-groen p-5 md:p-6 md:flex md:flex-col md:justify-center">
         {kiest || !gekozen ? (
           <>
-            <h2 className="text-ou-xl font-bold text-caroo-donker mb-4 text-center">
+            <h2 className="text-ou-xl md:text-ou-2xl font-bold text-caroo-donker mb-4 text-center">
               {t('thuis.hoeVoelJe')}
             </h2>
             <div className="grid grid-cols-5 gap-2">
@@ -122,8 +124,8 @@ export function Thuis({
                   }`}
                   aria-label={stemmingLabel(t, s.waarde)}
                 >
-                  <span className="text-4xl leading-none">{s.emoji}</span>
-                  <span className="text-sm text-gray-700 mt-1.5 leading-tight text-center">{stemmingLabel(t, s.waarde)}</span>
+                  <span className="text-4xl md:text-5xl leading-none">{s.emoji}</span>
+                  <span className="text-sm md:text-base text-gray-700 mt-1.5 leading-tight text-center">{stemmingLabel(t, s.waarde)}</span>
                 </button>
               ))}
             </div>
@@ -148,14 +150,14 @@ export function Thuis({
         <button
           onClick={vraagBezoek}
           disabled={bezig}
-          className="w-full rounded-caroo-lg bg-caroo-oranje-donker text-white py-7 shadow-md active:scale-[0.98] transition-transform"
+          className="w-full lg:h-full lg:min-h-[260px] md:py-9 rounded-caroo-lg bg-caroo-oranje-donker text-white py-7 shadow-md active:scale-[0.98] transition-transform"
         >
-          <span className="block text-5xl mb-1">🏠</span>
-          <span className="block text-ou-2xl font-bold">{t('thuis.ikWilBezoek')}</span>
-          <span className="block text-ou-sm text-white mt-1">{t('thuis.familieZietMeteen')}</span>
+          <span className="block text-5xl md:text-7xl mb-1">🏠</span>
+          <span className="block text-ou-2xl md:text-4xl font-bold">{t('thuis.ikWilBezoek')}</span>
+          <span className="block text-ou-sm md:text-ou-lg text-white mt-1">{t('thuis.familieZietMeteen')}</span>
         </button>
       ) : bezoek.reactie_naam ? (
-        <section className="rounded-caroo-lg bg-caroo-oranje-licht border-2 border-caroo-oranje p-5 text-center">
+        <section className="rounded-caroo-lg bg-caroo-oranje-licht border-2 border-caroo-oranje p-5 text-center md:flex md:flex-col md:justify-center">
           <p className="text-5xl mb-2">🎉</p>
           <p className="text-ou-xl font-bold text-caroo-donker">{t('thuis.komtLangs', { naam: bezoek.reactie_naam })}</p>
           {bezoek.reactie_wanneer && (
@@ -168,7 +170,7 @@ export function Thuis({
           </button>
         </section>
       ) : (
-        <section className="rounded-caroo-lg bg-caroo-oranje-licht border-2 border-caroo-oranje p-5 text-center">
+        <section className="rounded-caroo-lg bg-caroo-oranje-licht border-2 border-caroo-oranje p-5 text-center md:flex md:flex-col md:justify-center">
           <p className="text-5xl mb-2">💌</p>
           <p className="text-ou-xl font-bold text-caroo-donker">{t('thuis.familieWeetHet')}</p>
           <p className="text-ou-base text-gray-600 mt-1">{t('thuis.zodraIemand')}</p>
@@ -177,9 +179,12 @@ export function Thuis({
           </button>
         </section>
       )}
+      </div>
 
+      {/* Op een tablet: vandaag en boodschappen/foto naast elkaar */}
+      <div className="space-y-5 md:space-y-0 md:grid md:grid-cols-2 md:gap-6">
       {/* Vandaag */}
-      <section className="caroo-card">
+      <section className="caroo-card md:p-6">
         <button onClick={() => gaNaar('mijn_dag')} className="w-full text-start">
           <h2 className="text-ou-lg font-bold text-caroo-donker mb-2">{t('thuis.vandaag')}</h2>
           {dagAfspraken.length === 0 ? (
@@ -228,6 +233,7 @@ export function Thuis({
           )}
         </button>
       </div>
+      </div>
 
       {/* Medicijnen */}
       {medicijnen.length > 0 && (
@@ -236,7 +242,7 @@ export function Thuis({
           {medicijnen.map((med: any) => (
             <div key={med.id} className="mb-1.5">
               <p className="text-ou-base text-gray-800">{med.naam}, {med.dosering}</p>
-              <p className="text-ou-sm text-gray-600">{t('thuis.tijdenUur', { tijden: (med.tijdstippen || []).join(', ') })}</p>
+              <p className="text-ou-sm md:text-ou-base text-gray-600">{t('thuis.tijdenUur', { tijden: (med.tijdstippen || []).join(', ') })}</p>
             </div>
           ))}
         </section>
