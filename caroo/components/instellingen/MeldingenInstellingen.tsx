@@ -100,7 +100,7 @@ export function MeldingenInstellingen({ email: startEmail, groot = false }: { em
             {t('instellingen.iphone4')}
           </div>
         ) : push === 'niet-mogelijk' ? (
-          <p className={`${tekst} text-gray-500`}>{t('instellingen.geenPopups')}</p>
+          <p className={`${tekst} text-gray-600`}>{t('instellingen.geenPopups')}</p>
         ) : push === 'geblokkeerd' ? (
           <p className={`${tekst} text-gray-600`}>
             {t('instellingen.geblokkeerd')}

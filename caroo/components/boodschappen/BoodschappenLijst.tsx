@@ -145,7 +145,7 @@ export function BoodschappenLijst({ groepId, initieel = [], groot = false }: Pro
           {t('boodschappen.nogHalen', { aantal: opLijst.length })}
         </h2>
         {opLijst.length === 0 ? (
-          <p className={`text-gray-500 ${klein}`}>{t('boodschappen.leeg')}</p>
+          <p className={`text-gray-600 ${klein}`}>{t('boodschappen.leeg')}</p>
         ) : (
           <ul className="space-y-2">
             {opLijst.map(item => (
@@ -167,10 +167,10 @@ export function BoodschappenLijst({ groepId, initieel = [], groot = false }: Pro
       {/* Eerder gekocht */}
       {eerder.length > 0 && (
         <section>
-          <h2 className={`font-bold text-gray-500 mb-1 ${groot ? 'text-ou-lg' : 'text-base'}`}>
+          <h2 className={`font-bold text-gray-600 mb-1 ${groot ? 'text-ou-lg' : 'text-base'}`}>
             {t('boodschappen.eerderGekocht')}
           </h2>
-          <p className={`text-gray-400 mb-2 ${groot ? 'text-ou-sm' : 'text-xs'}`}>
+          <p className={`text-gray-600 mb-2 ${groot ? 'text-ou-sm' : 'text-xs'}`}>
             {t('boodschappen.tikOmTerug')}
           </p>
           <ul className="space-y-2">
@@ -184,13 +184,13 @@ export function BoodschappenLijst({ groepId, initieel = [], groot = false }: Pro
                   <span className={`${vakje} flex-shrink-0 rounded-lg bg-caroo-groen-licht text-caroo-groen flex items-center justify-center`}>
                     ✓
                   </span>
-                  <span className={`${tekst} text-gray-500`}>{item.naam}</span>
+                  <span className={`${tekst} text-gray-600`}>{item.naam}</span>
                   <span className={`ms-auto text-caroo-groen font-medium ${klein}`}>{t('boodschappen.opnieuw')}</span>
                 </button>
                 {!groot && (
                   <button
                     onClick={() => verwijder(item.id)}
-                    className="text-gray-300 hover:text-red-400 text-lg px-2"
+                    className="text-gray-500 hover:text-red-600 text-lg px-2"
                     aria-label={t('boodschappen.helemaalVerwijderen', { naam: item.naam })}
                   >
                     ×

@@ -25,7 +25,7 @@ export function BoekjeInhoud({ t, taal, terugHref, groepNaam, naam, van, tot, ve
 
       <header className="print:hidden bg-white border-b sticky top-0 z-10">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-3 px-4 py-3">
-          <Link href={terugHref} className="text-gray-500 text-sm">
+          <Link href={terugHref} className="text-gray-600 text-sm">
             <span className="inline-block rtl:rotate-180">←</span> {t('algemeen.terug')}
           </Link>
           <DownloadKnop />
@@ -33,19 +33,19 @@ export function BoekjeInhoud({ t, taal, terugHref, groepNaam, naam, van, tot, ve
       </header>
 
       <main className="max-w-2xl mx-auto px-6 py-10 print:p-0">
-        <p className="print:hidden text-sm text-gray-500 mb-8 bg-white rounded-caroo p-3">{t('boekje.uitleg')}</p>
+        <p className="print:hidden text-sm text-gray-600 mb-8 bg-white rounded-caroo p-3">{t('boekje.uitleg')}</p>
 
         {/* Voorkant */}
         <section className="text-center py-16 print:py-24 print:break-after-page">
-          <p className="text-caroo-oranje font-bold tracking-wide">{groepNaam}</p>
+          <p className="text-caroo-oranje-tekst font-bold tracking-wide">{groepNaam}</p>
           <h1 className="text-4xl font-bold text-caroo-donker mt-3 leading-tight">{t('boekje.titel', { naam })}</h1>
           {van && tot && (
-            <p className="text-gray-500 mt-4">{datum(taal, van, lang)} – {datum(taal, tot, lang)}</p>
+            <p className="text-gray-600 mt-4">{datum(taal, van, lang)} – {datum(taal, tot, lang)}</p>
           )}
         </section>
 
         {alles === 0 && (
-          <p className="text-center text-gray-500 py-10">{t('boekje.leeg')}</p>
+          <p className="text-center text-gray-600 py-10">{t('boekje.leeg')}</p>
         )}
 
         {verhalen.length > 0 && (
@@ -54,7 +54,7 @@ export function BoekjeInhoud({ t, taal, terugHref, groepNaam, naam, van, tot, ve
             <div className="space-y-8">
               {verhalen.map((v: any) => (
                 <article key={v.id} className="boekje-verhaal">
-                  <p className="text-sm text-gray-500 mb-2">
+                  <p className="text-sm text-gray-600 mb-2">
                     {datum(taal, v.aangemaakt_op, lang)}
                     {v.gesproken && <span> · {t('boekje.ingesproken')}</span>}
                   </p>
@@ -72,14 +72,14 @@ export function BoekjeInhoud({ t, taal, terugHref, groepNaam, naam, van, tot, ve
               {tips.map((tip: any) => (
                 <article key={tip.id} className="boekje-verhaal border-s-4 border-caroo-oranje ps-4">
                   <p dir="auto" className="text-lg leading-relaxed text-caroo-donker whitespace-pre-wrap">{tip.tekst}</p>
-                  <p className="text-sm text-gray-500 mt-1">{datum(taal, tip.aangemaakt_op, lang)}</p>
+                  <p className="text-sm text-gray-600 mt-1">{datum(taal, tip.aangemaakt_op, lang)}</p>
                 </article>
               ))}
             </div>
           </section>
         )}
 
-        <p className="text-center text-xs text-gray-400 mt-16">{t('boekje.gemaaktMet')}</p>
+        <p className="text-center text-xs text-gray-600 mt-16">{t('boekje.gemaaktMet')}</p>
       </main>
     </div>
   )

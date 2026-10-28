@@ -21,7 +21,7 @@ export default async function InstellingenPage() {
     <div className="max-w-md mx-auto min-h-screen pb-20">
       <header className="bg-white border-b sticky top-0 z-10">
         <div className="flex items-center gap-3 px-4 py-3">
-          <Link href="/dashboard" className="text-gray-500 rtl:rotate-180 inline-block" aria-label={t('algemeen.terug')}>←</Link>
+          <Link href="/dashboard" className="text-gray-600 rtl:rotate-180 inline-block" aria-label={t('algemeen.terug')}>←</Link>
           <h1 className="font-bold text-caroo-donker">{t('instellingen.titel')}</h1>
         </div>
       </header>

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useT } from '@/lib/i18n/client'
 import { categorieTekst } from '@/lib/i18n/vertaal'
+import { tekstKleurOp } from '@/lib/kleur'
 
 interface Categorie {
   id: string
@@ -88,8 +89,8 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
         {categorieen.map(cat => (
           <span
             key={cat.id}
-            className="text-xs font-medium px-2 py-0.5 rounded-full text-white"
-            style={{ backgroundColor: cat.kleur }}
+            className="text-xs font-medium px-2 py-0.5 rounded-full"
+            style={{ backgroundColor: cat.kleur, color: tekstKleurOp(cat.kleur) }}
           >
             {categorieTekst(t, cat.naam)}
           </span>
@@ -172,12 +173,12 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
       {afspraken.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-3xl mb-2">📅</p>
-          <p className="text-gray-500">{t('agenda.geen')}</p>
+          <p className="text-gray-600">{t('agenda.geen')}</p>
         </div>
       ) : (
         maanden.map(maand => (
           <div key={maand} className="mb-6">
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2 capitalize">
+            <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2 capitalize">
               {maand}
             </h2>
             <div className="space-y-2">
@@ -194,16 +195,16 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
                     />
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-caroo-donker truncate">{af.titel}</p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-600">
                         {datum(af.start_tijd, { weekday: 'short', day: 'numeric', month: 'short' })} · {tijd(af.start_tijd)}
                       </p>
                       {af.beschrijving && (
-                        <p className="text-xs text-gray-400 mt-0.5 truncate">{af.beschrijving}</p>
+                        <p className="text-xs text-gray-600 mt-0.5 truncate">{af.beschrijving}</p>
                       )}
                       {af.agenda_categorieen && (
                         <span
-                          className="text-xs font-medium px-1.5 py-0.5 rounded text-white mt-1 inline-block"
-                          style={{ backgroundColor: af.agenda_categorieen.kleur }}
+                          className="text-xs font-medium px-1.5 py-0.5 rounded mt-1 inline-block"
+                          style={{ backgroundColor: af.agenda_categorieen.kleur, color: tekstKleurOp(af.agenda_categorieen.kleur) }}
                         >
                           {categorieTekst(t, af.agenda_categorieen.naam)}
                         </span>
@@ -211,7 +212,7 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
                     </div>
                     <button
                       onClick={() => verwijder(af.id)}
-                      className="text-gray-300 hover:text-red-400 text-lg flex-shrink-0"
+                      className="text-gray-500 hover:text-red-600 text-lg flex-shrink-0"
                       aria-label={t('algemeen.verwijderen')}
                     >
                       ×

@@ -172,7 +172,7 @@ export function MedicijnenClient({ groepId, medicijnen: initieel, registratiesVa
       {medicijnen.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-4xl mb-2">💊</p>
-          <p className="text-gray-500">{t('medicijnen.geen')}</p>
+          <p className="text-gray-600">{t('medicijnen.geen')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -181,9 +181,9 @@ export function MedicijnenClient({ groepId, medicijnen: initieel, registratiesVa
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <p className="font-bold text-caroo-donker">{med.naam}</p>
-                  <p className="text-sm text-gray-500">{med.dosering}</p>
+                  <p className="text-sm text-gray-600">{med.dosering}</p>
                   {med.opmerkingen && (
-                    <p className="text-xs text-gray-400 mt-0.5">{med.opmerkingen}</p>
+                    <p className="text-xs text-gray-600 mt-0.5">{med.opmerkingen}</p>
                   )}
                 </div>
                 <span className="text-2xl">💊</span>

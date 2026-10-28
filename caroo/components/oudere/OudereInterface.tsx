@@ -8,6 +8,7 @@ import { InstellingenFormulier } from '@/components/instellingen/InstellingenFor
 import { uitloggen } from '@/app/auth/actions'
 import { useT } from '@/lib/i18n/client'
 import { categorieTekst } from '@/lib/i18n/vertaal'
+import { tekstKleurOp } from '@/lib/kleur'
 
 type Tab = 'thuis' | 'mijn_dag' | 'boodschappen' | 'fotos' | 'mijn_verhaal' | 'mijn_tip' | 'instellingen'
 
@@ -45,17 +46,17 @@ export function OudereInterface({
       <header className="bg-caroo-groen text-white px-4 py-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-white/80 text-ou-sm">{begroeting},</p>
+            <p className="text-white text-ou-sm">{begroeting},</p>
             <h1 className="text-ou-2xl font-bold">{voornaam}</h1>
-            <p className="text-white/70 text-xs mt-0.5">{groepNaam}</p>
+            <p className="text-white text-ou-sm mt-0.5">{groepNaam}</p>
           </div>
           <button
             onClick={() => setActieveTab('instellingen')}
-            className="flex flex-col items-center text-white/80 hover:text-white pt-1"
+            className="flex flex-col items-center text-white hover:text-white pt-1"
             aria-label={t('algemeen.instellingen')}
           >
             <span className="text-2xl">⚙️</span>
-            <span className="text-[11px]">{t('algemeen.instellingen')}</span>
+            <span className="text-sm">{t('algemeen.instellingen')}</span>
           </button>
         </div>
       </header>
@@ -114,14 +115,15 @@ export function OudereInterface({
             <button
               key={item.tab}
               onClick={() => setActieveTab(item.tab)}
-              className={`flex flex-col items-center justify-center py-2 transition-colors
+              aria-current={actieveTab === item.tab ? 'page' : undefined}
+              className={`flex flex-col items-center justify-center py-2 px-0.5 m-1 rounded-caroo transition-colors
                 ${actieveTab === item.tab
-                  ? 'text-caroo-groen'
-                  : 'text-gray-400 hover:text-gray-600'
+                  ? 'bg-caroo-groen-licht text-caroo-groen font-bold'
+                  : 'text-gray-700 hover:text-caroo-donker'
                 }`}
             >
-              <span className="text-xl">{item.emoji}</span>
-              <span className="text-[10px] mt-0.5">{item.label}</span>
+              <span className="text-2xl leading-none">{item.emoji}</span>
+              <span className="text-sm leading-tight mt-1 text-center break-words">{item.label}</span>
             </button>
           ))}
         </div>
@@ -138,15 +140,15 @@ function TabMijnDag({ dagAfspraken }: any) {
       {dagAfspraken.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-4xl mb-3">☀️</p>
-          <p className="text-ou-lg text-gray-500">{t('oudere.mijnDag.geenAfspraken')}</p>
+          <p className="text-ou-lg text-gray-600">{t('oudere.mijnDag.geenAfspraken')}</p>
         </div>
       ) : (
         <div className="space-y-4">
           {dagAfspraken.map((af: any) => (
             <div key={af.id} className="caroo-card">
               <div
-                className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full text-white mb-2"
-                style={{ backgroundColor: af.agenda_categorieen?.kleur || '#1A7A6E' }}
+                className="inline-block text-ou-sm font-semibold px-3 py-0.5 rounded-full mb-2"
+                style={{ backgroundColor: af.agenda_categorieen?.kleur || '#1A7A6E', color: tekstKleurOp(af.agenda_categorieen?.kleur || '#1A7A6E') }}
               >
                 {categorieTekst(t, af.agenda_categorieen?.naam) || t('oudere.mijnDag.afspraak')}
               </div>
@@ -155,7 +157,7 @@ function TabMijnDag({ dagAfspraken }: any) {
                 {t('oudere.mijnDag.tijdUur', { tijd: tijd(af.start_tijd) })}
               </p>
               {af.beschrijving && (
-                <p className="text-ou-sm text-gray-500 mt-2">{af.beschrijving}</p>
+                <p className="text-ou-sm text-gray-600 mt-2">{af.beschrijving}</p>
               )}
             </div>
           ))}
@@ -171,8 +173,8 @@ function TabFotos({ fotos }: any) {
     return (
       <div className="px-4 py-8 text-center">
         <p className="text-5xl mb-3">📸</p>
-        <p className="text-ou-lg text-gray-500">{t('oudere.fotos.geen')}</p>
-        <p className="text-ou-sm text-gray-400 mt-1">{t('oudere.fotos.familieKan')}</p>
+        <p className="text-ou-lg text-gray-600">{t('oudere.fotos.geen')}</p>
+        <p className="text-ou-sm text-gray-600 mt-1">{t('oudere.fotos.familieKan')}</p>
       </div>
     )
   }
@@ -189,7 +191,7 @@ function TabFotos({ fotos }: any) {
               className="w-full h-full object-cover"
             />
             {foto.onderschrift && (
-              <p className="text-xs text-gray-600 p-1 truncate">{foto.onderschrift}</p>
+              <p className="text-ou-sm text-gray-700 px-2 py-1 truncate">{foto.onderschrift}</p>
             )}
           </div>
         ))}
@@ -226,7 +228,7 @@ function TabMijnTip({ groepId }: any) {
   return (
     <div className="px-4 py-6">
       <h2 className="text-ou-xl font-bold text-caroo-donker mb-2">{t('oudere.tip.titel')}</h2>
-      <p className="text-ou-sm text-gray-500 mb-4">
+      <p className="text-ou-sm text-gray-600 mb-4">
         {t('oudere.tip.uitleg')}
       </p>
 

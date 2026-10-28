@@ -115,17 +115,17 @@ export default async function GroepPage({
       <header className="bg-caroo-groen text-white sticky top-0 z-10">
         <div className="flex items-center justify-between px-4 py-3">
           <div>
-            <Link href="/dashboard" className="text-white/70 text-xs"><span className="inline-block rtl:rotate-180">←</span> {t('groep.dashboard')}</Link>
+            <Link href="/dashboard" className="text-white text-xs"><span className="inline-block rtl:rotate-180">←</span> {t('groep.dashboard')}</Link>
             <h1 className="font-bold">{groep.naam}</h1>
           </div>
           <div className="text-end">
             <div className="flex items-center justify-end gap-3">
-              <Link href="/instellingen" className="text-white/80 text-lg" aria-label={t('algemeen.instellingen')}>⚙️</Link>
+              <Link href="/instellingen" className="text-white text-lg" aria-label={t('algemeen.instellingen')}>⚙️</Link>
               <form action={uitloggen}>
-                <button type="submit" className="text-white/70 text-sm">{t('algemeen.uitloggen')}</button>
+                <button type="submit" className="text-white text-sm">{t('algemeen.uitloggen')}</button>
               </form>
             </div>
-            <p className="text-white/60 text-[11px] max-w-[160px] truncate" dir="ltr">{user.email}</p>
+            <p className="text-white text-xs max-w-[180px] truncate" dir="ltr">{user.email}</p>
           </div>
         </div>
       </header>
@@ -201,14 +201,14 @@ export default async function GroepPage({
         {/* Tips en levenslessen */}
         {tips && tips.length > 0 && (
           <div>
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">
               {t('groep.tips')}
             </h2>
             <div className="space-y-2">
               {tips.map((tip: any) => (
                 <div key={tip.id} className="caroo-card border-s-4 border-caroo-oranje">
                   <p className="text-caroo-donker whitespace-pre-line">💡 {tip.tekst}</p>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-xs text-gray-600 mt-1">
                     {tip.users?.naam || tip.auteur_naam || t('algemeen.onbekend')} ·{' '}
                     {datum(taal, tip.aangemaakt_op, { day: 'numeric', month: 'long' })}
                   </p>
@@ -221,7 +221,7 @@ export default async function GroepPage({
         {/* Aankomende taken */}
         {openTaken && openTaken.length > 0 && (
           <div>
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">
               {t('groep.openTaken')}
             </h2>
             <div className="space-y-2">
@@ -231,7 +231,7 @@ export default async function GroepPage({
                   <div>
                     <p className="text-sm font-medium">{taak.titel}</p>
                     {taak.deadline && (
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-gray-600">
                         {datum(taal, taak.deadline, { day: 'numeric', month: 'numeric', year: 'numeric' })}
                       </p>
                     )}
@@ -245,7 +245,7 @@ export default async function GroepPage({
         {/* Aankomende afspraken */}
         {afspraken && afspraken.length > 0 && (
           <div>
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+            <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">
               {t('groep.komendeAfspraken')}
             </h2>
             <div className="space-y-2">
@@ -257,7 +257,7 @@ export default async function GroepPage({
                   />
                   <div>
                     <p className="text-sm font-medium">{afspraak.titel}</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-gray-600">
                       {datum(taal, afspraak.start_tijd, { weekday: 'short', day: 'numeric', month: 'short' })} · {tijd(taal, afspraak.start_tijd)}
                     </p>
                   </div>
@@ -269,7 +269,7 @@ export default async function GroepPage({
 
         {/* Leden */}
         <div>
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+          <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">
             {t('groep.leden', { aantal: leden?.length || 0 })}
           </h2>
           <div className="space-y-2">
@@ -277,7 +277,7 @@ export default async function GroepPage({
               <div key={lid.users.id} className="caroo-card flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium">{lid.users.naam}</p>
-                  <p className="text-xs text-gray-400" dir="ltr">{lid.users.email}</p>
+                  <p className="text-xs text-gray-600" dir="ltr">{lid.users.email}</p>
                 </div>
                 <span className="text-xs bg-caroo-groen-licht text-caroo-groen px-2 py-0.5 rounded-full">
                   {rolTekst(t, lid.rol)}

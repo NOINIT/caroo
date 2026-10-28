@@ -137,10 +137,10 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
 
       {openstaand.length > 0 && (
         <div>
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-1">
+          <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-1">
             {t('uitnodigen.wachtOpReactie')}
           </h2>
-          <p className="text-xs text-gray-400 mb-2">
+          <p className="text-xs text-gray-600 mb-2">
             {t('uitnodigen.geaccepteerdBij')}
           </p>
           <div className="space-y-2">
@@ -149,7 +149,7 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
                 <span className="text-lg">📨</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-caroo-donker truncate" dir="ltr">{u.email}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-600">
                     {rolTekst(t, u.rol)} · {t('uitnodigen.geldigTot', { datum: datum(u.verloopt_op, { day: 'numeric', month: 'numeric', year: 'numeric' }) })}
                   </p>
                 </div>

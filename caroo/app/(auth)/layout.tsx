@@ -17,7 +17,7 @@ export default function AuthLayout({
           {children}
         </div>
       </main>
-      <footer className="text-center text-xs text-gray-400 py-4">
+      <footer className="text-center text-xs text-gray-600 py-4">
         © {new Date().getFullYear()} NOINIT · Clanoo
       </footer>
     </div>

@@ -88,13 +88,13 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
       {entries.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-5xl mb-3">📖</p>
-          <p className="text-gray-500">{t('dagboek.leeg')}</p>
-          <p className="text-sm text-gray-400 mt-1">{t('dagboek.eerste')}</p>
+          <p className="text-gray-600">{t('dagboek.leeg')}</p>
+          <p className="text-sm text-gray-600 mt-1">{t('dagboek.eerste')}</p>
         </div>
       ) : (
         Object.entries(perMaand).map(([maand, maandEntries]) => (
           <div key={maand} className="mb-6">
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2 capitalize">
+            <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2 capitalize">
               {maand}
             </h2>
             <div className="space-y-2">
@@ -112,7 +112,7 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
                   >
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <div>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-gray-600">
                           {datum(entry.aangemaakt_op, { weekday: 'long', day: 'numeric', month: 'short' })} · {tijd(entry.aangemaakt_op)}
                           {(entry.users?.naam || entry.auteur_naam) && ` · ${entry.users?.naam || entry.auteur_naam}`}
                         </p>

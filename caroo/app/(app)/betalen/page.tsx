@@ -58,7 +58,7 @@ export default function BetalenPage() {
         <h1 className="text-2xl font-bold text-caroo-donker mb-2">
           {t('betalen.titel')}
         </h1>
-        <p className="text-gray-500">
+        <p className="text-gray-600">
           <MetVet tekst={t('betalen.activeer')} waarde={groepNaam} sleutel="groep" />
         </p>
       </div>
@@ -67,12 +67,12 @@ export default function BetalenPage() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="font-semibold text-caroo-donker">{groepNaam}</p>
-            <p className="text-sm text-gray-500">{t('betalen.product')}</p>
+            <p className="text-sm text-gray-600">{t('betalen.product')}</p>
           </div>
           <p className="text-2xl font-bold text-caroo-groen">{JAARPRIJS}</p>
         </div>
 
-        <div className="border-t pt-4 text-sm text-gray-500">
+        <div className="border-t pt-4 text-sm text-gray-600">
           <p>{t('betalen.methodes')}</p>
           <p className="mt-1">{t('betalen.veilig')}</p>
           <p className="mt-1">{t('betalen.opzegbaar')}</p>
@@ -93,7 +93,7 @@ export default function BetalenPage() {
         {laden ? t('betalen.doorsturen') : t('betalen.nuBetalen', { prijs: JAARPRIJS })}
       </button>
 
-      <p className="text-center text-xs text-gray-400 mt-4">
+      <p className="text-center text-xs text-gray-600 mt-4">
         {t('betalen.daarna')}
       </p>
     </div>

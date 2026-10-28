@@ -100,7 +100,7 @@ export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start
                   {t('signalen.vandaagRond', { tijd: tijd || '...' })}
                 </button>
               </div>
-              <button onClick={() => setKiesVoor(null)} className="text-xs text-gray-500 underline">
+              <button onClick={() => setKiesVoor(null)} className="text-xs text-gray-600 underline">
                 {t('algemeen.annuleren')}
               </button>
             </div>
@@ -119,7 +119,7 @@ export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start
           <div key={i} className="caroo-card flex items-center gap-3">
             <span className="text-4xl leading-none">{info.emoji}</span>
             <div>
-              <p className="text-sm text-gray-500">{t('signalen.voeltZich', { naam: s.naam || t('algemeen.deHoofdpersoon') })}</p>
+              <p className="text-sm text-gray-600">{t('signalen.voeltZich', { naam: s.naam || t('algemeen.deHoofdpersoon') })}</p>
               <p className="font-bold text-caroo-donker">{stemmingLabel(t, info.waarde)}</p>
             </div>
           </div>

@@ -154,8 +154,8 @@ export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: P
       {fotos.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-5xl mb-3">🖼️</p>
-          <p className="text-gray-500">{t('fotos.geen')}</p>
-          <p className="text-sm text-gray-400 mt-1">{t('fotos.eerste')}</p>
+          <p className="text-gray-600">{t('fotos.geen')}</p>
+          <p className="text-sm text-gray-600 mt-1">{t('fotos.eerste')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-2">
@@ -202,7 +202,7 @@ export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: P
                   <p className="text-caroo-donker font-medium">{groteFoto.onderschrift}</p>
                 )}
                 {(groteFoto.users?.naam || groteFoto.auteur_naam) && (
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-600">
                     {t('fotos.geplaatstDoor', { naam: groteFoto.users?.naam || groteFoto.auteur_naam || '' })} ·{' '}
                     {datum(groteFoto.aangemaakt_op, { day: 'numeric', month: 'numeric', year: 'numeric' })}
                   </p>
@@ -212,7 +212,7 @@ export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: P
             {(groteFoto.uploader_id === mijnId || isBeheerder) && (
               <div className="mt-3">
                 {!bevestigVerwijderen ? (
-                  <button onClick={() => setBevestigVerwijderen(true)} className="w-full text-sm text-white/80 underline py-2">
+                  <button onClick={() => setBevestigVerwijderen(true)} className="w-full text-sm text-white underline py-2">
                     {t('fotos.verwijderen')}
                   </button>
                 ) : (

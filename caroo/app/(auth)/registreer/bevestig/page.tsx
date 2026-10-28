@@ -12,7 +12,7 @@ export default async function BevestigPage() {
       <p className="text-gray-600 mb-4">
         {t('registreer.bevestigingGestuurd')}
       </p>
-      <p className="text-sm text-gray-400 mb-6">
+      <p className="text-sm text-gray-600 mb-6">
         {t('login.geenMail')}
       </p>
       <Link href="/login" className="text-caroo-groen text-sm font-medium hover:underline">

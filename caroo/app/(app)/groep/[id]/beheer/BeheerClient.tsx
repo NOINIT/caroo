@@ -98,7 +98,7 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
 
       {/* Leden */}
       <section>
-        <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">
+        <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">
           {t('groep.leden', { aantal: leden.length })}
         </h2>
         <div className="space-y-2">
@@ -111,12 +111,12 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-caroo-donker text-sm">{lid.users?.naam || t('algemeen.onbekend')}</p>
-                  <p className="text-xs text-gray-500"><span dir="ltr">{lid.users?.email}</span> · {lid.rol === 'groepsbeheerder' ? t('dashboard.beheerder') : t(`rollen.${lid.rol as 'mantelzorger' | 'oudere'}`)}</p>
+                  <p className="text-xs text-gray-600"><span dir="ltr">{lid.users?.email}</span> · {lid.rol === 'groepsbeheerder' ? t('dashboard.beheerder') : t(`rollen.${lid.rol as 'mantelzorger' | 'oudere'}`)}</p>
                 </div>
                 {!isZijzelf && (
                   <button
                     onClick={() => verwijderLid(lid.id)}
-                    className="text-gray-300 hover:text-red-400 text-lg flex-shrink-0"
+                    className="text-gray-500 hover:text-red-600 text-lg flex-shrink-0"
                     aria-label={t('beheer.lidVerwijderen')}
                   >
                     ×
@@ -131,7 +131,7 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
       {/* Categorieën */}
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
+          <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
             {t('beheer.categorieen')}
           </h2>
           <button
@@ -191,7 +191,7 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
                   </button>
                   <button
                     onClick={() => setBewerkCat(null)}
-                    className="text-gray-400 text-sm"
+                    className="text-gray-600 text-sm"
                   >
                     ✕
                   </button>
@@ -204,11 +204,11 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
                   />
                   <span className="flex-1 text-sm text-caroo-donker">{categorieTekst(t, cat.naam)}</span>
                   {cat.systeem && (
-                    <span className="text-xs text-gray-400">{t('beheer.standaard')}</span>
+                    <span className="text-xs text-gray-600">{t('beheer.standaard')}</span>
                   )}
                   <button
                     onClick={() => startBewerkCat(cat)}
-                    className="text-gray-400 hover:text-caroo-groen text-sm"
+                    className="text-gray-600 hover:text-caroo-groen text-sm"
                     aria-label={t('beheer.bewerken')}
                   >
                     ✏️
@@ -216,7 +216,7 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
                   {!cat.systeem && (
                     <button
                       onClick={() => verwijderCategorie(cat.id)}
-                      className="text-gray-300 hover:text-red-400 text-lg"
+                      className="text-gray-500 hover:text-red-600 text-lg"
                       aria-label={t('algemeen.verwijderen')}
                     >
                       ×

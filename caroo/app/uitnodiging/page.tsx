@@ -89,7 +89,7 @@ export default async function UitnodigingPage({
               {t('uitnodiging.ontvangenVoor')}
             </p>
             <p className="text-caroo-groen font-bold text-lg mb-1">{groepNaam}</p>
-            <p className="text-sm text-gray-400 mb-6">
+            <p className="text-sm text-gray-600 mb-6">
               {t('uitnodiging.rol', { rol: t(`rollen.${uitnodiging.rol as 'oudere' | 'mantelzorger' | 'groepsbeheerder'}`) })}
             </p>
 

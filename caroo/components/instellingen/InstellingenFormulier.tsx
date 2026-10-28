@@ -52,7 +52,7 @@ export function InstellingenFormulier({ naam: startNaam, email, lettergrootte: s
     setStatus('opgeslagen')
   }
 
-  const kop = groot ? 'text-ou-lg font-bold text-caroo-donker mb-3' : 'text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2'
+  const kop = groot ? 'text-ou-lg font-bold text-caroo-donker mb-3' : 'text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2'
   const knop = groot ? 'py-4 text-ou-base' : 'py-2.5 text-sm'
 
   return (
@@ -67,12 +67,12 @@ export function InstellingenFormulier({ naam: startNaam, email, lettergrootte: s
           className={`input-field ${groot ? 'text-ou-base py-4' : ''}`}
           aria-label={t('instellingen.mijnNaam')}
         />
-        <p className="text-xs text-gray-400 mt-1">{t('instellingen.ingelogdAls', { email })}</p>
+        <p className="text-xs text-gray-600 mt-1">{t('instellingen.ingelogdAls', { email })}</p>
       </section>
 
       <section>
         <h2 className={kop}>{t('instellingen.taal')}</h2>
-        <p className="text-xs text-gray-500 mb-3">{t('instellingen.taalUitleg')}</p>
+        <p className="text-xs text-gray-600 mb-3">{t('instellingen.taalUitleg')}</p>
         <TaalKiezer groot={groot} />
       </section>
 
@@ -121,7 +121,7 @@ export function InstellingenFormulier({ naam: startNaam, email, lettergrootte: s
 
       <section>
         <h2 className={kop}>{t('instellingen.meldingen')}</h2>
-        <p className="text-xs text-gray-500 mb-3">
+        <p className="text-xs text-gray-600 mb-3">
           {t('instellingen.meldingenUitleg')}
         </p>
         <MeldingenInstellingen email={meldingEmail} groot={groot} />

@@ -172,7 +172,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
       {gefilterd.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-4xl mb-2">{filter === 'open' ? '✅' : '📋'}</p>
-          <p className="text-gray-500">
+          <p className="text-gray-600">
             {filter === 'open' ? t('taken.geenOpen') : t('taken.nietsAfgerond')}
           </p>
         </div>
@@ -199,14 +199,14 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
                     {taak.titel}
                   </p>
                   {taak.beschrijving && (
-                    <p className="text-sm text-gray-500 mt-0.5">{taak.beschrijving}</p>
+                    <p className="text-sm text-gray-600 mt-0.5">{taak.beschrijving}</p>
                   )}
                   <div className="flex flex-wrap gap-2 mt-1">
                     {taak.deadline && (
                       <span className={`text-xs px-1.5 py-0.5 rounded ${
                         isOverdue
                           ? 'bg-red-100 text-red-600'
-                          : 'bg-gray-100 text-gray-500'
+                          : 'bg-gray-100 text-gray-600'
                       }`}>
                         📅 {datum(taak.deadline, { day: 'numeric', month: 'short' })}
                       </span>
@@ -220,7 +220,7 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
                 </div>
                 <button
                   onClick={() => verwijder(taak.id)}
-                  className="text-gray-300 hover:text-red-400 text-lg flex-shrink-0"
+                  className="text-gray-500 hover:text-red-600 text-lg flex-shrink-0"
                   aria-label={t('algemeen.verwijderen')}
                 >
                   ×

@@ -43,7 +43,7 @@ export function OudereUitnodiging({ token, groepNaam, gemaskeerdEmail }: Props) 
         <p className="text-ou-base text-gray-700 mb-4">
           {t('oudereUitnodiging.klikKnop', { groep: groepNaam })}
         </p>
-        <p className="text-ou-sm text-gray-500">
+        <p className="text-ou-sm text-gray-600">
           {t('oudereUitnodiging.geenMail')}
         </p>
       </div>
@@ -91,7 +91,7 @@ export function OudereUitnodiging({ token, groepNaam, gemaskeerdEmail }: Props) 
 
       <Link
         href={`/login?redirect=/uitnodiging&token=${token}`}
-        className="inline-block mt-5 text-sm text-gray-500 underline"
+        className="inline-block mt-5 text-sm text-gray-600 underline"
       >
         {t('oudereUitnodiging.alWachtwoord')}
       </Link>

@@ -77,7 +77,7 @@ function LoginForm() {
         <p className="text-gray-600">
           {t('login.linkGestuurd')}
         </p>
-        <p className="text-sm text-gray-400 mt-4">
+        <p className="text-sm text-gray-600 mt-4">
           {t('login.geenMail')}
         </p>
       </div>
@@ -88,7 +88,7 @@ function LoginForm() {
     <div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-caroo-donker mb-2">{t('login.titel')}</h1>
-        <p className="text-gray-500">
+        <p className="text-gray-600">
           {viaUitnodiging ? t('login.viaUitnodiging') : t('login.welkomTerug')}
         </p>
       </div>
@@ -99,7 +99,7 @@ function LoginForm() {
           className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
             tabblad === 'wachtwoord'
               ? 'bg-white text-caroo-groen shadow-sm'
-              : 'text-gray-500'
+              : 'text-gray-600'
           }`}
         >
           {t('login.tabWachtwoord')}
@@ -109,7 +109,7 @@ function LoginForm() {
           className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
             tabblad === 'magic'
               ? 'bg-white text-caroo-groen shadow-sm'
-              : 'text-gray-500'
+              : 'text-gray-600'
           }`}
         >
           {t('login.tabLink')}
@@ -206,7 +206,7 @@ function LoginForm() {
         </form>
       )}
 
-      <p className="text-center text-sm text-gray-500 mt-6">
+      <p className="text-center text-sm text-gray-600 mt-6">
         {t('login.nogGeenAccount')}{' '}
         <Link
           href={viaUitnodiging ? `/registreer?redirect=${redirectNaar}&token=${token}` : '/registreer'}

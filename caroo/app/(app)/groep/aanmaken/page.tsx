@@ -58,7 +58,7 @@ export default function GroepAanmakenPage() {
         <h1 className="text-2xl font-bold text-caroo-donker mb-2">
           {t('dashboard.groepAanmaken')}
         </h1>
-        <p className="text-gray-500">
+        <p className="text-gray-600">
           {t('aanmaken.intro')}
         </p>
       </div>
@@ -78,7 +78,7 @@ export default function GroepAanmakenPage() {
             placeholder={t('aanmaken.voorbeeld')}
             maxLength={60}
           />
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-gray-600 mt-1">
             {t('aanmaken.tip')}
           </p>
         </div>

@@ -121,7 +121,7 @@ export function MijnVerhaal({ groepId }: Props) {
   return (
     <div className="px-4 py-6">
       <h2 className="text-ou-xl font-bold text-caroo-donker mb-2">{t('verhaal.titel')}</h2>
-      <p className="text-ou-sm text-gray-500 mb-5">
+      <p className="text-ou-sm text-gray-600 mb-5">
         {t('verhaal.uitleg')}
       </p>
 
@@ -146,7 +146,7 @@ export function MijnVerhaal({ groepId }: Props) {
           {!luistert ? (
             <button
               onClick={startSpraaak}
-              className="w-full py-5 bg-caroo-oranje text-white text-ou-lg font-bold rounded-caroo-lg
+              className="w-full py-5 bg-caroo-oranje-donker text-white text-ou-lg font-bold rounded-caroo-lg
                          flex items-center justify-center gap-3 active:scale-95 transition-transform"
             >
               <span className="text-2xl">🎤</span>
@@ -167,7 +167,7 @@ export function MijnVerhaal({ groepId }: Props) {
 
       {!spraakBeschikbaar && (
         <div className="bg-gray-50 rounded-caroo p-3 mb-4 text-center">
-          <p className="text-ou-sm text-gray-500">
+          <p className="text-ou-sm text-gray-600">
             {t('verhaal.geenSpraak')}
             <br />
             {t('verhaal.probeerChrome')}
@@ -204,7 +204,7 @@ export function MijnVerhaal({ groepId }: Props) {
               <div key={entry.id} className="caroo-card">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-sm">{entry.gesproken ? '🎤' : '✍️'}</span>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-ou-sm text-gray-700">
                     {datum(entry.aangemaakt_op, { day: 'numeric', month: 'long', year: 'numeric' })}
                   </span>
                 </div>

@@ -14,6 +14,9 @@ const config: Config = {
           'groen-licht': '#E8F5F3',
           oranje: '#E8711A',
           'oranje-licht': '#FDF2EC',
+          // Leesbaar oranje: witte tekst erop (contrast 4,5) en oranje tekst op wit (contrast 5)
+          'oranje-donker': '#C2570C',
+          'oranje-tekst': '#B4510C',
           donker: '#1A2F5A',
           grijs: '#6B7280',
           'grijs-licht': '#F3F4F6',

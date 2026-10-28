@@ -65,7 +65,7 @@ export function WachtlijstFormulier({ bron }: { bron: string }) {
       </div>
 
       <fieldset>
-        <legend className="input-label">Voor wie zoek je dit? <span className="font-normal text-gray-500">(mag je overslaan)</span></legend>
+        <legend className="input-label">Voor wie zoek je dit? <span className="font-normal text-gray-600">(mag je overslaan)</span></legend>
         <div className="flex flex-wrap gap-2 mt-1">
           {KEUZES.map(k => (
             <button
@@ -96,7 +96,7 @@ export function WachtlijstFormulier({ bron }: { bron: string }) {
         {bezig ? 'Even geduld...' : 'Zet me op de wachtlijst'}
       </button>
 
-      <p className="text-xs text-gray-500 leading-relaxed">
+      <p className="text-xs text-gray-600 leading-relaxed">
         We gebruiken je gegevens alleen voor de wachtlijst en, als je dat aanvinkt, voor nieuws over {MERK.naam}.
       </p>
     </form>

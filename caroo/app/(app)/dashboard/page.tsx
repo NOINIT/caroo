@@ -55,7 +55,7 @@ export default async function DashboardPage({
           <div className="flex items-center gap-4">
             <Link href="/instellingen" className="text-lg" aria-label={t('algemeen.instellingen')}>⚙️</Link>
             <form action={uitloggen}>
-              <button type="submit" className="text-sm text-gray-500 hover:text-red-500 transition-colors">
+              <button type="submit" className="text-sm text-gray-600 hover:text-red-500 transition-colors">
                 {t('algemeen.uitloggen')}
               </button>
             </form>
@@ -69,7 +69,7 @@ export default async function DashboardPage({
           <h1 className="text-xl font-bold text-caroo-donker">
             {t('dashboard.hallo', { naam: profiel?.naam?.split(' ')[0] || t('dashboard.daar') })}
           </h1>
-          <p className="text-xs text-gray-400 mt-0.5">{t('instellingen.ingelogdAls', { email: user.email || '' })}</p>
+          <p className="text-xs text-gray-600 mt-0.5">{t('instellingen.ingelogdAls', { email: user.email || '' })}</p>
           {welkomTerug && (
             <p className="text-caroo-groen text-sm mt-1">
               {t('dashboard.welkom')}
@@ -98,7 +98,7 @@ export default async function DashboardPage({
         {/* Zorggroepen */}
         {groepen.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+            <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">
               {t('dashboard.mijnGroepen')}
             </h2>
             <div className="space-y-3">
@@ -112,7 +112,7 @@ export default async function DashboardPage({
                   >
                     <div>
                       <p className="font-semibold text-caroo-donker">{groep.naam}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">
+                      <p className="text-xs text-gray-600 mt-0.5">
                         {lid.rol === 'groepsbeheerder' ? `👑 ${t('dashboard.beheerder')}` :
                          lid.rol === 'mantelzorger' ? `🤝 ${t('rollen.mantelzorger')}` : `⭐ ${t('rollen.oudere')}`}
                         {!groep.betaald && (

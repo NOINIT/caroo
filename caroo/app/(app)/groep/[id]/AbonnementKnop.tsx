@@ -28,7 +28,7 @@ export default function AbonnementKnop({ groepId }: { groepId: string }) {
     <button
       onClick={openPortal}
       disabled={laden}
-      className="text-sm text-gray-400 hover:text-gray-600 underline"
+      className="text-sm text-gray-600 hover:text-gray-800 underline"
     >
       {laden ? t('abonnement.doorsturen') : t('abonnement.beheren')}
     </button>

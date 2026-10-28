@@ -42,7 +42,7 @@ export default async function FotosPage({ params }: { params: { id: string } }) 
     <div className="max-w-md mx-auto min-h-screen pb-20">
       <header className="bg-white border-b sticky top-0 z-10">
         <div className="flex items-center gap-3 px-4 py-3">
-          <Link href={`/groep/${params.id}`} className="text-gray-500 inline-block rtl:rotate-180">←</Link>
+          <Link href={`/groep/${params.id}`} className="text-gray-600 inline-block rtl:rotate-180">←</Link>
           <h1 className="font-bold text-caroo-donker">{t('groep.tegels.fotos')} — {groep.naam}</h1>
         </div>
       </header>

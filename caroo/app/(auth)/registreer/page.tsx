@@ -37,7 +37,7 @@ function RegistreerForm() {
     <div>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-caroo-donker mb-2">{t('registreer.titel')}</h1>
-        <p className="text-gray-500">
+        <p className="text-gray-600">
           {viaUitnodiging ? t('registreer.viaUitnodiging') : t('registreer.intro')}
         </p>
       </div>
@@ -105,7 +105,7 @@ function RegistreerForm() {
         </button>
       </form>
 
-      <p className="text-center text-sm text-gray-500 mt-6">
+      <p className="text-center text-sm text-gray-600 mt-6">
         {t('registreer.alAccount')}{' '}
         <Link
           href={viaUitnodiging ? `/login?redirect=${redirectNaar}&token=${token}` : '/login'}
