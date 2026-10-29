@@ -479,7 +479,7 @@ export const tr: Woordenboek = {
     punt3: '✅ Ses tanımalı Hikâyem',
     punt4: '✅ Fotoğraf albümü ve tavsiye paylaşma',
     verder: 'Ödemeye geç →',
-    prijsUitleg: 'İlk ay ücretsiz, ödeme bilgisi gerekmez. Sonrasında tüm aile için aylık €10\'dan başlayan fiyatlarla.',
+    prijsUitleg: 'İlk ay ücretsiz, ödeme bilgisi gerekmez. Sonrasında tüm aile için aylık €12,50.',
   },
 
   betalen: {
@@ -505,7 +505,7 @@ export const tr: Woordenboek = {
     jaarUitleg: 'Aylık {maand} demektir.',
     maand: 'Aylık',
     maandLabel: 'aylık',
-    maandUitleg: 'İlk {aantal} ay. Sonrasında aylık {prijs}.',
+    maandUitleg: 'Yıllık abonelikle yılda {voordeel} tasarruf edersiniz.',
     opzegMaand: '🔄 Her ay iptal edebilirsiniz.',
     opzegJaar: '🔄 İstediğiniz zaman iptal edebilirsiniz. Clanoo yıl sonuna kadar sizde kalır.',
     verder: 'Ödemeye geç',

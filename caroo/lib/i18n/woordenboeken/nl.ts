@@ -481,7 +481,7 @@ export const nl = {
     punt3: '✅ Mijn verhaal met spraakherkenning',
     punt4: '✅ Fotoalbum & tips delen',
     verder: 'Verder naar betaling →',
-    prijsUitleg: 'De eerste maand is gratis, zonder betaalgegevens. Daarna vanaf €10 per maand voor de hele familie.',
+    prijsUitleg: 'De eerste maand is gratis, zonder betaalgegevens. Daarna €12,50 per maand voor de hele familie.',
   },
 
   betalen: {
@@ -507,7 +507,7 @@ export const nl = {
     jaarUitleg: 'Dat is {maand} per maand.',
     maand: 'Per maand',
     maandLabel: 'per maand',
-    maandUitleg: 'De eerste {aantal} maanden. Daarna {prijs} per maand.',
+    maandUitleg: 'Met een jaarabonnement ben je {voordeel} per jaar goedkoper uit.',
     opzegMaand: '🔄 Opzeggen kan elke maand.',
     opzegJaar: '🔄 Opzeggen kan altijd. Je houdt Clanoo tot het einde van het jaar.',
     verder: 'Verder naar betalen',

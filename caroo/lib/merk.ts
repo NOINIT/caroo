@@ -6,5 +6,5 @@ export const MERK = {
   plaats: 'Dordrecht',
   contact: 'hallo@noinit.nl',
   lancering: '1 januari 2027',
-  oprichters: { aantal: 100, prijs: '€69', normaal: '€149' },
+  oprichters: { aantal: 100, prijs: '€69', normaal: '€125' },
 }

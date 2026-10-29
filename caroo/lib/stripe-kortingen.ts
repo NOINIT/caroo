@@ -4,8 +4,8 @@ import { PRIJS } from '@/lib/prijzen'
 
 // Kortingen in Stripe. Ze worden de eerste keer vanzelf aangemaakt (vaste id's),
 // zodat er in het Stripe-dashboard niets met de hand ingesteld hoeft te worden.
-export const KORTING_START = 'clanoo-startkorting-6m'
-export const KORTING_OPRICHTER = 'clanoo-oprichter-2027'
+// Nieuwe id sinds de prijs van €149 naar €125 ging: een kortingscode kan in Stripe niet worden aangepast
+export const KORTING_OPRICHTER = 'clanoo-oprichter-2027-125'
 
 export function stripeClient() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!)
@@ -19,24 +19,11 @@ async function haalOfMaak(stripe: Stripe, id: string, maak: Stripe.CouponCreateP
   }
 }
 
-/** Startkorting: zes betaalde maanden €5 korting op €15, dus €10 */
-export function startkorting(stripe: Stripe) {
-  return haalOfMaak(stripe, KORTING_START, {
-    name: `Startkorting: ${PRIJS.startMaanden} maanden €${PRIJS.maandStart}`,
-    amount_off: (PRIJS.maand - PRIJS.maandStart) * 100,
-    currency: 'eur',
-    duration: 'repeating',
-    // Zes maanden vanaf het afsluiten. Met of zonder gratis maand vallen daar
-    // precies zes betaalde maandfacturen in.
-    duration_in_months: PRIJS.startMaanden,
-  })
-}
-
-/** Oprichtersprijs: het eerste jaar €80 korting op €149, dus €69. Maximaal 100 keer. */
+/** Oprichtersprijs: het eerste jaar €56 korting op €125, dus €69. Maximaal 100 keer. */
 export function oprichterskorting(stripe: Stripe) {
   return haalOfMaak(stripe, KORTING_OPRICHTER, {
     name: `Oprichtersprijs: eerste jaar €${PRIJS.oprichter}`,
-    amount_off: (PRIJS.jaar - PRIJS.oprichter) * 100,
+    amount_off: Math.round((PRIJS.jaar - PRIJS.oprichter) * 100),
     currency: 'eur',
     // Twee maanden: valt altijd over de eerste jaarfactuur (ook na een gratis maand),
     // nooit over de tweede.

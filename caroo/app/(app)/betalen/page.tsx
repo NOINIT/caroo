@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useT } from '@/lib/i18n/client'
 import { MetVet } from '@/components/ui/MetVet'
-import { PRIJS, JAAR_PER_MAAND, euro, type Plan } from '@/lib/prijzen'
+import { PRIJS, JAAR_PER_MAAND, JAAR_VOORDEEL, euro, type Plan } from '@/lib/prijzen'
 import { toegangVan } from '@/lib/opzeggen'
 
 export default function BetalenPage() {
@@ -82,9 +82,9 @@ export default function BetalenPage() {
     {
       plan: 'maand',
       titel: t('betalen.maand'),
-      prijs: euro(PRIJS.maandStart),
+      prijs: euro(PRIJS.maand),
       label: t('betalen.maandLabel'),
-      uitleg: t('betalen.maandUitleg', { aantal: PRIJS.startMaanden, prijs: euro(PRIJS.maand) }),
+      uitleg: t('betalen.maandUitleg', { voordeel: euro(JAAR_VOORDEEL) }),
     },
   ]
 

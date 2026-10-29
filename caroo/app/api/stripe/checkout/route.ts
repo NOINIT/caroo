@@ -5,7 +5,7 @@ import { getT } from '@/lib/i18n/server'
 import { stripeTaal } from '@/lib/i18n/talen'
 import { PRIJS, isPlan } from '@/lib/prijzen'
 import { proefEinde } from '@/lib/opzeggen'
-import { stripeClient, startkorting, oprichterskorting, oprichtersplekkenOver } from '@/lib/stripe-kortingen'
+import { stripeClient, oprichterskorting, oprichtersplekkenOver } from '@/lib/stripe-kortingen'
 
 export async function POST(request: Request) {
   const { t, taal } = await getT()
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 
   try {
     const perJaar = plan !== 'maand'
-    const korting = plan === 'maand' ? await startkorting(stripe) : plan === 'oprichter' ? await oprichterskorting(stripe) : null
+    const korting = plan === 'oprichter' ? await oprichterskorting(stripe) : null
     if (plan === 'oprichter' && (await oprichtersplekkenOver()) <= 0) {
       return NextResponse.json({ error: t('betalen.oprichtersVol') }, { status: 400 })
     }
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
         quantity: 1,
         price_data: {
           currency: 'eur',
-          unit_amount: (perJaar ? PRIJS.jaar : PRIJS.maand) * 100,
+          unit_amount: Math.round((perJaar ? PRIJS.jaar : PRIJS.maand) * 100),
           recurring: { interval: perJaar ? 'year' : 'month' },
           product_data: {
             name: perJaar ? t('betalen.stripeJaar') : t('betalen.stripeMaand'),

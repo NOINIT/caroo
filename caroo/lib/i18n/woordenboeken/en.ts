@@ -479,7 +479,7 @@ export const en: Woordenboek = {
     punt3: '✅ My story with speech recognition',
     punt4: '✅ Photo album & sharing tips',
     verder: 'Continue to payment →',
-    prijsUitleg: 'The first month is free, no payment details needed. After that from €10 per month for the whole family.',
+    prijsUitleg: 'The first month is free, no payment details needed. After that €12.50 per month for the whole family.',
   },
 
   betalen: {
@@ -505,7 +505,7 @@ export const en: Woordenboek = {
     jaarUitleg: 'That is {maand} per month.',
     maand: 'Monthly',
     maandLabel: 'per month',
-    maandUitleg: 'For the first {aantal} months. Then {prijs} per month.',
+    maandUitleg: 'With a yearly plan you save {voordeel} a year.',
     opzegMaand: '🔄 Cancel any month.',
     opzegJaar: '🔄 Cancel any time. You keep Clanoo until the end of the year.',
     verder: 'Continue to payment',

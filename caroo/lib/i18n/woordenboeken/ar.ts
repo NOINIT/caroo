@@ -483,7 +483,7 @@ export const ar: Woordenboek = {
     punt3: '✅ حكايتي مع التعرّف على الصوت',
     punt4: '✅ ألبوم صور ومشاركة النصائح',
     verder: 'المتابعة إلى الدفع ←',
-    prijsUitleg: 'الشهر الأول مجاني، دون بيانات دفع. بعد ذلك من €10 شهريًا للعائلة كلها.',
+    prijsUitleg: 'الشهر الأول مجاني، دون بيانات دفع. بعد ذلك €12,50 شهريًا للعائلة كلها.',
   },
 
   betalen: {
@@ -509,7 +509,7 @@ export const ar: Woordenboek = {
     jaarUitleg: 'أي {maand} شهريًا.',
     maand: 'شهري',
     maandLabel: 'شهريًا',
-    maandUitleg: 'لأول {aantal} أشهر. ثم {prijs} شهريًا.',
+    maandUitleg: 'مع الاشتراك السنوي توفّر {voordeel} في السنة.',
     opzegMaand: '🔄 يمكنك الإلغاء كل شهر.',
     opzegJaar: '🔄 يمكنك الإلغاء في أي وقت، ويبقى Clanoo متاحًا حتى نهاية السنة.',
     verder: 'المتابعة إلى الدفع',
