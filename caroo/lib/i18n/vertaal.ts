@@ -69,7 +69,6 @@ export function rolTekst(t: TFunctie, rol: string) {
 }
 
 /** Huidige jaarprijs. Wordt bijgewerkt zodra de nieuwe prijzen live gaan. */
-export const JAARPRIJS = '€19,99'
 
 /** Standaardcategorieën van de agenda staan in het Nederlands in de database; die vertalen we bij het tonen. */
 const STANDAARD_CATEGORIEEN = ['Zorgafspraak', 'Verjaardag', 'Jubileum', 'Feestje', 'Herdenking', 'Overig']

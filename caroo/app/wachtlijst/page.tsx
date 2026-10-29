@@ -87,8 +87,9 @@ export default function WachtlijstPagina({ searchParams }: { searchParams: { bro
             <div>
               <dt className="font-bold text-caroo-donker">Wat kost het?</dt>
               <dd>
-                {o.prijs} voor het eerste jaar als oprichtersfamilie, daarna {o.normaal} per jaar. Dat is per familie:
-                iedereen die je uitnodigt doet mee zonder extra kosten. Opzeggen kan altijd tegen het einde van het jaar.
+                Je begint met een gratis maand. Als oprichtersfamilie betaal je daarna {o.prijs} voor het eerste jaar,
+                en vanaf het tweede jaar {o.normaal} per jaar. Dat is per familie: iedereen die je uitnodigt doet mee zonder
+                extra kosten. Opzeggen kan altijd; je houdt Clanoo tot het einde van het jaar.
               </dd>
             </div>
             <div>

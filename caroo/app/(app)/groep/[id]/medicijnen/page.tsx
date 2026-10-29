@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { MedicijnenClient } from './MedicijnenClient'
 import { getT } from '@/lib/i18n/server'
+import { magGebruiken } from '@/lib/opzeggen'
 
 export default async function MedicijnenPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -15,11 +16,11 @@ export default async function MedicijnenPage({ params }: { params: { id: string 
 
   const { data: groep } = await supabase
     .from('zorggroepen')
-    .select('id, naam, betaald')
+    .select('id, naam, betaald, gestopt_op, aangemaakt_op')
     .eq('id', params.id)
     .single()
 
-  if (!groep?.betaald) redirect(`/betalen?groep=${params.id}`)
+  if (!groep || !magGebruiken(groep)) redirect(`/betalen?groep=${params.id}`)
 
   const vandaag = new Date().toISOString().split('T')[0]
 

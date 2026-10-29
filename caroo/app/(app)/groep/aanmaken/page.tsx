@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useT } from '@/lib/i18n/client'
-import { JAARPRIJS } from '@/lib/i18n/vertaal'
 
 export default function GroepAanmakenPage() {
   const [naam, setNaam] = useState('')
@@ -49,7 +48,7 @@ export default function GroepAanmakenPage() {
     })
 
     // Redirect naar betaalpagina
-    router.push(`/betalen?groep=${groep.id}&naam=${encodeURIComponent(naam)}`)
+    router.push(`/groep/${groep.id}`)
   }
 
   return (
@@ -98,7 +97,7 @@ export default function GroepAanmakenPage() {
             <li>{t('aanmaken.punt4')}</li>
             <li>{t('registreer.avg')}</li>
           </ul>
-          <p className="mt-3 font-bold text-caroo-groen">{t('aanmaken.perJaar', { prijs: JAARPRIJS })}</p>
+          <p className="mt-3 font-bold text-caroo-groen">{t('aanmaken.prijsUitleg')}</p>
         </div>
 
         <button

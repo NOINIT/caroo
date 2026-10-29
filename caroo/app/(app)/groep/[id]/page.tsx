@@ -3,7 +3,7 @@ import { heeftRecht } from '@/lib/rechten'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getT } from '@/lib/i18n/server'
-import { rolTekst, JAARPRIJS, datum, tijd } from '@/lib/i18n/vertaal'
+import { rolTekst, datum, tijd } from '@/lib/i18n/vertaal'
 import { uitloggen } from '@/app/auth/actions'
 import AbonnementKnop from './AbonnementKnop'
 import { FamilieSignalen } from '@/components/familie/FamilieSignalen'
@@ -29,7 +29,7 @@ export default async function GroepPage({
   // Haal groepinfo op
   const { data: groep } = await supabase
     .from('zorggroepen')
-    .select('id, naam, betaald, eigenaar_id, gestopt_op')
+    .select('id, naam, betaald, eigenaar_id, gestopt_op, aangemaakt_op')
     .eq('id', params.id)
     .single()
 
@@ -149,14 +149,30 @@ export default async function GroepPage({
         </div>
       )}
 
-      {/* Niet betaald banner */}
+      {/* Gratis maand loopt nog */}
+      {nazorg.toegang === 'proef' && nazorg.tot && (
+        <div className="bg-caroo-groen-licht border-b border-caroo-groen px-4 py-3">
+          <p className="text-caroo-donker text-sm font-medium">
+            {t('groep.proefLoopt', { datum: datum(taal, nazorg.tot, { day: 'numeric', month: 'long' }) })}{' '}
+            {isEigenaar && (
+              <Link href={`/betalen?groep=${groep.id}&naam=${encodeURIComponent(groep.naam)}`} className="underline">
+                {t('groep.kiesAbonnement')}
+              </Link>
+            )}
+          </p>
+        </div>
+      )}
+
+      {/* Gratis maand voorbij, geen abonnement */}
       {nazorg.toegang === 'geen' && (
-        <div className="bg-orange-50 border-b border-orange-200 px-4 py-3">
-          <p className="text-orange-800 text-sm font-medium">
-            {t('groep.nietGeactiveerd')}{' '}
-            <Link href={`/betalen?groep=${groep.id}&naam=${encodeURIComponent(groep.naam)}`} className="underline">
-              {t('groep.nuActiveren', { prijs: JAARPRIJS })}
-            </Link>
+        <div className="bg-caroo-oranje-licht border-b border-caroo-oranje px-4 py-3">
+          <p className="text-caroo-donker text-sm font-medium">
+            {isEigenaar ? t('groep.proefVoorbij') : t('groep.proefVoorbijLid')}{' '}
+            {isEigenaar && (
+              <Link href={`/betalen?groep=${groep.id}&naam=${encodeURIComponent(groep.naam)}`} className="underline">
+                {t('groep.kiesAbonnement')}
+              </Link>
+            )}
           </p>
         </div>
       )}
@@ -183,7 +199,7 @@ export default async function GroepPage({
               ? [{ href: `/groep/${params.id}/beheer`, emoji: '⚙️', label: t('groep.tegels.beheer') }]
               : []),
           ].map((item: { href: string; emoji: string; label: string; altijd?: boolean }) => {
-            const open = groep.betaald || (item.altijd && nazorg.toegang === 'nazorg')
+            const open = nazorg.toegang === 'actief' || nazorg.toegang === 'proef' || (item.altijd && nazorg.toegang === 'nazorg')
             return (
             <Link
               key={item.href}
@@ -286,7 +302,7 @@ export default async function GroepPage({
             ))}
           </div>
 
-          {isBeheerder && groep.betaald && (
+          {isBeheerder && (nazorg.toegang === 'actief' || nazorg.toegang === 'proef') && (
             <Link
               href={`/groep/${params.id}/uitnodigen`}
               className="mt-3 text-caroo-groen text-sm font-medium flex items-center gap-1 hover:underline"

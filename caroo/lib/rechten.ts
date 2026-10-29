@@ -40,7 +40,8 @@ export async function getMijnGroepen() {
         naam,
         betaald,
         eigenaar_id,
-        aangemaakt_op
+        aangemaakt_op,
+        gestopt_op
       )
     `)
     .eq('user_id', user.id)

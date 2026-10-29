@@ -22,7 +22,7 @@ export default async function BoekjePage({ params }: { params: { id: string } })
 
   const { data: groep } = await supabase
     .from('zorggroepen')
-    .select('id, naam, betaald, gestopt_op')
+    .select('id, naam, betaald, gestopt_op, aangemaakt_op')
     .eq('id', params.id)
     .single()
   if (!groep) redirect('/dashboard')

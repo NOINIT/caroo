@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { CarooLogo } from '@/components/ui/CarooLogo'
 import { uitloggen } from '@/app/auth/actions'
 import { getT } from '@/lib/i18n/server'
-import { JAARPRIJS } from '@/lib/i18n/vertaal'
+import { toegangVan } from '@/lib/opzeggen'
 
 export default async function DashboardPage({
   searchParams
@@ -87,7 +87,7 @@ export default async function DashboardPage({
           <div className="caroo-card bg-caroo-groen-licht border-caroo-groen border mb-6">
             <h2 className="font-bold text-caroo-donker mb-2">{t('dashboard.eersteGroep')}</h2>
             <p className="text-sm text-gray-600 mb-4">
-              {t('dashboard.eersteGroepUitleg', { prijs: JAARPRIJS })}
+              {t('dashboard.eersteGroepUitleg')}
             </p>
             <Link href="/groep/aanmaken" className="btn-primary text-sm">
               {t('dashboard.groepAanmaken')} <span className="inline-block rtl:rotate-180">→</span>
@@ -115,8 +115,11 @@ export default async function DashboardPage({
                       <p className="text-xs text-gray-600 mt-0.5">
                         {lid.rol === 'groepsbeheerder' ? `👑 ${t('dashboard.beheerder')}` :
                          lid.rol === 'mantelzorger' ? `🤝 ${t('rollen.mantelzorger')}` : `⭐ ${t('rollen.oudere')}`}
-                        {!groep.betaald && (
-                          <span className="ms-2 text-orange-500">{t('dashboard.nietBetaald')}</span>
+                        {toegangVan(groep).toegang === 'proef' && (
+                          <span className="ms-2 text-caroo-groen">{t('dashboard.gratisMaand')}</span>
+                        )}
+                        {toegangVan(groep).toegang === 'geen' && (
+                          <span className="ms-2 text-caroo-oranje-tekst">{t('dashboard.nietBetaald')}</span>
                         )}
                       </p>
                     </div>

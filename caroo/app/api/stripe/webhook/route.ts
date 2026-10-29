@@ -27,7 +27,8 @@ export async function POST(request: Request) {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object
 
-    if (session.payment_status === 'paid') {
+    // 'no_payment_required': abonnement afgesloten tijdens de gratis maand; het betalen begint later
+    if (session.payment_status === 'paid' || session.payment_status === 'no_payment_required') {
       const groepId = session.metadata?.groep_id
 
       if (!groepId) {
