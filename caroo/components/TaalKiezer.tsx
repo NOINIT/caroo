@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { TALEN } from '@/lib/i18n/talen'
+import { KIESBARE_TALEN } from '@/lib/i18n/talen'
 import { useT } from '@/lib/i18n/client'
 import { kiesTaal } from '@/lib/acties/taal'
 
@@ -35,7 +35,7 @@ export function TaalKiezer({ variant = 'knoppen', groot = false }: { variant?: '
           disabled={bezig}
           className="bg-transparent border border-gray-200 rounded-lg py-1 ps-2 pe-7 text-sm"
         >
-          {TALEN.map(l => (
+          {KIESBARE_TALEN.map(l => (
             <option key={l.code} value={l.code} lang={l.code}>{l.naam}</option>
           ))}
         </select>
@@ -44,8 +44,8 @@ export function TaalKiezer({ variant = 'knoppen', groot = false }: { variant?: '
   }
 
   return (
-    <div className="grid grid-cols-2 gap-2">
-      {TALEN.map(l => (
+    <div className="grid grid-cols-3 gap-2">
+      {KIESBARE_TALEN.map(l => (
         <button
           key={l.code}
           type="button"
