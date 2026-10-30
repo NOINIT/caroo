@@ -3,11 +3,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useT } from '@/lib/i18n/client'
-import { maakVriendUitnodiging, trekUitnodigingIn, wijzigVervoer, verbreekVriendschap } from '@/lib/acties/vrienden'
+import { maakVriendUitnodiging, trekUitnodigingIn, wijzigVervoer, verbreekVriendschap, zetVriendenZelf } from '@/lib/acties/vrienden'
+import type { VriendVerzoek } from '@/lib/vrienden'
 
 type Vervoer = 'zelf' | 'nodig' | 'verschilt'
 interface Hoofdpersoon { id: string; naam: string }
-interface Actief { id: string; hoofdpersoon: string; vriendNaam: string; vervoer: Vervoer }
+interface Actief { id: string; hoofdpersoon: string; vriendNaam: string; vervoer: Vervoer; wacht: boolean }
 interface Open { id: string; hoofdpersoon: string; verloopt: string }
 
 function VervoerKeuze({ waarde, onChange, naam }: { waarde: Vervoer; onChange: (v: Vervoer) => void; naam: string }) {
@@ -34,8 +35,9 @@ function VervoerKeuze({ waarde, onChange, naam }: { waarde: Vervoer; onChange: (
   )
 }
 
-export function VriendenBeheer({ groepId, hoofdpersonen, actief, open, max }: {
-  groepId: string; hoofdpersonen: Hoofdpersoon[]; actief: Actief[]; open: Open[]; max: number
+export function VriendenBeheer({ groepId, hoofdpersonen, actief, open, zelf, verzoek, isBeheerder, max }: {
+  groepId: string; hoofdpersonen: Hoofdpersoon[]; actief: Actief[]; open: Open[]; zelf: string[]
+  verzoek: VriendVerzoek | null; isBeheerder: boolean; max: number
 }) {
   return (
     <div className="space-y-8">
@@ -46,6 +48,9 @@ export function VriendenBeheer({ groepId, hoofdpersonen, actief, open, max }: {
           persoon={h}
           actief={actief.filter(a => a.hoofdpersoon === h.id)}
           open={open.find(o => o.hoofdpersoon === h.id) || null}
+          zelf={zelf.includes(h.id)}
+          verzoek={verzoek?.hoofdpersoonId === h.id ? verzoek : null}
+          isBeheerder={isBeheerder}
           max={max}
         />
       ))}
@@ -53,8 +58,9 @@ export function VriendenBeheer({ groepId, hoofdpersonen, actief, open, max }: {
   )
 }
 
-function Persoon({ groepId, persoon, actief, open, max }: {
-  groepId: string; persoon: Hoofdpersoon; actief: Actief[]; open: Open | null; max: number
+function Persoon({ groepId, persoon, actief, open, zelf, verzoek, isBeheerder, max }: {
+  groepId: string; persoon: Hoofdpersoon; actief: Actief[]; open: Open | null; zelf: boolean
+  verzoek: VriendVerzoek | null; isBeheerder: boolean; max: number
 }) {
   const { t, datum } = useT()
   const router = useRouter()
@@ -69,7 +75,7 @@ function Persoon({ groepId, persoon, actief, open, max }: {
 
   async function maak() {
     setBezig(true); setFout(null); setGekopieerd(false)
-    const r = await maakVriendUitnodiging(groepId, persoon.id, vervoer)
+    const r = await maakVriendUitnodiging(groepId, persoon.id, vervoer, verzoek?.id ?? null)
     setBezig(false)
     if ('error' in r && r.error) { setFout(r.error); return }
     if ('url' in r && r.url) setLink(r.url)
@@ -87,11 +93,34 @@ function Persoon({ groepId, persoon, actief, open, max }: {
       <h2 className="text-lg font-bold text-caroo-donker mb-1">{persoon.naam}</h2>
       <p className="text-sm text-gray-600 mb-4">{t('vrienden.familie.intro', { naam: voornaam })}</p>
 
+      {verzoek && (
+        <p className="caroo-card border-s-4 border-caroo-oranje text-sm text-caroo-donker mb-4">
+          👭 {t('vrienden.familie.verzoekBanner', { naam: voornaam, vriend: verzoek.vriendNaam })}
+        </p>
+      )}
+
+      {isBeheerder && (
+        <label className="caroo-card flex items-start gap-3 mb-4 cursor-pointer">
+          <input
+            type="checkbox"
+            defaultChecked={zelf}
+            onChange={async e => { await zetVriendenZelf(groepId, persoon.id, e.target.checked); router.refresh() }}
+            className="mt-1 w-5 h-5 accent-caroo-groen"
+          />
+          <span>
+            <span className="block text-sm font-semibold text-caroo-donker">{t('vrienden.familie.zelfRegelen', { naam: voornaam })}</span>
+            <span className="block text-xs text-gray-600">{t('vrienden.familie.zelfUitleg', { naam: voornaam })}</span>
+          </span>
+        </label>
+      )}
+
       <div className="space-y-2 mb-4">
         {actief.length === 0 && !open && <p className="text-sm text-gray-600">{t('vrienden.familie.geen')}</p>}
         {actief.map(a => (
           <div key={a.id} className="caroo-card space-y-3">
-            <p className="font-medium text-caroo-donker">👭 {t('vrienden.familie.gekoppeldMet', { naam: a.vriendNaam })}</p>
+            <p className="font-medium text-caroo-donker">
+              👭 {a.wacht ? t('vrienden.familie.wachtOpKeuze', { naam: a.vriendNaam }) : t('vrienden.familie.gekoppeldMet', { naam: a.vriendNaam })}
+            </p>
             <VervoerKeuze
               naam={voornaam}
               waarde={a.vervoer}

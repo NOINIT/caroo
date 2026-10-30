@@ -45,25 +45,64 @@ function watTekst(t: TFunctie, wat: string, eigen: string | null) {
 
 /* ───────────── Familie: koppelen en beheren ───────────── */
 
-export async function maakVriendUitnodiging(groepId: string, hoofdpersoonId: string, vervoer: string) {
+async function nieuweUitnodiging(groepId: string, hoofdpersoonId: string, vervoer: Vervoer, door: string, jaA: boolean, verzoekId: string | null) {
+  const service = createServiceClient()
+  // Eén open uitnodiging per hoofdpersoon: een oude vervalt
+  await service.from('vriendschappen').delete().eq('persoon_a', hoofdpersoonId).eq('status', 'uitgenodigd')
+  if ((await aantalVrienden(hoofdpersoonId)) >= MAX_VRIENDEN) return null
+  const code = nieuweCode()
+  const verloopt = new Date(Date.now() + VRIEND_UITNODIGING_DAGEN * 86400000).toISOString()
+  const { data, error } = await service.from('vriendschappen').insert({
+    persoon_a: hoofdpersoonId, groep_a: groepId, vervoer_a: vervoer, ja_a: jaA, verzoek_id: verzoekId,
+    uitnodig_hash: hashCode(code), verloopt_op: verloopt, aangemaakt_door: door,
+  }).select('id').single()
+  if (error || !data) return null
+  return { id: data.id as string, url: `${BASIS}/vriend/${code}`, verloopt }
+}
+
+export async function maakVriendUitnodiging(groepId: string, hoofdpersoonId: string, vervoer: string, verzoekId?: string | null) {
   const { t } = await getT()
   const user = await magKoppelen(groepId)
   if (!user) return { error: t('koppelen.geenRechten') }
   if (!isVervoer(vervoer) || !(await isHoofdpersoonIn(groepId, hoofdpersoonId))) return { error: t('algemeen.lukteNiet') }
+  // Kwam de vraag van de hoofdpersoon zelf? Dan heeft zij al ja gezegd.
+  let verzoek: string | null = null
+  if (verzoekId) {
+    const { data } = await createServiceClient().from('vriend_verzoeken').select('id')
+      .eq('id', verzoekId).eq('groep_id', groepId).eq('hoofdpersoon', hoofdpersoonId).maybeSingle()
+    verzoek = (data?.id as string) || null
+  }
+  const r = await nieuweUitnodiging(groepId, hoofdpersoonId, vervoer, user.id, !!verzoek, verzoek)
+  if (!r) return { error: t('vrienden.familie.maxBereikt', { naam: await naamVan(hoofdpersoonId) }) }
+  return r
+}
 
+/** Een hoofdpersoon die vrienden zelf regelt, maakt zelf een uitnodiging */
+export async function maakEigenUitnodiging(groepId: string) {
+  const { t } = await getT()
+  const user = await ingelogd()
+  if (!user || !(await regeltZelf(groepId, user.id))) return { error: t('algemeen.lukteNiet') }
+  const r = await nieuweUitnodiging(groepId, user.id, 'verschilt', user.id, true, null)
+  if (!r) return { error: t('vrienden.maxVrienden') }
+  return { ...r, naam: await naamVan(user.id) }
+}
+
+async function regeltZelf(groepId: string, userId: string) {
+  const { data } = await createServiceClient().from('groepsleden').select('rol, vrienden_zelf')
+    .eq('groep_id', groepId).eq('user_id', userId).maybeSingle()
+  return data?.rol === 'oudere' && !!data.vrienden_zelf
+}
+
+/** De beheerder zet aan of uit dat de hoofdpersoon vrienden zelf regelt */
+export async function zetVriendenZelf(groepId: string, hoofdpersoonId: string, aan: boolean) {
+  const { t } = await getT()
+  const user = await ingelogd()
+  if (!user) return { error: t('algemeen.nietIngelogd') }
   const service = createServiceClient()
-  // Eén open uitnodiging per hoofdpersoon: een oude vervalt
-  await service.from('vriendschappen').delete().eq('persoon_a', hoofdpersoonId).eq('status', 'uitgenodigd')
-  if ((await aantalVrienden(hoofdpersoonId)) >= MAX_VRIENDEN) return { error: t('vrienden.familie.maxBereikt', { naam: await naamVan(hoofdpersoonId) }) }
-
-  const code = nieuweCode()
-  const verloopt = new Date(Date.now() + VRIEND_UITNODIGING_DAGEN * 86400000).toISOString()
-  const { data, error } = await service.from('vriendschappen').insert({
-    persoon_a: hoofdpersoonId, groep_a: groepId, vervoer_a: vervoer,
-    uitnodig_hash: hashCode(code), verloopt_op: verloopt, aangemaakt_door: user.id,
-  }).select('id').single()
-  if (error || !data) return { error: t('algemeen.lukteNiet') }
-  return { id: data.id as string, url: `${BASIS}/vriend/${code}`, verloopt }
+  const { data: ik } = await service.from('groepsleden').select('rol').eq('groep_id', groepId).eq('user_id', user.id).maybeSingle()
+  if (ik?.rol !== 'groepsbeheerder') return { error: t('koppelen.geenRechten') }
+  await service.from('groepsleden').update({ vrienden_zelf: !!aan }).eq('groep_id', groepId).eq('user_id', hoofdpersoonId).eq('rol', 'oudere')
+  return { succes: true }
 }
 
 export async function trekUitnodigingIn(groepId: string, vriendschapId: string) {
@@ -83,6 +122,50 @@ export async function bekijkVriendUitnodiging(code: string) {
   return { id: data.id as string, persoonA: data.persoon_a as string, naam: await naamVan(data.persoon_a) }
 }
 
+async function controleerKoppeling(a: string, b: string) {
+  const service = createServiceClient()
+  const { count: al } = await service.from('vriendschappen').select('id', { count: 'exact', head: true }).in('status', ['bevestigen', 'actief'])
+    .or(`and(persoon_a.eq.${a},persoon_b.eq.${b}),and(persoon_a.eq.${b},persoon_b.eq.${a})`)
+  if (al) return 'vrienden.familie.foutAl' as const
+  // A telt zijn eigen open uitnodiging al mee
+  if ((await aantalVrienden(a)) > MAX_VRIENDEN || (await aantalVrienden(b)) >= MAX_VRIENDEN) return 'vrienden.familie.foutMax' as const
+  return null
+}
+
+async function zetKlaar(vriendschapId: string, b: string, groepId: string, vervoer: Vervoer, door: string, jaB: boolean) {
+  const { data } = await createServiceClient().from('vriendschappen').update({
+    persoon_b: b, groep_b: groepId, vervoer_b: vervoer, status: 'bevestigen', ja_b: jaB,
+    uitnodig_hash: null, verloopt_op: null, goedgekeurd_door: door,
+  }).eq('id', vriendschapId).eq('status', 'uitgenodigd').select('id').maybeSingle()
+  if (!data) return false
+  await rondAfOfVraag(vriendschapId)
+  return true
+}
+
+/** Hebben beiden ja gezegd? Dan zijn ze vrienden. Anders krijgt wie nog moet kiezen de vraag. */
+async function rondAfOfVraag(vriendschapId: string) {
+  const service = createServiceClient()
+  const { data: v } = await service.from('vriendschappen')
+    .select('id, persoon_a, groep_a, persoon_b, groep_b, ja_a, ja_b, verzoek_id, status').eq('id', vriendschapId).maybeSingle()
+  if (!v || v.status !== 'bevestigen' || !v.persoon_b) return
+  const [naamA, naamB] = await Promise.all([naamVan(v.persoon_a), naamVan(v.persoon_b)])
+
+  if (v.ja_a && v.ja_b) {
+    await service.from('vriendschappen').update({ status: 'actief', actief_sinds: new Date().toISOString() }).eq('id', v.id)
+    if (v.verzoek_id) await service.from('vriend_verzoeken').delete().eq('id', v.verzoek_id)
+    await Promise.all([
+      stuurMelding([v.persoon_a], tt => ({ titel: tt('vrienden.meldingGekoppeld', { naam: naamB }), tekst: tt('vrienden.meldingGekoppeldTekst'), url: `/oudere/${v.groep_a}`, tag: `vriend-${v.id}` })),
+      stuurMelding([v.persoon_b], tt => ({ titel: tt('vrienden.meldingGekoppeld', { naam: naamA }), tekst: tt('vrienden.meldingGekoppeldTekst'), url: `/oudere/${v.groep_b}`, tag: `vriend-${v.id}` })),
+      stuurMelding(await familieVan(v.groep_a), tt => ({ titel: tt('vrienden.familie.gelukt', { a: naamA, b: naamB }), tekst: tt('vrienden.familie.privacy'), url: `/groep/${v.groep_a}/vrienden` })),
+      stuurMelding(await familieVan(v.groep_b), tt => ({ titel: tt('vrienden.familie.gelukt', { a: naamB, b: naamA }), tekst: tt('vrienden.familie.privacy'), url: `/groep/${v.groep_b}/vrienden` })),
+    ])
+    return
+  }
+  if (!v.ja_a) await stuurMelding([v.persoon_a], tt => ({ titel: tt('vrienden.meldingVraag', { naam: naamB }), tekst: tt('vrienden.meldingVraagTekst'), url: `/oudere/${v.groep_a}`, tag: `vriend-${v.id}` }))
+  if (!v.ja_b) await stuurMelding([v.persoon_b], tt => ({ titel: tt('vrienden.meldingVraag', { naam: naamA }), tekst: tt('vrienden.meldingVraagTekst'), url: `/oudere/${v.groep_b}`, tag: `vriend-${v.id}` }))
+}
+
+/** De familie van de vriend zet het klaar. Daarna kiest hun hoofdpersoon zelf. */
 export async function accepteerVriendUitnodiging(code: string, groepId: string, hoofdpersoonId: string, vervoer: string) {
   const { t } = await getT()
   const user = await magKoppelen(groepId)
@@ -91,30 +174,113 @@ export async function accepteerVriendUitnodiging(code: string, groepId: string, 
   if (!uitnodiging) return { error: t('vrienden.familie.ongeldig') }
   if (!isVervoer(vervoer) || !(await isHoofdpersoonIn(groepId, hoofdpersoonId))) return { error: t('algemeen.lukteNiet') }
   if (hoofdpersoonId === uitnodiging.persoonA) return { error: t('vrienden.familie.foutZelf') }
+  const fout = await controleerKoppeling(uitnodiging.persoonA, hoofdpersoonId)
+  if (fout) return { error: t(fout) }
+  if (!(await zetKlaar(uitnodiging.id, hoofdpersoonId, groepId, vervoer, user.id, false))) return { error: t('vrienden.familie.ongeldig') }
+  return { succes: true, naamA: uitnodiging.naam, naamB: await naamVan(hoofdpersoonId) }
+}
 
+/** Een hoofdpersoon die vrienden zelf regelt, zegt meteen zelf ja op de uitnodiging */
+export async function accepteerZelf(code: string, groepId: string) {
+  const { t } = await getT()
+  const user = await ingelogd()
+  if (!user || !(await regeltZelf(groepId, user.id))) return { error: t('algemeen.lukteNiet') }
+  const uitnodiging = await bekijkVriendUitnodiging(code)
+  if (!uitnodiging) return { error: t('vrienden.familie.ongeldig') }
+  if (user.id === uitnodiging.persoonA) return { error: t('vrienden.familie.foutZelf') }
+  const fout = await controleerKoppeling(uitnodiging.persoonA, user.id)
+  if (fout) return { error: t(fout) }
+  if (!(await zetKlaar(uitnodiging.id, user.id, groepId, 'verschilt', user.id, true))) return { error: t('vrienden.familie.ongeldig') }
+  const { data: nu } = await createServiceClient().from('vriendschappen').select('status').eq('id', uitnodiging.id).maybeSingle()
+  return { succes: true, groepId, actief: nu?.status === 'actief' }
+}
+
+/** De hoofdpersoon kiest zelf: wil ik vrienden worden? */
+export async function beantwoordVriendschap(vriendschapId: string, ja: boolean) {
+  const { t } = await getT()
+  const user = await ingelogd()
+  if (!user) return { error: t('algemeen.nietIngelogd') }
   const service = createServiceClient()
-  const a = uitnodiging.persoonA, b = hoofdpersoonId
-  const { count: al } = await service.from('vriendschappen').select('id', { count: 'exact', head: true }).eq('status', 'actief')
-    .or(`and(persoon_a.eq.${a},persoon_b.eq.${b}),and(persoon_a.eq.${b},persoon_b.eq.${a})`)
-  if (al) return { error: t('vrienden.familie.foutAl') }
-  // A telt zijn eigen open uitnodiging al mee
-  if ((await aantalVrienden(a)) > MAX_VRIENDEN || (await aantalVrienden(b)) >= MAX_VRIENDEN) return { error: t('vrienden.familie.foutMax') }
+  const { data: v } = await service.from('vriendschappen')
+    .select('id, persoon_a, groep_a, persoon_b, groep_b, aangemaakt_door, goedgekeurd_door').eq('id', vriendschapId).eq('status', 'bevestigen').maybeSingle()
+  if (!v) return { error: t('algemeen.lukteNiet') }
+  const kant = v.persoon_a === user.id ? 'a' : v.persoon_b === user.id ? 'b' : null
+  if (!kant) return { error: t('algemeen.lukteNiet') }
 
-  const { data, error } = await service.from('vriendschappen').update({
-    persoon_b: b, groep_b: groepId, vervoer_b: vervoer, status: 'actief',
-    uitnodig_hash: null, verloopt_op: null, goedgekeurd_door: user.id, actief_sinds: new Date().toISOString(),
-  }).eq('id', uitnodiging.id).eq('status', 'uitgenodigd').select('groep_a').maybeSingle()
-  if (error || !data) return { error: t('vrienden.familie.ongeldig') }
+  if (!ja) {
+    const [naamA, naamB] = await Promise.all([naamVan(v.persoon_a), naamVan(v.persoon_b as string)])
+    await verwijderVriendschap(v.id)
+    // Rustig laten weten aan wie het klaarzette, zonder te zeggen wie nee zei
+    await stuurMelding([v.aangemaakt_door, v.goedgekeurd_door].filter(Boolean) as string[], tt => ({
+      titel: tt('vrienden.familie.gaatNietDoor', { a: naamA, b: naamB }), tekst: tt('vrienden.familie.gaatNietDoorTekst'), url: '/dashboard',
+    }))
+    return { succes: true }
+  }
+  await service.from('vriendschappen').update({ [`ja_${kant}`]: true }).eq('id', v.id)
+  await rondAfOfVraag(v.id)
+  return { succes: true }
+}
 
-  const [naamA, naamB] = await Promise.all([naamVan(a), naamVan(b)])
+/* De hoofdpersoon vraagt de familie: regel een vriend voor mij */
+
+export async function vraagVriendAan(groepId: string, vriendNaam: string) {
+  const { t } = await getT()
+  const user = await ingelogd()
+  if (!user) return { error: t('algemeen.nietIngelogd') }
+  const naam = (vriendNaam || '').trim().slice(0, 60)
+  if (!naam || !(await isHoofdpersoonIn(groepId, user.id))) return { error: t('algemeen.lukteNiet') }
+  const service = createServiceClient()
+  const sinds = new Date(Date.now() - 30 * 86400000).toISOString()
+  const { count: open } = await service.from('vriend_verzoeken').select('id', { count: 'exact', head: true })
+    .eq('hoofdpersoon', user.id).gt('aangemaakt_op', sinds)
+  if ((await aantalVrienden(user.id)) + (open ?? 0) >= MAX_VRIENDEN) return { error: t('vrienden.maxVrienden') }
+
+  const { data, error } = await service.from('vriend_verzoeken')
+    .insert({ groep_id: groepId, hoofdpersoon: user.id, vriend_naam: naam }).select('id').single()
+  if (error || !data) return { error: t('algemeen.lukteNiet') }
+  const mijnNaam = await naamVan(user.id)
+  await stuurMelding(await familieVan(groepId), tt => ({
+    titel: tt('vrienden.familie.verzoekTitel', { naam: mijnNaam, vriend: naam }), tekst: tt('vrienden.familie.verzoekTekst'),
+    url: `/groep/${groepId}`, tag: `verzoek-${data.id}`,
+  }))
+  return { succes: true }
+}
+
+export async function trekVriendVerzoekIn(verzoekId: string) {
+  const { t } = await getT()
+  const user = await ingelogd()
+  if (!user) return { error: t('algemeen.nietIngelogd') }
+  await createServiceClient().from('vriend_verzoeken').delete().eq('id', verzoekId).eq('hoofdpersoon', user.id)
+  return { succes: true }
+}
+
+/** Iemand uit de familie neemt de vraag op zich */
+export async function regelVriendVerzoek(groepId: string, verzoekId: string) {
+  const { t } = await getT()
+  const user = await ingelogd()
+  if (!user) return { error: t('algemeen.nietIngelogd') }
+  if (!(await familieVan(groepId)).includes(user.id)) return { error: t('algemeen.lukteNiet') }
+  const service = createServiceClient()
+  const naam = (await naamVan(user.id)) || t('algemeen.iemand')
+  const { data } = await service.from('vriend_verzoeken')
+    .update({ regelt_door: user.id, regelt_naam: naam, regelt_op: new Date().toISOString() })
+    .eq('id', verzoekId).eq('groep_id', groepId).is('regelt_door', null).select('hoofdpersoon, vriend_naam').maybeSingle()
+  if (!data) {
+    const { data: al } = await service.from('vriend_verzoeken').select('regelt_door, regelt_naam').eq('id', verzoekId).maybeSingle()
+    if (al?.regelt_door === user.id) return { succes: true, naam }
+    return { alGeregeld: true, naam: (al?.regelt_naam as string) || null }
+  }
+  const anderen = (await familieVan(groepId)).filter(id => id !== user.id)
   await Promise.all([
-    stuurMelding([a], tt => ({ titel: tt('vrienden.meldingGekoppeld', { naam: naamB }), tekst: tt('vrienden.meldingGekoppeldTekst'), url: `/oudere/${data.groep_a}` })),
-    stuurMelding([b], tt => ({ titel: tt('vrienden.meldingGekoppeld', { naam: naamA }), tekst: tt('vrienden.meldingGekoppeldTekst'), url: `/oudere/${groepId}` })),
-    stuurMelding((await familieVan(data.groep_a)), tt => ({
-      titel: tt('vrienden.familie.gelukt', { a: naamA, b: naamB }), tekst: tt('vrienden.meldingGekoppeldTekst'), url: `/groep/${data.groep_a}/vrienden`,
+    stuurMelding(anderen, tt => ({
+      titel: tt('vrienden.familie.verzoekGeregeld', { naam, vriend: data.vriend_naam }), tekst: tt('bezoek.geregeldTekst'),
+      url: `/groep/${groepId}`, tag: `verzoek-${verzoekId}`,
+    })),
+    stuurMelding([data.hoofdpersoon], tt => ({
+      titel: tt('vrienden.regeltHet', { naam }), tekst: tt('vrienden.meldingRegeltTekst'), url: `/oudere/${groepId}`, tag: `verzoek-${verzoekId}`,
     })),
   ])
-  return { succes: true, naamA, naamB }
+  return { succes: true, naam }
 }
 
 /** De familie stelt in of hun hoofdpersoon vervoer nodig heeft */

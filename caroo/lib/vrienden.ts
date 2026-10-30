@@ -24,7 +24,7 @@ export interface Vriendschap {
   persoon_b: string | null
   groep_b: string | null
   vervoer_b: Vervoer | null
-  status: 'uitgenodigd' | 'actief'
+  status: 'uitgenodigd' | 'bevestigen' | 'actief'
   verloopt_op: string | null
 }
 
@@ -56,7 +56,7 @@ export async function aantalVrienden(persoonId: string) {
   const nu = new Date().toISOString()
   const [{ count: actief }, { count: open }] = await Promise.all([
     service.from('vriendschappen').select('id', { count: 'exact', head: true })
-      .eq('status', 'actief').or(`persoon_a.eq.${persoonId},persoon_b.eq.${persoonId}`),
+      .in('status', ['actief', 'bevestigen']).or(`persoon_a.eq.${persoonId},persoon_b.eq.${persoonId}`),
     service.from('vriendschappen').select('id', { count: 'exact', head: true })
       .eq('status', 'uitgenodigd').eq('persoon_a', persoonId).gt('verloopt_op', nu),
   ])
@@ -104,13 +104,59 @@ export async function vriendenOverzicht(userId: string) {
 }
 export type VriendKaart = Awaited<ReturnType<typeof vriendenOverzicht>>[number]
 
+/**
+ * Alles wat nog loopt voor de tablet: vragen waar ik ja of nee op moet zeggen,
+ * vrienden waar ik op wacht, en mijn vragen aan de familie.
+ */
+export async function vriendenStatus(userId: string, groepId: string) {
+  const service = createServiceClient()
+  const sinds = new Date(Date.now() - 30 * 86400000).toISOString()
+  const [{ data: lopend }, { data: verzoeken }, { data: lid }] = await Promise.all([
+    service.from('vriendschappen').select('id, persoon_a, persoon_b, ja_a, ja_b')
+      .eq('status', 'bevestigen').or(`persoon_a.eq.${userId},persoon_b.eq.${userId}`),
+    service.from('vriend_verzoeken').select('id, vriend_naam, regelt_naam')
+      .eq('hoofdpersoon', userId).gt('aangemaakt_op', sinds).order('aangemaakt_op', { ascending: true }),
+    service.from('groepsleden').select('vrienden_zelf').eq('groep_id', groepId).eq('user_id', userId).maybeSingle(),
+  ])
+  const lijst = lopend || []
+  const naamVan = await namen(lijst.map(v => (v.persoon_a === userId ? v.persoon_b : v.persoon_a) as string))
+  const vanAnder = (v: any) => naamVan.get(v.persoon_a === userId ? v.persoon_b : v.persoon_a) || ''
+  const mijnJa = (v: any) => (v.persoon_a === userId ? v.ja_a : v.ja_b)
+  return {
+    zelf: !!(lid as any)?.vrienden_zelf,
+    vragen: lijst.filter(v => !mijnJa(v)).map(v => ({ id: v.id as string, naam: vanAnder(v) })),
+    wachten: lijst.filter(v => mijnJa(v)).map(v => ({ id: v.id as string, naam: vanAnder(v) })),
+    verzoeken: (verzoeken || []).map(v => ({ id: v.id as string, vriendNaam: v.vriend_naam as string, regeltNaam: (v.regelt_naam as string) || null })),
+  }
+}
+export type VriendenStatus = Awaited<ReturnType<typeof vriendenStatus>>
+
+/** Vragen van hoofdpersonen in een groep aan de familie: regel een vriend voor mij */
+export async function vriendVerzoekenVanGroep(groepId: string) {
+  const sinds = new Date(Date.now() - 30 * 86400000).toISOString()
+  const { data } = await createServiceClient().from('vriend_verzoeken')
+    .select('id, hoofdpersoon, vriend_naam, regelt_door, regelt_naam')
+    .eq('groep_id', groepId).gt('aangemaakt_op', sinds).order('aangemaakt_op', { ascending: true })
+  const naamVan = await namen((data || []).map(v => v.hoofdpersoon as string))
+  return (data || []).map(v => ({
+    id: v.id as string,
+    hoofdpersoonId: v.hoofdpersoon as string,
+    hoofdpersoon: naamVan.get(v.hoofdpersoon) || '',
+    vriendNaam: v.vriend_naam as string,
+    regeltDoor: (v.regelt_door as string) || null,
+    regeltNaam: (v.regelt_naam as string) || null,
+  }))
+}
+export type VriendVerzoek = Awaited<ReturnType<typeof vriendVerzoekenVanGroep>>[number]
+
 /** Bekenden van de hoofdpersonen in een groep, voor de familie (zonder berichten) */
 export async function vriendenVanGroep(groepId: string) {
   const service = createServiceClient()
   const nu = new Date().toISOString()
-  const [{ data: actief }, { data: open }] = await Promise.all([
-    service.from('vriendschappen').select(VELDEN).eq('status', 'actief').or(`groep_a.eq.${groepId},groep_b.eq.${groepId}`),
+  const [{ data: actief }, { data: open }, { data: zelf }] = await Promise.all([
+    service.from('vriendschappen').select(VELDEN).in('status', ['actief', 'bevestigen']).or(`groep_a.eq.${groepId},groep_b.eq.${groepId}`),
     service.from('vriendschappen').select(VELDEN + ', aangemaakt_op').eq('status', 'uitgenodigd').eq('groep_a', groepId).gt('verloopt_op', nu),
+    service.from('groepsleden').select('user_id').eq('groep_id', groepId).eq('rol', 'oudere').eq('vrienden_zelf', true),
   ])
   const lijst = (actief || []) as Vriendschap[]
   const ids = lijst.flatMap(v => [v.persoon_a, v.persoon_b as string])
@@ -123,8 +169,10 @@ export async function vriendenVanGroep(groepId: string) {
         hoofdpersoon: persoonVan(v, kant),
         vriendNaam: naamVan.get(persoonVan(v, ander(kant))) || '',
         vervoer: vervoerVan(v, kant),
+        wacht: v.status === 'bevestigen',
       }
     }),
+    zelf: (zelf || []).map(z => z.user_id as string),
     open: ((open || []) as unknown as (Vriendschap & { aangemaakt_op: string })[]).map(v => ({
       id: v.id, hoofdpersoon: v.persoon_a, verloopt: v.verloopt_op as string,
     })),

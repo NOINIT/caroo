@@ -3,7 +3,7 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { getT } from '@/lib/i18n/server'
 import { CarooLogo } from '@/components/ui/CarooLogo'
 import { bekijkVriendUitnodiging } from '@/lib/acties/vrienden'
-import { Akkoord } from './Akkoord'
+import { Akkoord, ZelfJa } from './Akkoord'
 
 export const metadata = { robots: { index: false } }
 
@@ -39,6 +39,13 @@ export default async function VriendUitnodiging({ params }: { params: { code: st
     }
   }
   const terug = encodeURIComponent(`/vriend/${params.code}`)
+  // Opent de hoofdpersoon de link zelf op haar tablet?
+  let hoofdpersoon: { groepId: string; zelf: boolean } | null = null
+  if (user && uitnodiging) {
+    const { data: rij } = await createServiceClient().from('groepsleden').select('groep_id, vrienden_zelf')
+      .eq('user_id', user.id).eq('rol', 'oudere').limit(1).maybeSingle()
+    if (rij) hoofdpersoon = { groepId: rij.groep_id as string, zelf: !!rij.vrienden_zelf }
+  }
 
   const voornaam = uitnodiging?.naam.split(' ')[0] || ''
   return (
@@ -54,7 +61,13 @@ export default async function VriendUitnodiging({ params }: { params: { code: st
           <>
             <h1 className="text-2xl font-bold text-caroo-donker text-center">👭 {t('vrienden.familie.uitnodigingTitel', { naam: voornaam })}</h1>
             <p className="text-gray-700 mt-3 mb-6 text-center">{t('vrienden.familie.uitnodigingTekst', { naam: voornaam })}</p>
-            {!user ? (
+            {hoofdpersoon ? (
+              hoofdpersoon.zelf && user!.id !== uitnodiging.persoonA ? (
+                <ZelfJa code={params.code} groepId={hoofdpersoon.groepId} naam={voornaam} />
+              ) : (
+                <p className="caroo-card text-ou-lg text-gray-700 text-center">{t('vrienden.familie.laatFamilieZien')}</p>
+              )
+            ) : !user ? (
               <div className="caroo-card text-center space-y-4">
                 <p className="text-lg font-bold text-caroo-donker">{t('vrienden.familie.nogGeenClanoo')}</p>
                 <p className="text-gray-700">{t('vrienden.familie.beginUitleg')}</p>

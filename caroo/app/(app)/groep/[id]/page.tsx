@@ -9,7 +9,8 @@ import AbonnementKnop from './AbonnementKnop'
 import { FamilieSignalen } from '@/components/familie/FamilieSignalen'
 import { vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
 import { toegangVan } from '@/lib/opzeggen'
-import { samenAfsprakenVanGroep, vakerBezoekGevraagd } from '@/lib/vrienden'
+import { samenAfsprakenVanGroep, vakerBezoekGevraagd, vriendVerzoekenVanGroep } from '@/lib/vrienden'
+import { VriendVerzoeken } from '@/components/familie/VriendVerzoeken'
 import { SamenAfspraken } from '@/components/familie/SamenAfspraken'
 
 export default async function GroepPage({
@@ -106,9 +107,10 @@ export default async function GroepPage({
     .limit(3)
 
   const isBeheerder = mijnLidschap?.rol === 'groepsbeheerder'
-  const [samen, signaal] = await Promise.all([
+  const [samen, signaal, vriendVerzoeken] = await Promise.all([
     samenAfsprakenVanGroep(params.id).catch(() => []),
     isBeheerder ? vakerBezoekGevraagd(params.id).catch(() => null) : Promise.resolve(null),
+    vriendVerzoekenVanGroep(params.id).catch(() => []),
   ])
   const isEigenaar = groep.eigenaar_id === user.id
   const welkom = searchParams.welkom === 'true'
@@ -198,6 +200,8 @@ export default async function GroepPage({
             <Link href={`/groep/${params.id}/hulp`} className="text-sm text-caroo-groen font-medium hover:underline">{t('vrienden.familie.signaalLink')}</Link>
           </div>
         )}
+
+        <VriendVerzoeken groepId={params.id} mijnId={user.id} verzoeken={vriendVerzoeken} />
 
         <SamenAfspraken groepId={params.id} afspraken={samen} />
 

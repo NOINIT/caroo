@@ -1,13 +1,15 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useT } from '@/lib/i18n/client'
 import { speelGeluid } from '@/lib/geluid'
 import { hoofdletter } from '@/lib/i18n/vertaal'
-import type { VriendKaart } from '@/lib/vrienden'
+import type { VriendKaart, VriendenStatus } from '@/lib/vrienden'
 import {
   laadVriend, stuurBericht, stuurVriendFoto, legWoord, nieuwSpel,
   stelSamenVoor, beantwoordSamen, trekSamenIn, stopMetVriend, type VriendDetail,
+  beantwoordVriendschap, vraagVriendAan, trekVriendVerzoekIn, maakEigenUitnodiging,
 } from '@/lib/acties/vrienden'
 
 type Scherm = 'praten' | 'spel' | 'samen'
@@ -21,43 +23,173 @@ function Rondje({ naam, groot }: { naam: string; groot?: boolean }) {
   )
 }
 
-export function Vrienden({ vrienden: start, onVeranderd }: { vrienden: VriendKaart[]; onVeranderd?: () => void }) {
+export function Vrienden({ vrienden, status, groepId }: { vrienden: VriendKaart[]; status: VriendenStatus; groepId: string }) {
   const { t } = useT()
-  const [vrienden, setVrienden] = useState(start)
+  const router = useRouter()
   const [open, setOpen] = useState<VriendKaart | null>(null)
+  const [bezig, setBezig] = useState(false)
+  const totaal = vrienden.length + status.vragen.length + status.wachten.length + status.verzoeken.length
+
+  async function antwoord(id: string, ja: boolean) {
+    setBezig(true)
+    await beantwoordVriendschap(id, ja)
+    if (ja) speelGeluid('succes')
+    setBezig(false)
+    router.refresh()
+  }
 
   if (open) {
     return (
       <VriendScherm
         kaart={open}
-        terug={() => { setOpen(null); onVeranderd?.() }}
-        gestopt={() => { setVrienden(v => v.filter(x => x.id !== open.id)); setOpen(null); onVeranderd?.() }}
+        terug={() => { setOpen(null); router.refresh() }}
+        gestopt={() => { setOpen(null); router.refresh() }}
       />
     )
   }
 
   return (
-    <div className="px-4 py-6 md:px-8">
-      <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">{t('vrienden.titel')}</h2>
-      <div className="grid gap-4 md:grid-cols-2">
-        {vrienden.map(v => (
-          <button
-            key={v.id}
-            onClick={() => { speelGeluid('tik'); setOpen(v) }}
-            className="caroo-card flex items-center gap-4 text-start hover:border-caroo-groen transition-colors py-5"
-          >
+    <div className="px-4 py-6 md:px-8 space-y-6">
+      <h2 className="text-ou-xl font-bold text-caroo-donker">{t('vrienden.titel')}</h2>
+
+      {/* Iemand wil vrienden worden: de hoofdpersoon kiest zelf */}
+      {status.vragen.map(v => (
+        <div key={v.id} className="caroo-card border-s-4 border-caroo-oranje py-5">
+          <div className="flex items-center gap-4 mb-4">
             <Rondje naam={v.naam} />
-            <span className="flex-1 min-w-0">
-              <span className="block text-ou-xl font-bold text-caroo-donker truncate">{v.naam}</span>
-              {v.vraag && <span className="block text-ou-base text-caroo-oranje-tekst font-semibold">☕ {t('vrienden.vraagt', { naam: v.naam })}</span>}
-              {!v.vraag && v.ongelezen > 0 && <span className="block text-ou-base text-caroo-oranje-tekst font-semibold">💬 {t('vrienden.nieuwBericht')}</span>}
-              {!v.vraag && !v.ongelezen && v.jouwBeurt && <span className="block text-ou-base text-caroo-groen font-semibold">🔤 {t('vrienden.jouwBeurt')}</span>}
-            </span>
-            <span className="text-3xl text-gray-400 rtl:rotate-180" aria-hidden>›</span>
-          </button>
-        ))}
-      </div>
+            <p className="text-ou-xl font-bold text-caroo-donker">{t('vrienden.vraagTekst', { naam: v.naam })}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <button disabled={bezig} onClick={() => antwoord(v.id, true)} className="btn-primary text-ou-base py-4">{t('vrienden.vraagJa')}</button>
+            <button disabled={bezig} onClick={() => antwoord(v.id, false)} className="btn-secondary text-ou-base py-4">{t('vrienden.vraagNee')}</button>
+          </div>
+        </div>
+      ))}
+
+      {vrienden.length === 0 && status.vragen.length === 0 && (
+        <p className="text-ou-lg text-gray-600">{t('vrienden.geenVrienden')}</p>
+      )}
+
+      {vrienden.length > 0 && (
+        <div className="grid gap-4 md:grid-cols-2">
+          {vrienden.map(v => (
+            <button
+              key={v.id}
+              onClick={() => { speelGeluid('tik'); setOpen(v) }}
+              className="caroo-card flex items-center gap-4 text-start hover:border-caroo-groen transition-colors py-5"
+            >
+              <Rondje naam={v.naam} />
+              <span className="flex-1 min-w-0">
+                <span className="block text-ou-xl font-bold text-caroo-donker truncate">{v.naam}</span>
+                {v.vraag && <span className="block text-ou-base text-caroo-oranje-tekst font-semibold">☕ {t('vrienden.vraagt', { naam: v.naam })}</span>}
+                {!v.vraag && v.ongelezen > 0 && <span className="block text-ou-base text-caroo-oranje-tekst font-semibold">💬 {t('vrienden.nieuwBericht')}</span>}
+                {!v.vraag && !v.ongelezen && v.jouwBeurt && <span className="block text-ou-base text-caroo-groen font-semibold">🔤 {t('vrienden.jouwBeurt')}</span>}
+              </span>
+              <span className="text-3xl text-gray-400 rtl:rotate-180" aria-hidden>›</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Wat nog loopt */}
+      {(status.wachten.length > 0 || status.verzoeken.length > 0) && (
+        <div className="space-y-2">
+          {status.wachten.map(v => (
+            <p key={v.id} className="caroo-card text-ou-base text-gray-700">⏳ {t('vrienden.wachtOp', { naam: v.naam })}</p>
+          ))}
+          {status.verzoeken.map(v => (
+            <div key={v.id} className="caroo-card flex items-center justify-between gap-3">
+              <p className="text-ou-base text-gray-700">
+                <strong className="text-caroo-donker">{v.vriendNaam}</strong>
+                <span className="block">⏳ {v.regeltNaam ? t('vrienden.regeltHet', { naam: v.regeltNaam }) : t('vrienden.verzoekVerstuurd')}</span>
+              </p>
+              <button onClick={async () => { await trekVriendVerzoekIn(v.id); router.refresh() }} className="text-ou-sm text-gray-600 underline flex-shrink-0">{t('vrienden.intrekken')}</button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {totaal < 3 ? (
+        <VriendToevoegen groepId={groepId} zelf={status.zelf} klaar={() => router.refresh()} />
+      ) : (
+        <p className="text-ou-base text-gray-600">{t('vrienden.maxVrienden')}</p>
+      )}
     </div>
+  )
+}
+
+function VriendToevoegen({ groepId, zelf, klaar }: { groepId: string; zelf: boolean; klaar: () => void }) {
+  const { t } = useT()
+  const [open, setOpen] = useState(false)
+  const [naam, setNaam] = useState('')
+  const [bezig, setBezig] = useState(false)
+  const [fout, setFout] = useState<string | null>(null)
+  const [link, setLink] = useState<{ url: string; naam: string } | null>(null)
+  const [gekopieerd, setGekopieerd] = useState(false)
+
+  async function vraag(e: React.FormEvent) {
+    e.preventDefault()
+    if (!naam.trim()) return
+    setBezig(true); setFout(null)
+    const r = await vraagVriendAan(groepId, naam)
+    setBezig(false)
+    if ('error' in r && r.error) { setFout(r.error); return }
+    speelGeluid('succes')
+    setNaam(''); setOpen(false)
+    klaar()
+  }
+
+  async function maakLink() {
+    setBezig(true); setFout(null)
+    const r = await maakEigenUitnodiging(groepId)
+    setBezig(false)
+    if ('error' in r && r.error) { setFout(r.error); return }
+    if ('url' in r && r.url) setLink({ url: r.url, naam: r.naam })
+  }
+
+  if (!open) {
+    return (
+      <button onClick={() => { speelGeluid('tik'); setOpen(true) }} className="btn-primary w-full text-ou-lg py-5">
+        {t('vrienden.toevoegen')}
+      </button>
+    )
+  }
+
+  if (zelf) {
+    const tekst = link ? `${t('vrienden.deelTekst')} ${link.url}` : ''
+    return (
+      <div className="caroo-card space-y-4">
+        <p className="text-ou-lg font-bold text-caroo-donker">{t('vrienden.toevoegen')}</p>
+        {fout && <p className="text-ou-sm text-red-600">{fout}</p>}
+        {!link ? (
+          <button onClick={maakLink} disabled={bezig} className="btn-primary w-full text-ou-base py-4">{t('vrienden.uitnodigingMaken')}</button>
+        ) : (
+          <>
+            <p className="text-ou-base text-gray-700">{t('vrienden.uitnodigingUitleg')}</p>
+            <a href={`https://wa.me/?text=${encodeURIComponent(tekst)}`} target="_blank" rel="noopener noreferrer" className="btn-primary w-full block text-center text-ou-base py-4">{t('vrienden.delen')}</a>
+            <button
+              onClick={async () => { try { await navigator.clipboard.writeText(link.url); setGekopieerd(true) } catch {} }}
+              className="btn-secondary w-full text-ou-base py-4"
+            >{gekopieerd ? `✓ ${t('vrienden.gekopieerd')}` : t('vrienden.kopieer')}</button>
+          </>
+        )}
+        <button onClick={() => { setOpen(false); setLink(null); klaar() }} className="text-ou-sm text-gray-600 underline">{t('algemeen.terug')}</button>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={vraag} className="caroo-card space-y-4">
+      <label htmlFor="vriend-naam" className="block text-ou-lg font-bold text-caroo-donker">{t('vrienden.toevoegenVraag')}</label>
+      <p className="text-ou-base text-gray-700">{t('vrienden.toevoegenUitleg')}</p>
+      <input id="vriend-naam" value={naam} onChange={e => setNaam(e.target.value)} maxLength={60}
+        placeholder={t('vrienden.toevoegenPlaceholder')} className="input-field text-ou-lg" />
+      {fout && <p className="text-ou-sm text-red-600">{fout}</p>}
+      <div className="grid grid-cols-3 gap-3">
+        <button type="button" onClick={() => setOpen(false)} className="btn-secondary text-ou-base py-4">{t('algemeen.annuleren')}</button>
+        <button type="submit" disabled={bezig || !naam.trim()} className="btn-primary col-span-2 text-ou-base py-4">{t('vrienden.toevoegenKnop')}</button>
+      </div>
+    </form>
   )
 }
 

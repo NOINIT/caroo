@@ -5,7 +5,7 @@ import { MijnVerhaal } from './MijnVerhaal'
 import { BoodschappenLijst } from '@/components/boodschappen/BoodschappenLijst'
 import { Thuis, type Bezoekverzoek } from './Thuis'
 import { Vrienden } from './Vrienden'
-import type { VriendKaart } from '@/lib/vrienden'
+import type { VriendKaart, VriendenStatus } from '@/lib/vrienden'
 import { InstellingenFormulier } from '@/components/instellingen/InstellingenFormulier'
 import { uitloggen } from '@/app/auth/actions'
 import { useT } from '@/lib/i18n/client'
@@ -31,11 +31,12 @@ interface Props {
   meldingEmail: boolean
   net_gekoppeld?: boolean
   vrienden: VriendKaart[]
+  vriendenStatus: VriendenStatus
 }
 
 export function OudereInterface({
   groepId, userId, email, naam, groepNaam, dagAfspraken, medicijnen, fotos,
-  stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid, meldingEmail, net_gekoppeld, vrienden,
+  stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid, meldingEmail, net_gekoppeld, vrienden, vriendenStatus,
 }: Props) {
   const [tipZichtbaar, setTipZichtbaar] = useState(!!net_gekoppeld)
   const [actieveTab, setActieveTab] = useState<Tab>('thuis')
@@ -106,7 +107,7 @@ export function OudereInterface({
           <MijnVerhaal groepId={groepId} />
         )}
         {actieveTab === 'vrienden' && (
-          <Vrienden vrienden={vrienden} />
+          <Vrienden vrienden={vrienden} status={vriendenStatus} groepId={groepId} />
         )}
         {actieveTab === 'mijn_tip' && (
           <TabMijnTip groepId={groepId} />
@@ -118,14 +119,14 @@ export function OudereInterface({
 
       {/* Onderste navigatie — grote knoppen voor ouderen */}
       <nav className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 max-w-md md:max-w-5xl mx-auto md:px-4">
-        <div className={`grid ${vrienden.length ? 'grid-cols-7' : 'grid-cols-6'}`}>
+        <div className="grid grid-cols-7">
           {[
             { tab: 'thuis' as Tab, emoji: '🏠', label: t('oudere.nav.thuis') },
             { tab: 'mijn_dag' as Tab, emoji: '📅', label: t('oudere.nav.mijnDag') },
             { tab: 'boodschappen' as Tab, emoji: '🛒', label: t('oudere.nav.boodschap') },
             { tab: 'fotos' as Tab, emoji: '📸', label: t('oudere.nav.fotos') },
             { tab: 'mijn_verhaal' as Tab, emoji: '🎤', label: t('oudere.nav.verhaal') },
-            ...(vrienden.length ? [{ tab: 'vrienden' as Tab, emoji: '👭', label: t('vrienden.nav'), nieuw: vrienden.some(v => v.ongelezen || v.vraag || v.jouwBeurt) }] : []),
+            { tab: 'vrienden' as Tab, emoji: '👭', label: t('vrienden.nav'), nieuw: vriendenStatus.vragen.length > 0 || vrienden.some(v => v.ongelezen || v.vraag || v.jouwBeurt) },
             { tab: 'mijn_tip' as Tab, emoji: '💡', label: t('oudere.nav.tip') },
 
           ].map(item => (

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useT } from '@/lib/i18n/client'
-import { accepteerVriendUitnodiging } from '@/lib/acties/vrienden'
+import { accepteerVriendUitnodiging, accepteerZelf } from '@/lib/acties/vrienden'
 
 type Vervoer = 'zelf' | 'nodig' | 'verschilt'
 interface Keuze { groepId: string; groepNaam: string; id: string; naam: string }
@@ -29,7 +29,7 @@ export function Akkoord({ code, keuzes }: { code: string; keuzes: Keuze[] }) {
     return (
       <div className="caroo-card text-center">
         <p className="text-4xl mb-2">🎉</p>
-        <p className="text-lg font-bold text-caroo-donker mb-4">{t('vrienden.familie.gelukt', { a: klaar.a, b: klaar.b })}</p>
+        <p className="text-lg font-bold text-caroo-donker mb-4">{t('vrienden.familie.klaargezetTekst', { naam: klaar.b.split(' ')[0] })}</p>
         <Link href={`/groep/${gekozen.groepId}/vrienden`} className="btn-primary inline-block">{t('vrienden.familie.naarGroep')}</Link>
       </div>
     )
@@ -85,6 +85,43 @@ export function Akkoord({ code, keuzes }: { code: string; keuzes: Keuze[] }) {
         {bezig ? t('algemeen.evenGeduld') : t('vrienden.familie.akkoord')}
       </button>
       <Link href="/dashboard" className="block text-center text-sm text-gray-600 underline">{t('vrienden.familie.nietNu')}</Link>
+    </div>
+  )
+}
+
+/** De hoofdpersoon regelt vrienden zelf en zegt hier meteen ja */
+export function ZelfJa({ code, groepId, naam }: { code: string; groepId: string; naam: string }) {
+  const { t } = useT()
+  const [bezig, setBezig] = useState(false)
+  const [fout, setFout] = useState<string | null>(null)
+  const [klaar, setKlaar] = useState(false)
+  const [actief, setActief] = useState(true)
+
+  async function ja() {
+    setBezig(true); setFout(null)
+    const r = await accepteerZelf(code, groepId)
+    setBezig(false)
+    if ('error' in r && r.error) { setFout(r.error); return }
+    setActief(!('actief' in r) || !!r.actief)
+    setKlaar(true)
+  }
+
+  return (
+    <div className="caroo-card text-center space-y-4">
+      {klaar ? (
+        <>
+          <p className="text-4xl">🎉</p>
+          <p className="text-ou-xl font-bold text-caroo-donker">{actief ? t('vrienden.meldingGekoppeld', { naam }) : t('vrienden.wachtOp', { naam })}</p>
+          <Link href={`/oudere/${groepId}`} className="btn-primary block text-ou-lg py-4">{t('vrienden.familie.naarGroep')}</Link>
+        </>
+      ) : (
+        <>
+          <p className="text-ou-xl font-bold text-caroo-donker">{t('vrienden.vraagTekst', { naam })}</p>
+          {fout && <p className="text-sm text-red-600">{fout}</p>}
+          <button onClick={ja} disabled={bezig} className="btn-primary w-full text-ou-lg py-4">{t('vrienden.wordVrienden')}</button>
+          <Link href={`/oudere/${groepId}`} className="block text-ou-base text-gray-600 underline">{t('vrienden.vraagNee')}</Link>
+        </>
+      )}
     </div>
   )
 }
