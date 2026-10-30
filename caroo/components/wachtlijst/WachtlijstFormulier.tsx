@@ -97,7 +97,8 @@ export function WachtlijstFormulier({ bron }: { bron: string }) {
       </button>
 
       <p className="text-xs text-gray-600 leading-relaxed">
-        We gebruiken je gegevens alleen voor de wachtlijst en, als je dat aanvinkt, voor nieuws over {MERK.naam}.
+        We gebruiken je gegevens alleen voor de wachtlijst en, als je dat aanvinkt, voor nieuws over {MERK.naam}.{' '}
+        <a href="/privacy" target="_blank" className="underline">Lees de privacyverklaring</a>.
       </p>
     </form>
   )

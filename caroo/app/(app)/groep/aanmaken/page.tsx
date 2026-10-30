@@ -4,8 +4,10 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useT } from '@/lib/i18n/client'
+import { MetLinks } from '@/components/ui/MetLinks'
 
 export default function GroepAanmakenPage() {
+  const [toestemming, setToestemming] = useState(false)
   const [naam, setNaam] = useState('')
   const [fout, setFout] = useState<string | null>(null)
   const [laden, setLaden] = useState(false)
@@ -100,9 +102,24 @@ export default function GroepAanmakenPage() {
           <p className="mt-3 font-bold text-caroo-groen">{t('aanmaken.prijsUitleg')}</p>
         </div>
 
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={toestemming}
+            onChange={e => setToestemming(e.target.checked)}
+            required
+            className="mt-1 h-5 w-5 flex-shrink-0 accent-caroo-groen"
+          />
+          <span className="text-sm text-gray-700">{t('aanmaken.toestemming')}</span>
+        </label>
+
+        <p className="text-sm text-gray-600">
+          <MetLinks tekst={t('algemeen.akkoord')} voorwaarden={t('algemeen.voorwaarden')} privacy={t('algemeen.privacy')} />
+        </p>
+
         <button
           type="submit"
-          disabled={laden || !naam.trim()}
+          disabled={laden || !naam.trim() || !toestemming}
           className="btn-primary w-full"
         >
           {laden ? t('login.evenWachten') : t('aanmaken.verder')}

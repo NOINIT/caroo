@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: '*',
-      allow: ['/', '/privacy', '/wachtlijst'],
+      allow: ['/', '/privacy', '/voorwaarden', '/wachtlijst'],
       disallow: ['/dashboard', '/groep', '/oudere', '/instellingen', '/betalen', '/api', '/auth', '/uitnodiging', '/login', '/registreer'],
     },
     sitemap: 'https://clanoo.nl/sitemap.xml',

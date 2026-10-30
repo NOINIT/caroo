@@ -6,7 +6,8 @@ const nextConfig = {
     return [
       { source: '/', headers: vers },
       { source: '/privacy', headers: vers },
-      { source: '/site/:pagina(index.html|privacy.html)', headers: vers },
+      { source: '/voorwaarden', headers: vers },
+      { source: '/site/:pagina(index.html|privacy.html|voorwaarden.html)', headers: vers },
     ]
   },
   async rewrites() {
@@ -15,6 +16,7 @@ const nextConfig = {
       beforeFiles: [
         { source: '/', destination: '/site/index.html' },
         { source: '/privacy', destination: '/site/privacy.html' },
+        { source: '/voorwaarden', destination: '/site/voorwaarden.html' },
       ],
     }
   },

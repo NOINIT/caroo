@@ -22,6 +22,9 @@ export const nl = {
     onbekend: 'Onbekend',
     naarHome: 'Ga naar de homepage',
     taal: 'Taal',
+    akkoord: 'Door verder te gaan ga je akkoord met de {voorwaarden} en de {privacy}.',
+    voorwaarden: 'algemene voorwaarden',
+    privacy: 'privacyverklaring',
   },
 
   stemming: {
@@ -480,8 +483,9 @@ export const nl = {
     punt2: '✅ Agenda, taken & medicijnenagenda',
     punt3: '✅ Mijn verhaal met spraakherkenning',
     punt4: '✅ Fotoalbum & tips delen',
-    verder: 'Verder naar betaling →',
+    verder: 'Zorggroep aanmaken →',
     prijsUitleg: 'De eerste maand is gratis, zonder betaalgegevens. Daarna €12,50 per maand voor de hele familie.',
+    toestemming: 'De persoon voor wie we zorgen weet van Clanoo en vindt het goed dat we hier gegevens over hem of haar delen, ook over gezondheid. Kan die persoon dat zelf niet meer beslissen, dan geeft de wettelijk vertegenwoordiger toestemming.',
   },
 
   betalen: {

@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { registreer } from '@/app/auth/actions'
 import { useT } from '@/lib/i18n/client'
+import { MetLinks } from '@/components/ui/MetLinks'
 
 function RegistreerForm() {
   const [fout, setFout] = useState<string | null>(null)
@@ -95,6 +96,10 @@ function RegistreerForm() {
             <p className="mt-1">{t('registreer.avg')}</p>
           </div>
         )}
+
+        <p className="text-sm text-gray-600">
+          <MetLinks tekst={t('algemeen.akkoord')} voorwaarden={t('algemeen.voorwaarden')} privacy={t('algemeen.privacy')} />
+        </p>
 
         <button
           type="submit"
