@@ -47,7 +47,12 @@ export default function GroepAanmakenPage() {
       rol: 'groepsbeheerder',
     })
 
-    // Redirect naar betaalpagina
+    // Via een vrienduitnodiging? Dan meteen de hoofdpersoon toevoegen en terug naar de uitnodiging
+    const terug = new URLSearchParams(window.location.search).get('terug') || ''
+    if (/^\/vriend\/[A-Za-z0-9_-]{20,64}$/.test(terug)) {
+      router.push(`/groep/${groep.id}/koppelen?terug=${encodeURIComponent(terug)}`)
+      return
+    }
     router.push(`/groep/${groep.id}`)
   }
 

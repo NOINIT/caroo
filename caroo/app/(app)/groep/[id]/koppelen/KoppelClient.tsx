@@ -7,7 +7,7 @@ import { maakCode, voegToeEnMaakCode } from './actions'
 interface Hoofdpersoon { id: string; naam: string; geenEmail: boolean }
 interface Code { url: string; qr: string; verloopt: string }
 
-export function KoppelClient({ groepId, hoofdpersonen: start }: { groepId: string; hoofdpersonen: Hoofdpersoon[] }) {
+export function KoppelClient({ groepId, hoofdpersonen: start, terug }: { groepId: string; hoofdpersonen: Hoofdpersoon[]; terug?: { url: string; naam: string } | null }) {
   const { t, tijd } = useT()
   const [hoofdpersonen, setHoofdpersonen] = useState(start)
   const [voor, setVoor] = useState<Hoofdpersoon | null>(null)
@@ -70,6 +70,9 @@ export function KoppelClient({ groepId, hoofdpersonen: start }: { groepId: strin
           <p className="mb-2">{t('koppelen.linkUitleg')}</p>
           <button onClick={kopieer} className="btn-secondary text-sm py-2">{gekopieerd ? t('koppelen.gekopieerd') : t('koppelen.kopieer')}</button>
         </div>
+        {terug && (
+          <a href={terug.url} className="btn-primary w-full block text-center">👭 {t('vrienden.familie.verderUitnodiging', { naam: terug.naam })}</a>
+        )}
         <div className="flex gap-3">
           <button onClick={() => maak(voor)} disabled={bezig} className="btn-secondary flex-1">{t('koppelen.nieuweCode')}</button>
           <button onClick={() => { setCode(null); setVoor(null) }} className="text-sm text-gray-600 underline px-2">{t('algemeen.annuleren')}</button>
@@ -81,6 +84,10 @@ export function KoppelClient({ groepId, hoofdpersonen: start }: { groepId: strin
   return (
     <div className="space-y-6">
       {fout && <div className="bg-red-50 border border-red-200 text-red-700 rounded-caroo p-3 text-sm">{fout}</div>}
+
+      {terug && hoofdpersonen.length > 0 && (
+        <a href={terug.url} className="btn-primary w-full block text-center text-lg py-4">👭 {t('vrienden.familie.verderUitnodiging', { naam: terug.naam })}</a>
+      )}
 
       {hoofdpersonen.length > 0 && (
         <div className="space-y-3">

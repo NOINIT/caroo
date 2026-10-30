@@ -15,6 +15,8 @@ export default async function VriendUitnodiging({ params }: { params: { code: st
   const { data: { user } } = await createClient().auth.getUser()
 
   let keuzes: { groepId: string; groepNaam: string; id: string; naam: string }[] = []
+  // Groep zonder hoofdpersoon: daar kan de familie de hoofdpersoon nog aan toevoegen
+  let groepZonderHoofdpersoon: { id: string; naam: string } | null = null
   if (user && uitnodiging) {
     const service = createServiceClient()
     const { data: mijn } = await service.from('groepsleden').select('groep_id, rol, zorggroepen (naam)')
@@ -31,8 +33,12 @@ export default async function VriendUitnodiging({ params }: { params: { code: st
           id: o.user_id,
           naam: o.users?.naam || t('algemeen.deHoofdpersoon'),
         }))
+      const metHoofdpersoon = new Set((ouderen || []).map(o => o.groep_id as string))
+      const leeg = (mijn || []).find(m => !metHoofdpersoon.has(m.groep_id as string))
+      if (leeg) groepZonderHoofdpersoon = { id: leeg.groep_id as string, naam: (leeg as any).zorggroepen?.naam || '' }
     }
   }
+  const terug = encodeURIComponent(`/vriend/${params.code}`)
 
   const voornaam = uitnodiging?.naam.split(' ')[0] || ''
   return (
@@ -49,12 +55,22 @@ export default async function VriendUitnodiging({ params }: { params: { code: st
             <h1 className="text-2xl font-bold text-caroo-donker text-center">👭 {t('vrienden.familie.uitnodigingTitel', { naam: voornaam })}</h1>
             <p className="text-gray-700 mt-3 mb-6 text-center">{t('vrienden.familie.uitnodigingTekst', { naam: voornaam })}</p>
             {!user ? (
-              <div className="caroo-card text-center">
-                <p className="text-gray-700 mb-4">{t('vrienden.familie.inloggen')}</p>
-                <Link href="/login" className="btn-primary inline-block">{t('vrienden.familie.naarInloggen')}</Link>
+              <div className="caroo-card text-center space-y-4">
+                <p className="text-lg font-bold text-caroo-donker">{t('vrienden.familie.nogGeenClanoo')}</p>
+                <p className="text-gray-700">{t('vrienden.familie.beginUitleg')}</p>
+                <Link href={`/registreer?redirect=${terug}`} className="btn-primary block">{t('vrienden.familie.beginGratis')}</Link>
+                <Link href={`/login?redirect=${terug}`} className="block text-sm text-caroo-groen underline">{t('vrienden.familie.alAccount')}</Link>
+              </div>
+            ) : keuzes.length === 0 && groepZonderHoofdpersoon ? (
+              <div className="caroo-card text-center space-y-4">
+                <p className="text-gray-700">{t('vrienden.familie.stapHoofdpersoon', { groep: groepZonderHoofdpersoon.naam })}</p>
+                <Link href={`/groep/${groepZonderHoofdpersoon.id}/koppelen?terug=${terug}`} className="btn-primary block">{t('vrienden.familie.voegToe')}</Link>
               </div>
             ) : keuzes.length === 0 ? (
-              <p className="caroo-card text-gray-700">{t('vrienden.familie.geenGroep')}</p>
+              <div className="caroo-card text-center space-y-4">
+                <p className="text-gray-700">{t('vrienden.familie.stapGroep')}</p>
+                <Link href={`/groep/aanmaken?terug=${terug}`} className="btn-primary block">{t('vrienden.familie.maakGroep')}</Link>
+              </div>
             ) : (
               <Akkoord code={params.code} keuzes={keuzes} />
             )}

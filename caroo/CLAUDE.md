@@ -7,6 +7,7 @@ Familie-zorgapp van NOINIT. Next.js 14 (app router) + Supabase + Stripe, gehost 
 - **Elke nieuwe tabel krijgt in dezelfde migratie expliciete GRANTs** (sinds 30-10-2026 geeft Supabase die niet meer automatisch):
   `GRANT SELECT, INSERT, UPDATE, DELETE ON public.<tabel> TO authenticated, service_role;`
   Geen rechten voor `anon`. Daarnaast altijd RLS aanzetten met policies via `is_groepslid()`.
+- Uitzondering: tabellen die over twee groepen heen gaan (`vriendschappen`, `vriend_*`, `koppelcodes`) hebben alleen rechten voor `service_role`. De servercode in `lib/acties/vrienden.ts` en `lib/vrienden.ts` controleert zelf wie wat mag.
 - Rol 'oudere' heet in de app "Hoofdpersoon" (zie `lib/rollen.ts`).
 
 ## Werkwijze
