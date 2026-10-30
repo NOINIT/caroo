@@ -6,6 +6,7 @@ import { speelGeluid } from '@/lib/geluid'
 import { reageerOpBezoek } from '@/lib/acties/bezoek'
 import { useT } from '@/lib/i18n/client'
 import { WANNEER_CODES, wanneerTekst, hoofdletter, stemmingLabel, type TFunctie } from '@/lib/i18n/vertaal'
+import { BEL_GELDIG_UUR } from '@/lib/stemming'
 
 interface Stemming { naam: string | null; stemming: number; bijgewerkt_op: string }
 interface Verzoek {
@@ -14,6 +15,7 @@ interface Verzoek {
   aangemaakt_op: string
   reactie_naam: string | null
   reactie_wanneer: string | null
+  soort?: string | null
 }
 
 interface Props {
@@ -37,7 +39,10 @@ function hoeLangGeleden(t: TFunctie, datum: (d: Date, o: Intl.DateTimeFormatOpti
 }
 
 export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start }: Props) {
-  const [verzoeken, setVerzoeken] = useState(start)
+  // Belverzoeken tellen maar een paar uur; daarna is het moment voorbij
+  const [verzoeken, setVerzoeken] = useState(start.filter(v =>
+    v.soort !== 'bellen' || Date.now() - new Date(v.aangemaakt_op).getTime() < BEL_GELDIG_UUR * 3600 * 1000))
+  const [alGeregeld, setAlGeregeld] = useState<string | null>(null)
   const [kiesVoor, setKiesVoor] = useState<string | null>(null)
   const [tijd, setTijd] = useState('')
   const { t, datum } = useT()
@@ -48,8 +53,11 @@ export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start
     setTijd('')
     setVerzoeken(prev => prev.map(v => (v.id === id ? { ...v, reactie_naam: mijnNaam, reactie_wanneer: wanneer } : v)))
     const r = await reageerOpBezoek(id, wanneer)
-    if ('error' in r && r.error) {
-      alert(r.error)
+    if ('alGeregeld' in r && r.alGeregeld) {
+      // Iemand anders was net eerder: dan is het geregeld, geen foutmelding
+      setAlGeregeld(id)
+      setVerzoeken(prev => prev.map(v => (v.id === id ? { ...v, reactie_naam: r.naam, reactie_wanneer: r.wanneer } : v)))
+    } else if ('error' in r && r.error) {
       setVerzoeken(prev => prev.map(v => (v.id === id ? { ...v, reactie_naam: null, reactie_wanneer: null } : v)))
     }
   }
@@ -61,15 +69,24 @@ export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start
       {verzoeken.map(v => (
         <div key={v.id} className="rounded-caroo border-2 border-caroo-oranje bg-caroo-oranje-licht p-4">
           <p className="font-bold text-caroo-donker">
-            {t('signalen.wilBezoek', { naam: v.aangevraagd_naam || t('algemeen.deHoofdpersoon') })}
+            {v.soort === 'bellen'
+              ? t('signalen.wilGebeld', { naam: v.aangevraagd_naam || t('algemeen.deHoofdpersoon') })
+              : t('signalen.wilBezoek', { naam: v.aangevraagd_naam || t('algemeen.deHoofdpersoon') })}
           </p>
           <p className="text-sm text-gray-600 mb-3">{hoeLangGeleden(t, datum, v.aangemaakt_op)}</p>
           {v.reactie_naam ? (
             <p className="text-sm font-medium text-caroo-groen">
-              {v.reactie_wanneer
-                ? t('signalen.gaatLangsWanneer', { naam: v.reactie_naam, wanneer: wanneerTekst(t, v.reactie_wanneer) })
-                : t('signalen.gaatLangs', { naam: v.reactie_naam })}
+              {v.soort === 'bellen'
+                ? t('signalen.belt', { naam: v.reactie_naam })
+                : v.reactie_wanneer
+                  ? t('signalen.gaatLangsWanneer', { naam: v.reactie_naam, wanneer: wanneerTekst(t, v.reactie_wanneer) })
+                  : t('signalen.gaatLangs', { naam: v.reactie_naam })}
+              {alGeregeld === v.id && <span className="block text-gray-600 font-normal mt-1">{t('signalen.wasEerder')}</span>}
             </p>
+          ) : v.soort === 'bellen' ? (
+            <button onClick={() => ikKom(v.id, '')} className="btn-primary w-full">
+              📞 {t('signalen.ikBel')}
+            </button>
           ) : kiesVoor === v.id ? (
             <div className="space-y-2">
               <p className="text-sm font-medium text-caroo-donker">{t('signalen.wanneer')}</p>

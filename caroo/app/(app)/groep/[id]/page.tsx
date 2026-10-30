@@ -67,7 +67,7 @@ export default async function GroepPage({
       .eq('datum', vandaagNL()),
     supabase
       .from('bezoekverzoeken')
-      .select('id, aangevraagd_naam, aangemaakt_op, reactie_naam, reactie_wanneer')
+      .select('id, aangevraagd_naam, aangemaakt_op, reactie_naam, reactie_wanneer, soort')
       .eq('groep_id', params.id)
       .gt('aangemaakt_op', new Date(Date.now() - BEZOEK_GELDIG_UUR * 3600 * 1000).toISOString())
       .order('aangemaakt_op', { ascending: false }),
@@ -301,6 +301,15 @@ export default async function GroepPage({
               </div>
             ))}
           </div>
+
+          {(isBeheerder || mijnLidschap?.rol === 'mantelzorger') && (nazorg.toegang === 'actief' || nazorg.toegang === 'proef') && (
+            <Link
+              href={`/groep/${params.id}/koppelen`}
+              className="mt-3 text-caroo-groen text-sm font-medium flex items-center gap-1 hover:underline"
+            >
+              {t('koppelen.koppelLink')}
+            </Link>
+          )}
 
           {isBeheerder && (nazorg.toegang === 'actief' || nazorg.toegang === 'proef') && (
             <Link

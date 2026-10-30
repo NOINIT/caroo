@@ -5,7 +5,7 @@ import { OudereInterface } from '@/components/oudere/OudereInterface'
 import { vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
 import { getT } from '@/lib/i18n/server'
 
-export default async function OuderePage({ params }: { params: { id: string } }) {
+export default async function OuderePage({ params, searchParams }: { params: { id: string }; searchParams: { nieuw?: string } }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -58,6 +58,7 @@ export default async function OuderePage({ params }: { params: { id: string } })
       .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer')
       .eq('groep_id', params.id)
       .eq('aangevraagd_door', user.id)
+      .eq('soort', 'bezoek')
       .gt('aangemaakt_op', bezoekSinds)
       .order('aangemaakt_op', { ascending: false })
       .limit(1)
@@ -79,6 +80,7 @@ export default async function OuderePage({ params }: { params: { id: string } })
 
   return (
     <OudereInterface
+      net_gekoppeld={searchParams.nieuw === '1'}
       groepId={params.id}
       userId={user.id}
       email={user.email || ''}

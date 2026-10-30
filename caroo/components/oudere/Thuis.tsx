@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { STEMMINGEN, stemmingInfo, vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
+import { STEMMINGEN, stemmingInfo, vandaagNL, BEZOEK_GELDIG_UUR, BEL_GELDIG_UUR } from '@/lib/stemming'
 import { speelGeluid } from '@/lib/geluid'
-import { vraagBezoekAan } from '@/lib/acties/bezoek'
+import { vraagBezoekAan, vraagBelAan } from '@/lib/acties/bezoek'
 import { useT } from '@/lib/i18n/client'
 import { wanneerTekst, hoofdletter, stemmingLabel } from '@/lib/i18n/vertaal'
 
@@ -37,7 +37,18 @@ export function Thuis({
   const [kiest, setKiest] = useState(stemmingVandaag === null)
   const [bezoek, setBezoek] = useState<Bezoekverzoek | null>(startBezoek)
   const [bezig, setBezig] = useState(false)
+  // Belverzoek na een sombere smiley
+  const [bel, setBel] = useState<Bezoekverzoek | null>(null)
+  const [belVraagWeg, setBelVraagWeg] = useState(false)
   const { t, datum, tijd } = useT()
+  const belSleutel = `clanoo-belvraag-${vandaagNL()}`
+  useEffect(() => {
+    try { if (localStorage.getItem(belSleutel)) setBelVraagWeg(true) } catch { /* geen opslag */ }
+  }, [belSleutel])
+  function verbergBelVraag() {
+    setBelVraagWeg(true)
+    try { localStorage.setItem(belSleutel, '1') } catch { /* geen opslag */ }
+  }
 
   const vandaagTekst = datum(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })
 
@@ -50,12 +61,27 @@ export function Thuis({
       .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer')
       .eq('groep_id', groepId)
       .eq('aangevraagd_door', userId)
+      .eq('soort', 'bezoek')
       .gt('aangemaakt_op', sinds)
       .order('aangemaakt_op', { ascending: false })
       .limit(1)
       .maybeSingle()
     setBezoek(data ?? null)
+    const belSinds = new Date(Date.now() - BEL_GELDIG_UUR * 3600 * 1000).toISOString()
+    const { data: b } = await supabase
+      .from('bezoekverzoeken')
+      .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer')
+      .eq('groep_id', groepId)
+      .eq('aangevraagd_door', userId)
+      .eq('soort', 'bellen')
+      .gt('aangemaakt_op', belSinds)
+      .order('aangemaakt_op', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    setBel(b ?? null)
   }, [groepId, userId])
+
+  useEffect(() => { ververs() }, [ververs])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -80,6 +106,24 @@ export function Thuis({
       },
       { onConflict: 'groep_id,user_id,datum' }
     )
+  }
+
+  async function vraagBellen() {
+    if (bezig) return
+    setBezig(true)
+    speelGeluid('succes')
+    const r = await vraagBelAan(groepId)
+    if ('verzoek' in r && r.verzoek) setBel(r.verzoek)
+    verbergBelVraag()
+    setBezig(false)
+  }
+
+  async function trekBelIn() {
+    if (!bel) return
+    speelGeluid('tik')
+    const supabase = createClient()
+    await supabase.from('bezoekverzoeken').delete().eq('id', bel.id)
+    setBel(null)
   }
 
   async function vraagBezoek() {
@@ -145,6 +189,7 @@ export function Thuis({
         )}
       </section>
 
+
       {/* Ik wil bezoek */}
       {!bezoek ? (
         <button
@@ -180,6 +225,31 @@ export function Thuis({
         </section>
       )}
       </div>
+
+      {/* Na een sombere smiley: wil je dat iemand belt? */}
+      {bel ? (
+        <section className="rounded-caroo-lg bg-caroo-groen-licht border-2 border-caroo-groen p-5 text-center">
+          <p className="text-5xl mb-2">📞</p>
+          <p className="text-ou-xl font-bold text-caroo-donker">
+            {bel.reactie_naam ? t('thuis.belGeregeld', { naam: bel.reactie_naam }) : t('thuis.belGevraagd')}
+          </p>
+          <button onClick={trekBelIn} className="text-ou-sm text-gray-600 underline mt-3">
+            {bel.reactie_naam ? t('thuis.klaarNieuw') : t('thuis.tochNiet')}
+          </button>
+        </section>
+      ) : !kiest && stemming !== null && stemming <= 2 && !belVraagWeg ? (
+        <section className="rounded-caroo-lg bg-white border-2 border-caroo-groen p-5 text-center">
+          <p className="text-ou-xl md:text-ou-2xl font-bold text-caroo-donker mb-4">{t('thuis.belVraag')}</p>
+          <div className="grid grid-cols-2 gap-3">
+            <button onClick={vraagBellen} disabled={bezig} className="rounded-caroo-lg bg-caroo-groen text-white text-ou-lg font-bold py-5 active:scale-[0.98] transition-transform">
+              📞 {t('thuis.belJa')}
+            </button>
+            <button onClick={verbergBelVraag} className="rounded-caroo-lg bg-white border-2 border-gray-300 text-caroo-donker text-ou-lg font-bold py-5">
+              {t('thuis.belNee')}
+            </button>
+          </div>
+        </section>
+      ) : null}
 
       {/* Op een tablet: vandaag en boodschappen/foto naast elkaar */}
       <div className="space-y-5 md:space-y-0 md:grid md:grid-cols-2 md:gap-6">

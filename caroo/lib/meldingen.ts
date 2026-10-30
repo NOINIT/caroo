@@ -3,6 +3,7 @@ import webpush from 'web-push'
 import { createServiceClient } from '@/lib/supabase/server'
 import { maakT, type TFunctie } from '@/lib/i18n/vertaal'
 import { isTaal, STANDAARD_TAAL, taalInfo, type Taal } from '@/lib/i18n/talen'
+import { isGeenEmail } from '@/lib/koppelen'
 
 export interface Melding {
   titel: string
@@ -80,7 +81,7 @@ export async function stuurMelding(userIds: string[], invoer: MeldingInvoer) {
 
     const pushIds = (ontvangers || []).filter(o => o.melding_push).map(o => o.id)
     const taken: Promise<unknown>[] = (ontvangers || [])
-      .filter(o => o.melding_email && o.email)
+      .filter(o => o.melding_email && o.email && !isGeenEmail(o.email))
       .map(o => {
         const taal = taalVan.get(o.id) ?? STANDAARD_TAAL
         return stuurMail(o.email as string, meldingIn(taal), taal)

@@ -15,6 +15,7 @@ const PUBLIC_ROUTES = [
   '/icons',
   '/wachtlijst',
   '/privacy',
+  '/koppel',
   '/site',
   '/robots.txt',
   '/sitemap.xml',

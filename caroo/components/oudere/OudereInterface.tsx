@@ -27,12 +27,14 @@ interface Props {
   lettergrootte: string
   geluid: boolean
   meldingEmail: boolean
+  net_gekoppeld?: boolean
 }
 
 export function OudereInterface({
   groepId, userId, email, naam, groepNaam, dagAfspraken, medicijnen, fotos,
-  stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid, meldingEmail,
+  stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid, meldingEmail, net_gekoppeld,
 }: Props) {
+  const [tipZichtbaar, setTipZichtbaar] = useState(!!net_gekoppeld)
   const [actieveTab, setActieveTab] = useState<Tab>('thuis')
   const { t } = useT()
 
@@ -60,6 +62,14 @@ export function OudereInterface({
           </button>
         </div>
       </header>
+
+      {/* Na het koppelen: tip voor de familie die de tablet klaarzet */}
+      {tipZichtbaar && (
+        <div className="bg-caroo-oranje-licht border-b border-caroo-oranje px-4 py-3 md:px-8 flex items-start gap-3">
+          <p className="flex-1 text-ou-sm text-caroo-donker">📲 {t('koppelen.beginschermTip')}</p>
+          <button onClick={() => setTipZichtbaar(false)} className="text-ou-sm font-bold text-caroo-donker underline">{t('koppelen.sluiten')}</button>
+        </div>
+      )}
 
       {/* Content */}
       <main className="flex-1 overflow-y-auto pb-28 md:pb-36">

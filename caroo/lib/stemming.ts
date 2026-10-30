@@ -17,3 +17,5 @@ export function vandaagNL() {
 
 /** Een bezoekverzoek telt als 'open' tot 2 dagen na aanvragen */
 export const BEZOEK_GELDIG_UUR = 48
+/** Een belverzoek telt een paar uur; daarna is het moment voorbij */
+export const BEL_GELDIG_UUR = 4
