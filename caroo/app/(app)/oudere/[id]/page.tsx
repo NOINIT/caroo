@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { OudereInterface } from '@/components/oudere/OudereInterface'
 import { vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
 import { getT } from '@/lib/i18n/server'
+import { vriendenOverzicht } from '@/lib/vrienden'
 
 export default async function OuderePage({ params, searchParams }: { params: { id: string }; searchParams: { nieuw?: string } }) {
   const supabase = createClient()
@@ -70,6 +71,8 @@ export default async function OuderePage({ params, searchParams }: { params: { i
       .eq('op_lijst', true),
   ])
 
+  const vrienden = await vriendenOverzicht(user.id).catch(() => [])
+
   // Foto's staan in een afgeschermde opslag: tijdelijke links maken
   const fotosMetUrl = await Promise.all(
     (fotos || []).map(async (foto: any) => {
@@ -81,6 +84,7 @@ export default async function OuderePage({ params, searchParams }: { params: { i
   return (
     <OudereInterface
       net_gekoppeld={searchParams.nieuw === '1'}
+      vrienden={vrienden}
       groepId={params.id}
       userId={user.id}
       email={user.email || ''}

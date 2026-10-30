@@ -4,13 +4,15 @@ import { useState } from 'react'
 import { MijnVerhaal } from './MijnVerhaal'
 import { BoodschappenLijst } from '@/components/boodschappen/BoodschappenLijst'
 import { Thuis, type Bezoekverzoek } from './Thuis'
+import { Vrienden } from './Vrienden'
+import type { VriendKaart } from '@/lib/vrienden'
 import { InstellingenFormulier } from '@/components/instellingen/InstellingenFormulier'
 import { uitloggen } from '@/app/auth/actions'
 import { useT } from '@/lib/i18n/client'
 import { categorieTekst } from '@/lib/i18n/vertaal'
 import { tekstKleurOp } from '@/lib/kleur'
 
-type Tab = 'thuis' | 'mijn_dag' | 'boodschappen' | 'fotos' | 'mijn_verhaal' | 'mijn_tip' | 'instellingen'
+type Tab = 'vrienden' | 'thuis' | 'mijn_dag' | 'boodschappen' | 'fotos' | 'mijn_verhaal' | 'mijn_tip' | 'instellingen'
 
 interface Props {
   groepId: string
@@ -28,11 +30,12 @@ interface Props {
   geluid: boolean
   meldingEmail: boolean
   net_gekoppeld?: boolean
+  vrienden: VriendKaart[]
 }
 
 export function OudereInterface({
   groepId, userId, email, naam, groepNaam, dagAfspraken, medicijnen, fotos,
-  stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid, meldingEmail, net_gekoppeld,
+  stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid, meldingEmail, net_gekoppeld, vrienden,
 }: Props) {
   const [tipZichtbaar, setTipZichtbaar] = useState(!!net_gekoppeld)
   const [actieveTab, setActieveTab] = useState<Tab>('thuis')
@@ -102,6 +105,9 @@ export function OudereInterface({
         {actieveTab === 'mijn_verhaal' && (
           <MijnVerhaal groepId={groepId} />
         )}
+        {actieveTab === 'vrienden' && (
+          <Vrienden vrienden={vrienden} />
+        )}
         {actieveTab === 'mijn_tip' && (
           <TabMijnTip groepId={groepId} />
         )}
@@ -112,13 +118,14 @@ export function OudereInterface({
 
       {/* Onderste navigatie — grote knoppen voor ouderen */}
       <nav className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 max-w-md md:max-w-5xl mx-auto md:px-4">
-        <div className="grid grid-cols-6">
+        <div className={`grid ${vrienden.length ? 'grid-cols-7' : 'grid-cols-6'}`}>
           {[
             { tab: 'thuis' as Tab, emoji: '🏠', label: t('oudere.nav.thuis') },
             { tab: 'mijn_dag' as Tab, emoji: '📅', label: t('oudere.nav.mijnDag') },
             { tab: 'boodschappen' as Tab, emoji: '🛒', label: t('oudere.nav.boodschap') },
             { tab: 'fotos' as Tab, emoji: '📸', label: t('oudere.nav.fotos') },
             { tab: 'mijn_verhaal' as Tab, emoji: '🎤', label: t('oudere.nav.verhaal') },
+            ...(vrienden.length ? [{ tab: 'vrienden' as Tab, emoji: '👭', label: t('vrienden.nav'), nieuw: vrienden.some(v => v.ongelezen || v.vraag || v.jouwBeurt) }] : []),
             { tab: 'mijn_tip' as Tab, emoji: '💡', label: t('oudere.nav.tip') },
 
           ].map(item => (
@@ -132,7 +139,12 @@ export function OudereInterface({
                   : 'text-gray-700 hover:text-caroo-donker'
                 }`}
             >
-              <span className="text-2xl md:text-4xl leading-none">{item.emoji}</span>
+              <span className="relative text-2xl md:text-4xl leading-none">
+                {item.emoji}
+                {'nieuw' in item && item.nieuw && actieveTab !== item.tab && (
+                  <span className="absolute -top-1 -end-2 w-3.5 h-3.5 md:w-4 md:h-4 rounded-full bg-caroo-oranje-donker border-2 border-white" aria-label={t('vrienden.nieuwBericht')} />
+                )}
+              </span>
               <span className="text-sm md:text-lg leading-tight mt-1 text-center break-words">{item.label}</span>
             </button>
           ))}

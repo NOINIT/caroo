@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Foto's tussen vrienden gaan via een server action; die zijn verkleind, maar geef wat ruimte
+  experimental: { serverActions: { bodySizeLimit: '5mb' } },
   // De websitepagina's altijd vers ophalen, zodat een prijswijziging meteen zichtbaar is
   async headers() {
     const vers = [{ key: 'Cache-Control', value: 'no-cache, must-revalidate' }]

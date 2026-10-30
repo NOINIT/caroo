@@ -9,6 +9,8 @@ import AbonnementKnop from './AbonnementKnop'
 import { FamilieSignalen } from '@/components/familie/FamilieSignalen'
 import { vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
 import { toegangVan } from '@/lib/opzeggen'
+import { samenAfsprakenVanGroep, vakerBezoekGevraagd } from '@/lib/vrienden'
+import { SamenAfspraken } from '@/components/familie/SamenAfspraken'
 
 export default async function GroepPage({
   params,
@@ -104,6 +106,10 @@ export default async function GroepPage({
     .limit(3)
 
   const isBeheerder = mijnLidschap?.rol === 'groepsbeheerder'
+  const [samen, signaal] = await Promise.all([
+    samenAfsprakenVanGroep(params.id).catch(() => []),
+    isBeheerder ? vakerBezoekGevraagd(params.id).catch(() => null) : Promise.resolve(null),
+  ])
   const isEigenaar = groep.eigenaar_id === user.id
   const welkom = searchParams.welkom === 'true'
   const { t, taal } = await getT()
@@ -184,6 +190,16 @@ export default async function GroepPage({
           stemmingen={stemmingenVandaag || []}
           verzoeken={bezoekverzoeken || []}
         />
+
+        {/* Zacht signaal, alleen voor de beheerder */}
+        {signaal && (
+          <div className="caroo-card border-s-4 border-caroo-oranje">
+            <p className="text-sm text-caroo-donker">{t('vrienden.familie.signaal', { naam: (signaal.naam || t('algemeen.deHoofdpersoon')).split(' ')[0] })}</p>
+            <Link href={`/groep/${params.id}/hulp`} className="text-sm text-caroo-groen font-medium hover:underline">{t('vrienden.familie.signaalLink')}</Link>
+          </div>
+        )}
+
+        <SamenAfspraken groepId={params.id} afspraken={samen} />
 
         {/* Snelkoppelingen */}
         <div className="grid grid-cols-3 gap-2">
@@ -308,6 +324,24 @@ export default async function GroepPage({
               className="mt-3 text-caroo-groen text-sm font-medium flex items-center gap-1 hover:underline"
             >
               {t('koppelen.koppelLink')}
+            </Link>
+          )}
+
+          {(isBeheerder || mijnLidschap?.rol === 'mantelzorger') && (nazorg.toegang === 'actief' || nazorg.toegang === 'proef') && (
+            <Link
+              href={`/groep/${params.id}/vrienden`}
+              className="mt-3 text-caroo-groen text-sm font-medium flex items-center gap-1 hover:underline"
+            >
+              {t('vrienden.familie.link')}
+            </Link>
+          )}
+
+          {(isBeheerder || mijnLidschap?.rol === 'mantelzorger') && (
+            <Link
+              href={`/groep/${params.id}/hulp`}
+              className="mt-3 text-caroo-groen text-sm font-medium flex items-center gap-1 hover:underline"
+            >
+              🤝 {t('hulp.titel')}
             </Link>
           )}
 
