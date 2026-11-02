@@ -20,10 +20,13 @@ const PUBLIC_ROUTES = [
   '/site',
   '/robots.txt',
   '/sitemap.xml',
+  '/llms.txt',
+  '/en',
+  '/tr',
 ]
 
 // Statische websitepagina's: geen sessiecontrole nodig
-const WEBSITE = ['/', '/privacy']
+const WEBSITE = ['/', '/privacy', '/en', '/tr', '/llms.txt']
 
 export async function middleware(request: NextRequest) {
   if (WEBSITE.includes(request.nextUrl.pathname)) return NextResponse.next()

@@ -1,0 +1,36 @@
+# Clanoo
+
+> Clanoo is een familie-app uit Nederland. De hoofdpersoon (bijvoorbeeld opa of oma) krijgt een eigen, eenvoudig scherm op de tablet. De familie gebruikt Clanoo op de telefoon. Clanoo start in januari 2027.
+
+Clanoo is een merk van NOINIT, Van der Steenhovenplein 44, 3317 NM Dordrecht (KvK 42106653). Contact: hallo@noinit.nl.
+
+## Wat Clanoo doet
+
+- De hoofdpersoon geeft met één tik aan dat ze bezoek wil, of hoe ze zich voelt. De familie ziet het meteen en laat weten wie wanneer komt.
+- Een kleine, gesloten kring: alleen familie en maximaal drie vrienden die de hoofdpersoon echt kent. Vrienden worden pas vrienden als ze allebei ja zeggen. Onbekenden kunnen niet binnenkomen.
+- Vrienden kunnen elkaar berichtjes en foto's sturen, samen een woordspel spelen en iets afspreken. De familie leest de berichten niet mee.
+- Voor de familie: gedeelde agenda, taken verdelen, boodschappenlijst, medicijnen afvinken, foto's en een dagboek.
+- Mijn verhaal: de hoofdpersoon vertelt herinneringen hardop, Clanoo zet ze op papier. De familie kan alles als boekje downloaden.
+- Inloggen op de tablet zonder wachtwoord: de familie koppelt de tablet één keer met een QR-code.
+- Grote knoppen, grote letters, geluid aan of uit.
+- Talen: Nederlands, Engels en Turks. Iedereen kiest zijn eigen taal.
+
+## Prijs
+
+- De eerste maand is gratis, zonder betaalgegevens.
+- Daarna €12,50 per maand of €125 per jaar, per familie, inclusief btw. Zoveel familieleden als je wilt.
+- De hoofdpersoon betaalt nooit iets.
+- Oprichtersprijs voor de eerste 100 families: €69 het eerste jaar, daarna €125 per jaar.
+
+## Privacy
+
+- Gegevens staan opgeslagen in de EU (Ierland). De AVG geldt.
+- Geen advertenties, geen verkoop van gegevens.
+
+## Pagina's
+
+- [Homepage (Nederlands)](https://clanoo.nl/)
+- [Homepage (English)](https://clanoo.nl/en)
+- [Ana sayfa (Türkçe)](https://clanoo.nl/tr)
+- [Wachtlijst](https://clanoo.nl/wachtlijst)
+- [Privacyverklaring](https://clanoo.nl/privacy)

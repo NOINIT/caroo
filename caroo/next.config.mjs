@@ -8,7 +8,10 @@ const nextConfig = {
     return [
       { source: '/', headers: vers },
       { source: '/privacy', headers: vers },
+      { source: '/en', headers: vers },
+      { source: '/tr', headers: vers },
       { source: '/site/:pagina(index.html|privacy.html)', headers: vers },
+      { source: '/site/:taal(en|tr)/index.html', headers: vers },
     ]
   },
   async rewrites() {
@@ -17,6 +20,8 @@ const nextConfig = {
       beforeFiles: [
         { source: '/', destination: '/site/index.html' },
         { source: '/privacy', destination: '/site/privacy.html' },
+        { source: '/en', destination: '/site/en/index.html' },
+        { source: '/tr', destination: '/site/tr/index.html' },
       ],
     }
   },
