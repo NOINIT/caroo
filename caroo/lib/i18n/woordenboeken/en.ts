@@ -717,6 +717,8 @@ export const en: Woordenboek = {
     gekopieerd: "Copied",
     deelTekst: "Hello! I use Clanoo. Would you like to be friends? Open this link:",
     wordVrienden: "Yes, become friends",
+    familieSpelen: "Play with family",
+    speelMetFamilie: "🎲 Play with {naam}",
     familie: {
       link: '👭 Friends of the main person',
       titel: 'Friends',
@@ -812,6 +814,9 @@ export const en: Woordenboek = {
   },
 
   spellen: {
+    speelMet: "🎲 Play with {naam}",
+    titelMet: "Playing with {naam}",
+    beurtBij: "It's your turn in {spel} with {naam}",
     kies: "Choose a game",
     woordketting: "Word chain",
     dobbelen: "Dice",

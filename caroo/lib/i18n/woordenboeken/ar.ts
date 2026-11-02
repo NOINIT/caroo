@@ -721,6 +721,8 @@ export const ar: Woordenboek = {
     gekopieerd: "تم النسخ",
     deelTekst: "مرحبًا! أستخدم Clanoo. هل تريد أن نصبح أصدقاء؟ افتح هذا الرابط:",
     wordVrienden: "نعم، لنصبح أصدقاء",
+    familieSpelen: "العب مع العائلة",
+    speelMetFamilie: "🎲 العب مع {naam}",
     familie: {
       link: '👭 أصدقاء الشخص الرئيسي',
       titel: 'الأصدقاء',
@@ -816,6 +818,9 @@ export const ar: Woordenboek = {
   },
 
   spellen: {
+    speelMet: "🎲 العب مع {naam}",
+    titelMet: "تلعب مع {naam}",
+    beurtBij: "دورك في {spel} مع {naam}",
     kies: "اختر لعبة",
     woordketting: "سلسلة الكلمات",
     dobbelen: "النرد",

@@ -9,7 +9,7 @@ import AbonnementKnop from './AbonnementKnop'
 import { FamilieSignalen } from '@/components/familie/FamilieSignalen'
 import { vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
 import { toegangVan } from '@/lib/opzeggen'
-import { samenAfsprakenVanGroep, vakerBezoekGevraagd, vriendVerzoekenVanGroep } from '@/lib/vrienden'
+import { samenAfsprakenVanGroep, vakerBezoekGevraagd, vriendVerzoekenVanGroep, spelBeurtenVoorFamilie } from '@/lib/vrienden'
 import { VriendVerzoeken } from '@/components/familie/VriendVerzoeken'
 import { SamenAfspraken } from '@/components/familie/SamenAfspraken'
 
@@ -107,10 +107,11 @@ export default async function GroepPage({
     .limit(3)
 
   const isBeheerder = mijnLidschap?.rol === 'groepsbeheerder'
-  const [samen, signaal, vriendVerzoeken] = await Promise.all([
+  const [samen, signaal, vriendVerzoeken, spelBeurten] = await Promise.all([
     samenAfsprakenVanGroep(params.id).catch(() => []),
     isBeheerder ? vakerBezoekGevraagd(params.id).catch(() => null) : Promise.resolve(null),
     vriendVerzoekenVanGroep(params.id).catch(() => []),
+    spelBeurtenVoorFamilie(params.id, user.id).catch(() => []),
   ])
   const isEigenaar = groep.eigenaar_id === user.id
   const welkom = searchParams.welkom === 'true'
@@ -202,6 +203,20 @@ export default async function GroepPage({
         )}
 
         <VriendVerzoeken groepId={params.id} mijnId={user.id} verzoeken={vriendVerzoeken} />
+
+        {/* Jij bent aan de beurt bij een spelletje met de hoofdpersoon */}
+        {spelBeurten.map(b => (
+          <Link key={b.id} href={`/groep/${params.id}/spelen?met=${b.met}`} className="caroo-card border-s-4 border-caroo-groen block hover:border-caroo-groen">
+            <p className="font-medium text-caroo-donker">🎲 {t('spellen.beurtBij', { spel: t(`spellen.${b.soort}` as any), naam: b.naam.split(' ')[0] })}</p>
+          </Link>
+        ))}
+
+        {/* Spelen met de hoofdpersoon */}
+        {(nazorg.toegang === 'actief' || nazorg.toegang === 'proef') && (leden || []).filter((l: any) => l.rol === 'oudere').map((l: any) => (
+          <Link key={l.users.id} href={`/groep/${params.id}/spelen?met=${l.users.id}`} className="btn-secondary w-full block text-center">
+            {t('spellen.speelMet', { naam: (l.users.naam || '').split(' ')[0] })}
+          </Link>
+        ))}
 
         <SamenAfspraken groepId={params.id} afspraken={samen} />
 

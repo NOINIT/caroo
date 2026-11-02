@@ -6,25 +6,32 @@ import { speelGeluid } from '@/lib/geluid'
 import * as D from '@/lib/spellen/dobbelen'
 import * as M from '@/lib/spellen/dammen'
 import * as S from '@/lib/spellen/schaken'
-import { laadPotjes, startPotje, dobbelGooi, dobbelKies, damZet, schaakZet, geefOp, type Potje, type Soort } from '@/lib/acties/spellen'
-import type { VriendDetail } from '@/lib/acties/vrienden'
+import { laadPotjes, startPotje, dobbelGooi, dobbelKies, damZet, schaakZet, geefOp, type Potje, type Soort, type Doel } from '@/lib/acties/spellen'
 
 type Keuze = 'woordketting' | Soort
 const ICOON: Record<Keuze, string> = { woordketting: '🔤', dobbelen: '🎲', dammen: '⚫', schaken: '♟️' }
 
-export function Spellen({ detail, woordketting }: { detail: VriendDetail; woordketting: React.ReactNode }) {
+/**
+ * Spellen kiezen en spelen. Werkt voor vrienden (met woordketting) en voor familie met de hoofdpersoon.
+ */
+export function Spellen({ doel, tegenNaam, woordketting }: {
+  doel: Doel; tegenNaam: string; woordketting?: { node: React.ReactNode; mijnBeurt: boolean }
+}) {
   const { t } = useT()
   const [gekozen, setGekozen] = useState<Keuze | null>(null)
   const [potjes, setPotjes] = useState<Potje[]>([])
 
-  const laad = useCallback(async () => setPotjes(await laadPotjes(detail.id)), [detail.id])
+  const sleutel = JSON.stringify(doel)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const laad = useCallback(async () => setPotjes(await laadPotjes(doel)), [sleutel])
   useEffect(() => {
     laad()
     const timer = setInterval(laad, 15000)
     return () => clearInterval(timer)
   }, [laad])
 
-  const woordBeurt = !!detail.spel && detail.spel.woorden.length > 0 && detail.spel.mijnBeurt
+  const woordBeurt = !!woordketting?.mijnBeurt
+  const keuzes: Keuze[] = woordketting ? ['woordketting', 'dobbelen', 'dammen', 'schaken'] : ['dobbelen', 'dammen', 'schaken']
   const beurt = (k: Keuze) => (k === 'woordketting' ? woordBeurt : !!potjes.find(p => p.soort === k && !p.klaar && p.mijnBeurt))
 
   if (!gekozen) {
@@ -32,7 +39,7 @@ export function Spellen({ detail, woordketting }: { detail: VriendDetail; woordk
       <div>
         <h3 className="text-ou-xl font-bold text-caroo-donker mb-4">{t('spellen.kies')}</h3>
         <div className="grid gap-3 md:grid-cols-2">
-          {(['woordketting', 'dobbelen', 'dammen', 'schaken'] as Keuze[]).map(k => (
+          {keuzes.map(k => (
             <button key={k} onClick={() => { speelGeluid('tik'); setGekozen(k) }}
               className="caroo-card flex items-center gap-4 text-start py-5 hover:border-caroo-groen transition-colors">
               <span className="text-4xl" aria-hidden>{ICOON[k]}</span>
@@ -53,26 +60,26 @@ export function Spellen({ detail, woordketting }: { detail: VriendDetail; woordk
       <span className="inline-block rtl:rotate-180">←</span> {t('spellen.andere')}
     </button>
   )
-  if (gekozen === 'woordketting') return <div>{terug}{woordketting}</div>
+  if (gekozen === 'woordketting') return <div>{terug}{woordketting?.node}</div>
 
   const potje = potjes.find(p => p.soort === gekozen) || null
   return (
     <div>
       {terug}
       <h3 className="text-ou-xl font-bold text-caroo-donker mb-3">{ICOON[gekozen]} {t(`spellen.${gekozen}`)}</h3>
-      <Potjeskader soort={gekozen} potje={potje} detail={detail} vernieuw={laad} />
+      <Potjeskader soort={gekozen} potje={potje} doel={doel} tegenNaam={tegenNaam} vernieuw={laad} />
     </div>
   )
 }
 
-function Potjeskader({ soort, potje, detail, vernieuw }: { soort: Soort; potje: Potje | null; detail: VriendDetail; vernieuw: () => Promise<void> }) {
+function Potjeskader({ soort, potje, doel, tegenNaam, vernieuw }: { soort: Soort; potje: Potje | null; doel: Doel; tegenNaam: string; vernieuw: () => Promise<void> }) {
   const { t } = useT()
   const [bezig, setBezig] = useState(false)
   const [opgeven, setOpgeven] = useState(false)
 
   async function begin() {
     setBezig(true)
-    await startPotje(detail.id, soort)
+    await startPotje(doel, soort)
     await vernieuw()
     setBezig(false)
   }
@@ -82,7 +89,7 @@ function Potjeskader({ soort, potje, detail, vernieuw }: { soort: Soort; potje: 
       <div className="space-y-4">
         {potje?.klaar && (
           <p className="caroo-card text-ou-xl font-bold text-center text-caroo-donker py-6">
-            {potje.gelijk ? t('spellen.gelijk') : potje.gewonnen ? t('spellen.gewonnen') : t('spellen.verloren', { naam: detail.vriendNaam })}
+            {potje.gelijk ? t('spellen.gelijk') : potje.gewonnen ? t('spellen.gewonnen') : t('spellen.verloren', { naam: tegenNaam })}
           </p>
         )}
         <button onClick={begin} disabled={bezig} className="btn-primary w-full text-ou-lg py-5">
@@ -94,11 +101,11 @@ function Potjeskader({ soort, potje, detail, vernieuw }: { soort: Soort; potje: 
 
   return (
     <div className="space-y-4">
-      {soort === 'dobbelen' && <DobbelenBord potje={potje} vriendNaam={detail.vriendNaam} vernieuw={vernieuw} />}
-      {soort === 'dammen' && <DammenBord potje={potje} vriendNaam={detail.vriendNaam} vernieuw={vernieuw} />}
-      {soort === 'schaken' && <SchaakBord potje={potje} vriendNaam={detail.vriendNaam} vernieuw={vernieuw} />}
+      {soort === 'dobbelen' && <DobbelenBord potje={potje} vriendNaam={tegenNaam} vernieuw={vernieuw} />}
+      {soort === 'dammen' && <DammenBord potje={potje} vriendNaam={tegenNaam} vernieuw={vernieuw} />}
+      {soort === 'schaken' && <SchaakBord potje={potje} vriendNaam={tegenNaam} vernieuw={vernieuw} />}
 
-      {!potje.mijnBeurt && <p className="caroo-card text-ou-lg text-caroo-donker">⏳ {t('spellen.beurtVan', { naam: detail.vriendNaam })}</p>}
+      {!potje.mijnBeurt && <p className="caroo-card text-ou-lg text-caroo-donker">⏳ {t('spellen.beurtVan', { naam: tegenNaam })}</p>}
 
       <div className="pt-4">
         {!opgeven ? (

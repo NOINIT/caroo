@@ -6,7 +6,7 @@ import { useT } from '@/lib/i18n/client'
 import { speelGeluid } from '@/lib/geluid'
 import { hoofdletter } from '@/lib/i18n/vertaal'
 import { Spellen } from './Spellen'
-import type { VriendKaart, VriendenStatus } from '@/lib/vrienden'
+import type { VriendKaart, VriendenStatus, FamilieSpeler } from '@/lib/vrienden'
 import {
   laadVriend, stuurBericht, stuurVriendFoto, legWoord, nieuwSpel,
   stelSamenVoor, beantwoordSamen, trekSamenIn, stopMetVriend, type VriendDetail,
@@ -24,10 +24,11 @@ function Rondje({ naam, groot }: { naam: string; groot?: boolean }) {
   )
 }
 
-export function Vrienden({ vrienden, status, groepId }: { vrienden: VriendKaart[]; status: VriendenStatus; groepId: string }) {
+export function Vrienden({ vrienden, status, groepId, familie = [] }: { vrienden: VriendKaart[]; status: VriendenStatus; groepId: string; familie?: FamilieSpeler[] }) {
   const { t } = useT()
   const router = useRouter()
   const [open, setOpen] = useState<VriendKaart | null>(null)
+  const [spelMet, setSpelMet] = useState<FamilieSpeler | null>(null)
   const [bezig, setBezig] = useState(false)
   const totaal = vrienden.length + status.vragen.length + status.wachten.length + status.verzoeken.length
 
@@ -37,6 +38,21 @@ export function Vrienden({ vrienden, status, groepId }: { vrienden: VriendKaart[
     if (ja) speelGeluid('succes')
     setBezig(false)
     router.refresh()
+  }
+
+  if (spelMet) {
+    return (
+      <div className="px-4 py-4 md:px-8 md:py-6">
+        <button onClick={() => { setSpelMet(null); router.refresh() }} className="text-ou-base text-caroo-groen font-semibold mb-3">
+          <span className="inline-block rtl:rotate-180">←</span> {t('vrienden.titel')}
+        </button>
+        <div className="flex items-center gap-4 mb-4">
+          <Rondje naam={spelMet.naam} groot />
+          <h2 className="text-ou-2xl font-bold text-caroo-donker">{spelMet.naam}</h2>
+        </div>
+        <Spellen doel={{ groep: groepId, met: spelMet.id }} tegenNaam={spelMet.naam} />
+      </div>
+    )
   }
 
   if (open) {
@@ -89,6 +105,25 @@ export function Vrienden({ vrienden, status, groepId }: { vrienden: VriendKaart[
               <span className="text-3xl text-gray-400 rtl:rotate-180" aria-hidden>›</span>
             </button>
           ))}
+        </div>
+      )}
+
+      {/* Spelen met familie uit de eigen groep */}
+      {familie.length > 0 && (
+        <div>
+          <h3 className="text-ou-lg font-bold text-caroo-donker mb-3">{t('vrienden.familieSpelen')}</h3>
+          <div className="grid gap-3 md:grid-cols-2">
+            {familie.map(f => (
+              <button key={f.id} onClick={() => { speelGeluid('tik'); setSpelMet(f) }}
+                className="caroo-card flex items-center gap-4 text-start hover:border-caroo-groen transition-colors">
+                <Rondje naam={f.naam} />
+                <span className="flex-1 min-w-0">
+                  <span className="block text-ou-lg font-bold text-caroo-donker truncate">{t('vrienden.speelMetFamilie', { naam: f.naam.split(' ')[0] })}</span>
+                  {f.jouwBeurt && <span className="block text-ou-base font-semibold text-caroo-groen">● {t('spellen.jouwBeurt')}</span>}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -246,7 +281,7 @@ function VriendScherm({ kaart, terug, gestopt }: { kaart: VriendKaart; terug: ()
       ) : scherm === 'praten' ? (
         <Praten detail={detail} opnieuw={laad} />
       ) : scherm === 'spel' ? (
-        <Spellen detail={detail} woordketting={<Spel detail={detail} opnieuw={laad} />} />
+        <Spellen doel={{ vriendschap: detail.id }} tegenNaam={detail.vriendNaam} woordketting={{ node: <Spel detail={detail} opnieuw={laad} />, mijnBeurt: !!detail.spel && detail.spel.woorden.length > 0 && detail.spel.mijnBeurt }} />
       ) : (
         <Samen detail={detail} opnieuw={laad} />
       )}

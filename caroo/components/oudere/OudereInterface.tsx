@@ -5,7 +5,7 @@ import { MijnVerhaal } from './MijnVerhaal'
 import { BoodschappenLijst } from '@/components/boodschappen/BoodschappenLijst'
 import { Thuis, type Bezoekverzoek } from './Thuis'
 import { Vrienden } from './Vrienden'
-import type { VriendKaart, VriendenStatus } from '@/lib/vrienden'
+import type { VriendKaart, VriendenStatus, FamilieSpeler } from '@/lib/vrienden'
 import { InstellingenFormulier } from '@/components/instellingen/InstellingenFormulier'
 import { uitloggen } from '@/app/auth/actions'
 import { useT } from '@/lib/i18n/client'
@@ -32,11 +32,12 @@ interface Props {
   net_gekoppeld?: boolean
   vrienden: VriendKaart[]
   vriendenStatus: VriendenStatus
+  familie: FamilieSpeler[]
 }
 
 export function OudereInterface({
   groepId, userId, email, naam, groepNaam, dagAfspraken, medicijnen, fotos,
-  stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid, meldingEmail, net_gekoppeld, vrienden, vriendenStatus,
+  stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid, meldingEmail, net_gekoppeld, vrienden, vriendenStatus, familie,
 }: Props) {
   const [tipZichtbaar, setTipZichtbaar] = useState(!!net_gekoppeld)
   const [actieveTab, setActieveTab] = useState<Tab>('thuis')
@@ -107,7 +108,7 @@ export function OudereInterface({
           <MijnVerhaal groepId={groepId} />
         )}
         {actieveTab === 'vrienden' && (
-          <Vrienden vrienden={vrienden} status={vriendenStatus} groepId={groepId} />
+          <Vrienden vrienden={vrienden} status={vriendenStatus} groepId={groepId} familie={familie} />
         )}
         {actieveTab === 'mijn_tip' && (
           <TabMijnTip groepId={groepId} />
@@ -126,7 +127,7 @@ export function OudereInterface({
             { tab: 'boodschappen' as Tab, emoji: '🛒', label: t('oudere.nav.boodschap') },
             { tab: 'fotos' as Tab, emoji: '📸', label: t('oudere.nav.fotos') },
             { tab: 'mijn_verhaal' as Tab, emoji: '🎤', label: t('oudere.nav.verhaal') },
-            { tab: 'vrienden' as Tab, emoji: '👭', label: t('vrienden.nav'), nieuw: vriendenStatus.vragen.length > 0 || vrienden.some(v => v.ongelezen || v.vraag || v.jouwBeurt) },
+            { tab: 'vrienden' as Tab, emoji: '👭', label: t('vrienden.nav'), nieuw: vriendenStatus.vragen.length > 0 || familie.some(f => f.jouwBeurt) || vrienden.some(v => v.ongelezen || v.vraag || v.jouwBeurt) },
             { tab: 'mijn_tip' as Tab, emoji: '💡', label: t('oudere.nav.tip') },
 
           ].map(item => (

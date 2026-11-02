@@ -717,6 +717,8 @@ export const tr: Woordenboek = {
     gekopieerd: "Kopyalandı",
     deelTekst: "Merhaba! Clanoo kullanıyorum. Arkadaş olmak ister misin? Bu bağlantıyı aç:",
     wordVrienden: "Evet, arkadaş olalım",
+    familieSpelen: "Aileyle oyna",
+    speelMetFamilie: "🎲 {naam} ile oyna",
     familie: {
       link: '👭 Ana kişinin arkadaşları',
       titel: 'Arkadaşlar',
@@ -812,6 +814,9 @@ export const tr: Woordenboek = {
   },
 
   spellen: {
+    speelMet: "🎲 {naam} ile oyna",
+    titelMet: "{naam} ile oynuyorsun",
+    beurtBij: "{naam} ile {spel} oyununda sıra sende",
     kies: "Bir oyun seç",
     woordketting: "Kelime zinciri",
     dobbelen: "Zar",

@@ -719,6 +719,8 @@ export const nl = {
     gekopieerd: "Gekopieerd",
     deelTekst: "Hallo! Ik gebruik Clanoo. Wil je vrienden worden? Open deze link:",
     wordVrienden: "Ja, word vrienden",
+    familieSpelen: "Spelen met familie",
+    speelMetFamilie: "🎲 Spelen met {naam}",
     familie: {
       link: '👭 Vrienden van de hoofdpersoon',
       titel: 'Vrienden',
@@ -814,6 +816,9 @@ export const nl = {
   },
 
   spellen: {
+    speelMet: "🎲 Speel met {naam}",
+    titelMet: "Spelen met {naam}",
+    beurtBij: "Jij bent aan de beurt bij {spel} met {naam}",
     kies: "Kies een spel",
     woordketting: "Woordketting",
     dobbelen: "Dobbelen",

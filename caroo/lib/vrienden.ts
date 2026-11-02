@@ -229,3 +229,27 @@ export async function vakerBezoekGevraagd(groepId: string) {
   if (dezeWeek.length < 3 || dezeWeek.length < gemiddeld * 1.5 + 1) return null
   return { naam: (dezeWeek[0]?.aangevraagd_naam as string) || null, aantal: dezeWeek.length }
 }
+
+/** Voor de hoofdpersoon: familieleden om mee te spelen, en of zij aan de beurt is */
+export async function familieOmMeeTeSpelen(groepId: string, userId: string) {
+  const service = createServiceClient()
+  const [{ data: leden }, { data: potjes }] = await Promise.all([
+    service.from('groepsleden').select('user_id, rol, users:user_id (naam)').eq('groep_id', groepId).neq('rol', 'oudere'),
+    service.from('vriend_potjes').select('speler_a').eq('groep_id', groepId).eq('speler_b', userId).eq('status', 'bezig').eq('beurt', userId),
+  ])
+  return (leden || []).map((l: any) => ({
+    id: l.user_id as string,
+    naam: (l.users?.naam as string) || '',
+    jouwBeurt: (potjes || []).some(p => p.speler_a === l.user_id),
+  }))
+}
+export type FamilieSpeler = Awaited<ReturnType<typeof familieOmMeeTeSpelen>>[number]
+
+/** Voor de familie: bij welke spellen met de hoofdpersoon ben ik aan de beurt? */
+export async function spelBeurtenVoorFamilie(groepId: string, userId: string) {
+  const service = createServiceClient()
+  const { data } = await service.from('vriend_potjes').select('id, speler_b, soort')
+    .eq('groep_id', groepId).eq('speler_a', userId).eq('status', 'bezig').eq('beurt', userId)
+  const naamVan = await namen((data || []).map(p => p.speler_b as string))
+  return (data || []).map(p => ({ id: p.id as string, met: p.speler_b as string, naam: naamVan.get(p.speler_b) || '', soort: p.soort as string }))
+}
