@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useT } from '@/lib/i18n/client'
 import { speelGeluid } from '@/lib/geluid'
 import { hoofdletter } from '@/lib/i18n/vertaal'
+import { Spellen } from './Spellen'
 import type { VriendKaart, VriendenStatus } from '@/lib/vrienden'
 import {
   laadVriend, stuurBericht, stuurVriendFoto, legWoord, nieuwSpel,
@@ -245,7 +246,7 @@ function VriendScherm({ kaart, terug, gestopt }: { kaart: VriendKaart; terug: ()
       ) : scherm === 'praten' ? (
         <Praten detail={detail} opnieuw={laad} />
       ) : scherm === 'spel' ? (
-        <Spel detail={detail} opnieuw={laad} />
+        <Spellen detail={detail} woordketting={<Spel detail={detail} opnieuw={laad} />} />
       ) : (
         <Samen detail={detail} opnieuw={laad} />
       )}

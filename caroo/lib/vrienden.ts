@@ -87,10 +87,11 @@ export async function vriendenOverzicht(userId: string) {
   if (!lijst.length) return []
   const ids = lijst.map(v => v.id)
   const anderen = lijst.map(v => persoonVan(v, ander(kantVan(v, userId)!)))
-  const [naamVan, { data: ongelezen }, { data: spellen }, { data: vragen }] = await Promise.all([
+  const [naamVan, { data: ongelezen }, { data: spellen }, { data: potjes }, { data: vragen }] = await Promise.all([
     namen(anderen),
     service.from('vriend_berichten').select('vriendschap_id').in('vriendschap_id', ids).neq('van', userId).is('gelezen_op', null),
     service.from('vriend_spellen').select('vriendschap_id, beurt').in('vriendschap_id', ids),
+    service.from('vriend_potjes').select('vriendschap_id, beurt').in('vriendschap_id', ids).eq('status', 'bezig').eq('beurt', userId),
     service.from('vriend_afspraken').select('vriendschap_id, voorgesteld_door').in('vriendschap_id', ids)
       .eq('status', 'gevraagd').gte('dag', vandaagNL()),
   ])
@@ -98,7 +99,7 @@ export async function vriendenOverzicht(userId: string) {
     id: v.id,
     naam: naamVan.get(anderen[i]) || '',
     ongelezen: (ongelezen || []).filter(b => b.vriendschap_id === v.id).length,
-    jouwBeurt: (spellen || []).some(s => s.vriendschap_id === v.id && s.beurt === userId),
+    jouwBeurt: (spellen || []).some(s => s.vriendschap_id === v.id && s.beurt === userId) || (potjes || []).some(p => p.vriendschap_id === v.id),
     vraag: (vragen || []).some(a => a.vriendschap_id === v.id && a.voorgesteld_door !== userId),
   }))
 }
