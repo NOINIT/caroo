@@ -384,7 +384,7 @@ export default async function GroepPage({
             <div className="mt-4 pt-4 border-t border-gray-100">
               <AbonnementKnop groepId={params.id} />
               {magHerroepen && (
-                <Link href={`/groep/${params.id}/herroepen`} className="block mt-2 text-sm text-gray-600 hover:text-gray-800 underline">
+                <Link href={`/groep/${params.id}/herroepen`} className="block mt-2 text-sm text-caroo-groen font-medium hover:underline">
                   {t('herroepen.link')}
                 </Link>
               )}

@@ -403,6 +403,9 @@ export const tr: Woordenboek = {
     mailOver: 'Konu: {overeenkomst}.',
     mailGestopt: 'Abonelik durduruldu. Daha önce ödeme yaptıysan her şeyi iade ediyoruz. Birkaç gün içinde hesabında olur.',
     mailGroet: 'Sevgiler,',
+    welkomOnderwerp: 'Clanoo aboneliğin başlatıldı',
+    welkomTekst: 'Teşekkürler. {groep} için abonelik başlatıldı.',
+    welkomBedenk: '14 gün içinde fikrini mi değiştirdin? Uygulamada, Abonelik bölümünden cayabilirsin.',
   },
 
   categorie: {

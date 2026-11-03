@@ -403,6 +403,9 @@ export const en: Woordenboek = {
     mailOver: 'This concerns: {overeenkomst}.',
     mailGestopt: 'The subscription has stopped. If you have already paid, we will refund everything. It will be in your account within a few days.',
     mailGroet: 'Kind regards,',
+    welkomOnderwerp: 'Your Clanoo subscription has been taken out',
+    welkomTekst: 'Thank you. The subscription for {groep} has been taken out.',
+    welkomBedenk: 'Changed your mind within 14 days? You can withdraw in the app, under Subscription.',
   },
 
   categorie: {

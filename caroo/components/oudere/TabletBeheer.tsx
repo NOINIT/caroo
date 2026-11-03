@@ -74,7 +74,7 @@ export function TabletBeheer({ g }: { g: BeheerGegevens }) {
             {g.groep.betaald ? t('tabletBeheer.bekijk') : t('groep.kiesAbonnement')}
           </Link>
           {g.groep.betaald && binnenBedenktijd(g.abonnementSinds) && (
-            <Link href={`/groep/${g.groepId}/herroepen`} className="block text-center text-ou-sm text-gray-700 underline pt-1">{t('herroepen.link')}</Link>
+            <Link href={`/groep/${g.groepId}/herroepen`} className="block text-center text-ou-sm text-caroo-groen font-semibold underline pt-1">{t('herroepen.link')}</Link>
           )}
         </div>
       )}

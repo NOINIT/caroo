@@ -405,6 +405,9 @@ export const nl = {
     mailOver: 'Het gaat om: {overeenkomst}.',
     mailGestopt: 'Het abonnement is gestopt. Heb je al betaald, dan betalen we alles terug. Dat staat binnen een paar dagen op je rekening.',
     mailGroet: 'Hartelijke groet,',
+    welkomOnderwerp: 'Je Clanoo-abonnement is afgesloten',
+    welkomTekst: 'Dank je wel. Het abonnement voor {groep} is afgesloten.',
+    welkomBedenk: 'Bedenk je je binnen 14 dagen? Herroepen kan in de app, bij Abonnement.',
   },
 
   categorie: {

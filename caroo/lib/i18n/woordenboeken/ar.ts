@@ -407,6 +407,9 @@ export const ar: Woordenboek = {
     mailOver: 'الموضوع: {overeenkomst}.',
     mailGestopt: 'توقف الاشتراك. إذا كنت قد دفعت، نرد لك كل شيء خلال أيام.',
     mailGroet: 'مع أطيب التحيات،',
+    welkomOnderwerp: 'تم الاشتراك في Clanoo',
+    welkomTekst: 'شكرًا لك. تم الاشتراك لـ {groep}.',
+    welkomBedenk: 'غيّرت رأيك خلال 14 يومًا؟ يمكنك الانسحاب في التطبيق، ضمن الاشتراك.',
   },
 
   categorie: {

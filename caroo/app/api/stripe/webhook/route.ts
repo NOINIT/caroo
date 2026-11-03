@@ -1,6 +1,9 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { stuurMail, escapeHtml } from '@/lib/mail'
+import { maakT } from '@/lib/i18n/vertaal'
+import { MERK } from '@/lib/merk'
 
 export async function POST(request: Request) {
   const stripe = new (Stripe as any)(process.env.STRIPE_SECRET_KEY!)
@@ -36,7 +39,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Geen groep_id' }, { status: 400 })
       }
 
-      const { error } = await supabase
+      const { data: geactiveerd, error } = await supabase
         .from('zorggroepen')
         .update({
           betaald: true,
@@ -49,10 +52,30 @@ export async function POST(request: Request) {
         })
         .eq('id', groepId)
         .eq('betaald', false)
+        .select('naam')
 
       if (error) {
         console.error('Update groep mislukt:', error)
         return NextResponse.json({ error: 'Update mislukt' }, { status: 500 })
+      }
+
+      // Bevestiging met de bedenktijd erin, in de taal van wie betaalde (één keer, alleen bij een nieuwe activering)
+      const naar = session.customer_details?.email || session.customer_email
+      if (geactiveerd?.length && naar) {
+        const { data: wie } = session.metadata?.user_id
+          ? await supabase.from('users').select('naam, taal').eq('id', session.metadata.user_id).maybeSingle()
+          : { data: null }
+        const t = maakT((wie?.taal as any) || 'nl')
+        await stuurMail({
+          naar,
+          onderwerp: t('herroepen.welkomOnderwerp'),
+          replyTo: MERK.contact,
+          html: `<div style="font-family:Arial,sans-serif;font-size:17px;line-height:1.55;color:#1A2F5A;max-width:560px">
+            <p>${escapeHtml(t('herroepen.mailHallo', { naam: (wie?.naam || '').split(' ')[0] }).replace(' ,', ','))}</p>
+            <p>${escapeHtml(t('herroepen.welkomTekst', { groep: geactiveerd[0].naam as string }))}</p>
+            <p>${escapeHtml(t('herroepen.welkomBedenk'))}</p>
+            <p>${escapeHtml(t('herroepen.mailGroet'))}<br>Clanoo · NOINIT</p></div>`,
+        })
       }
 
       console.log(`✅ Groep ${groepId} geactiveerd, abonnement ${session.subscription}`)
