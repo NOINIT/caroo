@@ -511,7 +511,7 @@ export const nl = {
   betalen: {
     jouwGroep: 'Jouw zorggroep',
     titel: 'Kies je abonnement',
-    activeer: 'Voor {groep}. Eén prijs voor de hele familie, de hoofdpersoon betaalt niets.',
+    activeer: 'Voor {groep}. Eén prijs voor de hele familie. Iedereen die je uitnodigt, doet gratis mee.',
     methodes: '💳 Betalen met iDEAL, creditcard of debitcard',
     veilig: '🔒 Veilig betalen via Stripe',
     doorsturen: 'Doorsturen naar betaling...',

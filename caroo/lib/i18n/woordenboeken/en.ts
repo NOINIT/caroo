@@ -509,7 +509,7 @@ export const en: Woordenboek = {
   betalen: {
     jouwGroep: 'Your care group',
     titel: 'Choose your plan',
-    activeer: 'For {groep}. One price for the whole family; the main person pays nothing.',
+    activeer: 'For {groep}. One price for the whole family. Everyone you invite takes part for free.',
     methodes: '💳 Pay with iDEAL, credit card or debit card',
     veilig: '🔒 Secure payment via Stripe',
     doorsturen: 'Redirecting to payment...',

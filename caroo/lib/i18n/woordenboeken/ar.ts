@@ -513,7 +513,7 @@ export const ar: Woordenboek = {
   betalen: {
     jouwGroep: 'مجموعة الرعاية الخاصة بك',
     titel: 'اختر اشتراكك',
-    activeer: 'لـ {groep}. سعر واحد للعائلة كلها، والشخص الرئيسي لا يدفع شيئًا.',
+    activeer: 'لـ {groep}. سعر واحد للعائلة كلها. كل من تدعوه يشارك مجانًا.',
     methodes: '💳 الدفع عبر iDEAL أو بطاقة ائتمان أو بطاقة خصم',
     veilig: '🔒 دفع آمن عبر Stripe',
     doorsturen: 'جارٍ التحويل إلى الدفع...',

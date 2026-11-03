@@ -21,7 +21,7 @@ Familie-zorgapp van NOINIT. Next.js 14 (app router) + Supabase + Stripe, gehost 
 
 ## Prijzen
 - Alle prijzen staan in `lib/prijzen.ts`. Pas ze alleen daar aan; app en betaalpagina volgen vanzelf.
-- Nu (besluit 29-10-2026): eerste maand gratis zonder betaalgegevens, daarna €12,50 per maand of €125 per jaar, per familie. De hoofdpersoon betaalt niets.
+- Nu (besluit 29-10-2026): eerste maand gratis zonder betaalgegevens, daarna €12,50 per maand of €125 per jaar, per familie. Wie de groep start, betaalt; iedereen die erbij komt doet gratis mee.
 - Oprichters (eerste 100 families): €69 het eerste jaar, daarna €125 per jaar. Kortingscode in Stripe wordt vanzelf aangemaakt (`lib/stripe-kortingen.ts`).
 - Gratis maand en toegang: `lib/opzeggen.ts` (`toegangVan`, `magGebruiken`). In de database telt `groep_betaald()` de gratis maand mee (migratie 015).
 - Verandert een prijs, pas dan ook aan: `public/site/index.html` (website, via het ontwerp), `lib/merk.ts` (wachtlijst) en de tekst `aanmaken.prijsUitleg` in de woordenboeken.

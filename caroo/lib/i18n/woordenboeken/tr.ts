@@ -509,7 +509,7 @@ export const tr: Woordenboek = {
   betalen: {
     jouwGroep: 'Bakım grubunuz',
     titel: 'Aboneliğinizi seçin',
-    activeer: '{groep} için. Tüm aile için tek fiyat; ana kişi hiçbir şey ödemez.',
+    activeer: '{groep} için. Tüm aile için tek fiyat. Davet ettiğin herkes ücretsiz yer alır.',
     methodes: '💳 iDEAL, kredi kartı ya da banka kartıyla ödeme',
     veilig: '🔒 Stripe ile güvenli ödeme',
     doorsturen: 'Ödemeye yönlendiriliyor...',
