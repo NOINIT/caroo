@@ -7,7 +7,8 @@ export const MAX_UITNODIGINGEN_PER_DAG = 10
 export const UITNODIGING_VERVALT_DAGEN = 7
 
 export async function checkRateLimit(userId: string): Promise<boolean> {
-  const supabase = createClient()
+  // De teller staat dicht voor gebruikers zelf (migratie 022): alleen de server leest en schrijft
+  const supabase = createServiceClient()
   const vandaag = new Date().toISOString().split('T')[0]
 
   const { data } = await supabase
@@ -21,7 +22,7 @@ export async function checkRateLimit(userId: string): Promise<boolean> {
 }
 
 async function verhoogTeller(userId: string): Promise<void> {
-  const supabase = createClient()
+  const supabase = createServiceClient()
   const vandaag = new Date().toISOString().split('T')[0]
 
   await supabase.from('uitnodiging_log').upsert(
