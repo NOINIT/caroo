@@ -3,6 +3,7 @@
 import crypto from 'crypto'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { magKoppelen } from '@/lib/koppelen'
+import { isBeheerder } from '@/lib/rechten'
 import { stuurMelding } from '@/lib/meldingen'
 import { getT } from '@/lib/i18n/server'
 import { vandaagNL } from '@/lib/stemming'
@@ -88,9 +89,10 @@ export async function maakEigenUitnodiging(groepId: string) {
 }
 
 async function regeltZelf(groepId: string, userId: string) {
-  const { data } = await createServiceClient().from('groepsleden').select('rol, vrienden_zelf')
+  const { data } = await createServiceClient().from('groepsleden').select('rol, vrienden_zelf, beheerder')
     .eq('groep_id', groepId).eq('user_id', userId).maybeSingle()
-  return data?.rol === 'oudere' && !!data.vrienden_zelf
+  // Een hoofdpersoon die zelf beheert, regelt ook haar vrienden zelf
+  return data?.rol === 'oudere' && (!!data.vrienden_zelf || !!data.beheerder)
 }
 
 /** De beheerder zet aan of uit dat de hoofdpersoon vrienden zelf regelt */
@@ -99,8 +101,7 @@ export async function zetVriendenZelf(groepId: string, hoofdpersoonId: string, a
   const user = await ingelogd()
   if (!user) return { error: t('algemeen.nietIngelogd') }
   const service = createServiceClient()
-  const { data: ik } = await service.from('groepsleden').select('rol').eq('groep_id', groepId).eq('user_id', user.id).maybeSingle()
-  if (ik?.rol !== 'groepsbeheerder') return { error: t('koppelen.geenRechten') }
+  if (!(await isBeheerder(groepId, user.id))) return { error: t('koppelen.geenRechten') }
   await service.from('groepsleden').update({ vrienden_zelf: !!aan }).eq('groep_id', groepId).eq('user_id', hoofdpersoonId).eq('rol', 'oudere')
   return { succes: true }
 }

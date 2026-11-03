@@ -451,6 +451,9 @@ export const ar: Woordenboek = {
   },
 
   beheer: {
+    eigenaarBeheerder: "يدفع الاشتراك ويبقى مديرًا",
+    maakBeheerder: "اجعله مديرًا",
+    geenBeheerderMeer: "إلغاء الإدارة",
     lidZeker: 'هل أنت متأكد من إزالة هذا العضو؟',
     categorieZeker: 'هل أنت متأكد من حذف هذه الفئة؟',
     lidVerwijderen: 'إزالة العضو',
@@ -488,6 +491,11 @@ export const ar: Woordenboek = {
   },
 
   aanmaken: {
+    voorWie: "لمن Clanoo؟",
+    voorMezelf: "لنفسي",
+    voorMezelfUitleg: "تحصل على الشاشة البسيطة ذات الأزرار الكبيرة وتقرر بنفسك من ينضم.",
+    voorIemand: "لشخص آخر",
+    voorIemandUitleg: "تدير المجموعة وتجهّز Clanoo على جهاز الشخص المعني.",
     mislukt: 'تعذّر إنشاء مجموعة الرعاية.',
     intro: 'اختر اسمًا لمجموعة الرعاية. بعدها يمكنك دعوة الأشخاص مباشرةً.',
     naam: 'اسم مجموعة الرعاية',
@@ -888,5 +896,22 @@ export const ar: Woordenboek = {
       jijWit: "تلعب بالأبيض",
       jijZwart: "تلعب بالأسود",
     },
+  },
+
+  tabletBeheer: {
+    titel: "الإدارة",
+    uitleg: "أنت تدير هذه المجموعة. تقرر بنفسك من ينضم.",
+    uitnodigen: "ادعُ العائلة",
+    email: "البريد الإلكتروني",
+    magBeheren: "يمكنه الإدارة أيضًا",
+    knop: "أنشئ دعوة",
+    linkUitleg: "أرسل هذا الرابط. صالح 7 أيام.",
+    deelTekst: "أدعوك إلى Clanoo الخاص بي:",
+    delen: "أرسل عبر واتساب",
+    kopieer: "انسخ الرابط",
+    gekopieerd: "تم النسخ",
+    leden: "من فيها",
+    abonnement: "الاشتراك",
+    bekijk: "عرض الاشتراك",
   },
 }

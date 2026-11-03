@@ -447,6 +447,9 @@ export const tr: Woordenboek = {
   },
 
   beheer: {
+    eigenaarBeheerder: "Aboneliği öder ve yönetici kalır",
+    maakBeheerder: "Yönetici yap",
+    geenBeheerderMeer: "Yöneticilikten çıkar",
     lidZeker: 'Bu üyeyi çıkarmak istediğinizden emin misiniz?',
     categorieZeker: 'Bu kategoriyi silmek istediğinizden emin misiniz?',
     lidVerwijderen: 'Üyeyi çıkar',
@@ -484,6 +487,11 @@ export const tr: Woordenboek = {
   },
 
   aanmaken: {
+    voorWie: "Clanoo kimin için?",
+    voorMezelf: "Kendim için",
+    voorMezelfUitleg: "Büyük düğmeli basit ekranı alırsın ve kimin katılacağına kendin karar verirsin.",
+    voorIemand: "Başka biri için",
+    voorIemandUitleg: "Grubu sen yönetirsin ve Clanoo'yu her şeyin etrafında döndüğü kişinin tabletine kurarsın.",
     mislukt: 'Bakım grubu kurulamadı.',
     intro: 'Bakım grubunuza bir ad verin. Ardından hemen kişileri davet edebilirsiniz.',
     naam: 'Bakım grubunun adı',
@@ -884,5 +892,22 @@ export const tr: Woordenboek = {
       jijWit: "Beyazla oynuyorsun",
       jijZwart: "Siyahla oynuyorsun",
     },
+  },
+
+  tabletBeheer: {
+    titel: "Yönetim",
+    uitleg: "Bu grubu sen yönetiyorsun. Kimin katılacağına sen karar verirsin.",
+    uitnodigen: "Aileyi davet et",
+    email: "E-posta adresi",
+    magBeheren: "Yönetebilir de",
+    knop: "Davet oluştur",
+    linkUitleg: "Bu bağlantıyı gönder. 7 gün geçerlidir.",
+    deelTekst: "Seni Clanoo'ma davet ediyorum:",
+    delen: "WhatsApp ile gönder",
+    kopieer: "Bağlantıyı kopyala",
+    gekopieerd: "Kopyalandı",
+    leden: "Kimler var",
+    abonnement: "Abonelik",
+    bekijk: "Aboneliği gör",
   },
 }

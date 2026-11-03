@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { heeftRecht } from '@/lib/rechten'
+import { isBeheerder } from '@/lib/rechten'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { BeheerClient } from './BeheerClient'
@@ -11,12 +11,12 @@ export default async function BeheerPage({ params }: { params: { id: string } })
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const heeftToegang = await heeftRecht(params.id, ['groepsbeheerder'])
+  const heeftToegang = await isBeheerder(params.id, user.id)
   if (!heeftToegang) redirect(`/groep/${params.id}`)
 
   const { data: groep } = await supabase
     .from('zorggroepen')
-    .select('id, naam, betaald, gestopt_op, aangemaakt_op')
+    .select('id, naam, betaald, gestopt_op, aangemaakt_op, eigenaar_id')
     .eq('id', params.id)
     .single()
 
@@ -25,7 +25,7 @@ export default async function BeheerPage({ params }: { params: { id: string } })
   const [{ data: leden }, { data: categorieen }] = await Promise.all([
     supabase
       .from('groepsleden')
-      .select('id, rol, toegevoegd_op, users (id, naam, email)')
+      .select('id, rol, beheerder, toegevoegd_op, users (id, naam, email)')
       .eq('groep_id', params.id)
       .order('toegevoegd_op', { ascending: true }),
 
@@ -48,6 +48,7 @@ export default async function BeheerPage({ params }: { params: { id: string } })
       <BeheerClient
         groepId={params.id}
         huidigGebruikerId={user.id}
+        eigenaarId={groep.eigenaar_id}
         leden={(leden || []) as any}
         categorieen={(categorieen || []) as any}
       />

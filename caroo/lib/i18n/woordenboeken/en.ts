@@ -447,6 +447,9 @@ export const en: Woordenboek = {
   },
 
   beheer: {
+    eigenaarBeheerder: "Pays for the subscription and stays admin",
+    maakBeheerder: "Make admin",
+    geenBeheerderMeer: "Remove as admin",
     lidZeker: 'Are you sure you want to remove this member?',
     categorieZeker: 'Are you sure you want to delete this category?',
     lidVerwijderen: 'Remove member',
@@ -484,6 +487,11 @@ export const en: Woordenboek = {
   },
 
   aanmaken: {
+    voorWie: "Who is Clanoo for?",
+    voorMezelf: "For myself",
+    voorMezelfUitleg: "You get the simple screen with big buttons and decide yourself who may join.",
+    voorIemand: "For someone else",
+    voorIemandUitleg: "You manage the group and set Clanoo up on the tablet of the person it is all about.",
     mislukt: "Couldn't create the care group.",
     intro: 'Give your care group a name. You can invite people straight after.',
     naam: 'Care group name',
@@ -884,5 +892,22 @@ export const en: Woordenboek = {
       jijWit: "You play white",
       jijZwart: "You play black",
     },
+  },
+
+  tabletBeheer: {
+    titel: "Manage",
+    uitleg: "You manage this group. You decide who joins.",
+    uitnodigen: "Invite family",
+    email: "Email address",
+    magBeheren: "May also manage",
+    knop: "Create an invitation",
+    linkUitleg: "Send this link. It works for 7 days.",
+    deelTekst: "I am inviting you to my Clanoo:",
+    delen: "Send via WhatsApp",
+    kopieer: "Copy the link",
+    gekopieerd: "Copied",
+    leden: "Who is in it",
+    abonnement: "Subscription",
+    bekijk: "View subscription",
   },
 }

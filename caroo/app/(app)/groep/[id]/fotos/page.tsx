@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { heeftRecht } from '@/lib/rechten'
+import { heeftRecht, isBeheerder } from '@/lib/rechten'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { FotosClient } from './FotosClient'
@@ -51,7 +51,7 @@ export default async function FotosPage({ params }: { params: { id: string } }) 
         groepId={params.id}
         fotos={fotosMetUrl}
         mijnId={user.id}
-        isBeheerder={await heeftRecht(params.id, ['groepsbeheerder'])}
+        isBeheerder={await isBeheerder(params.id)}
       />
     </div>
   )

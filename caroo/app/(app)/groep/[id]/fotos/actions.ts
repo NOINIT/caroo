@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient, createServiceClient } from '@/lib/supabase/server'
-import { heeftRecht } from '@/lib/rechten'
+import { isBeheerder as magBeheren } from '@/lib/rechten'
 import { getT } from '@/lib/i18n/server'
 
 /**
@@ -24,7 +24,7 @@ export async function verwijderFoto(groepId: string, fotoId: string) {
   if (!foto || foto.groep_id !== groepId) return { error: t('fotos.bestaatNiet') }
 
   const isPlaatser = foto.uploader_id === user.id
-  const isBeheerder = await heeftRecht(groepId, ['groepsbeheerder'])
+  const isBeheerder = await magBeheren(groepId, user.id)
   if (!isPlaatser && !isBeheerder) return { error: t('fotos.geenRecht') }
 
   await service.storage.from('fotos').remove([foto.opslag_pad])

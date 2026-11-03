@@ -42,9 +42,9 @@ export default async function VriendUitnodiging({ params }: { params: { code: st
   // Opent de hoofdpersoon de link zelf op haar tablet?
   let hoofdpersoon: { groepId: string; zelf: boolean } | null = null
   if (user && uitnodiging) {
-    const { data: rij } = await createServiceClient().from('groepsleden').select('groep_id, vrienden_zelf')
+    const { data: rij } = await createServiceClient().from('groepsleden').select('groep_id, vrienden_zelf, beheerder')
       .eq('user_id', user.id).eq('rol', 'oudere').limit(1).maybeSingle()
-    if (rij) hoofdpersoon = { groepId: rij.groep_id as string, zelf: !!rij.vrienden_zelf }
+    if (rij) hoofdpersoon = { groepId: rij.groep_id as string, zelf: !!rij.vrienden_zelf || !!rij.beheerder }
   }
 
   const voornaam = uitnodiging?.naam.split(' ')[0] || ''

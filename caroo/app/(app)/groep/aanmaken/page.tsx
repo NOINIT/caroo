@@ -2,58 +2,43 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { maakGroep } from './actions'
 import { useT } from '@/lib/i18n/client'
 
 export default function GroepAanmakenPage() {
   const [naam, setNaam] = useState('')
   const [fout, setFout] = useState<string | null>(null)
   const [laden, setLaden] = useState(false)
+  const [voorMezelf, setVoorMezelf] = useState<boolean | null>(null)
   const router = useRouter()
   const { t } = useT()
 
   async function handleAanmaken(e: React.FormEvent) {
     e.preventDefault()
-    if (!naam.trim()) return
+    if (!naam.trim() || voorMezelf === null) return
 
     setLaden(true)
     setFout(null)
 
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    // Groep aanmaken
-    const { data: groep, error } = await supabase
-      .from('zorggroepen')
-      .insert({ naam: naam.trim(), eigenaar_id: user.id })
-      .select()
-      .single()
-
-    if (error || !groep) {
-      setFout(t('aanmaken.mislukt'))
+    const r = await maakGroep(naam, voorMezelf)
+    if ('error' in r) {
+      setFout(r.error ?? t('aanmaken.mislukt'))
       setLaden(false)
       return
     }
 
-    // Eigenaar ook als groepslid toevoegen
-    await supabase.from('groepsleden').insert({
-      groep_id: groep.id,
-      user_id: user.id,
-      rol: 'groepsbeheerder',
-    })
-
+    // Voor mezelf: meteen naar het eigen, eenvoudige scherm
+    if (voorMezelf) {
+      router.push(`/oudere/${r.id}`)
+      return
+    }
     // Via een vrienduitnodiging? Dan meteen de hoofdpersoon toevoegen en terug naar de uitnodiging
     const terug = new URLSearchParams(window.location.search).get('terug') || ''
     if (/^\/vriend\/[A-Za-z0-9_-]{20,64}$/.test(terug)) {
-      router.push(`/groep/${groep.id}/koppelen?terug=${encodeURIComponent(terug)}`)
+      router.push(`/groep/${r.id}/koppelen?terug=${encodeURIComponent(terug)}`)
       return
     }
-    router.push(`/groep/${groep.id}`)
+    router.push(`/groep/${r.id}`)
   }
 
   return (
@@ -68,6 +53,27 @@ export default function GroepAanmakenPage() {
       </div>
 
       <form onSubmit={handleAanmaken} className="space-y-6">
+        <fieldset>
+          <legend className="input-label mb-2">{t('aanmaken.voorWie')}</legend>
+          <div className="grid gap-3">
+            {[
+              { waarde: false, kop: t('aanmaken.voorIemand'), uitleg: t('aanmaken.voorIemandUitleg') },
+              { waarde: true, kop: t('aanmaken.voorMezelf'), uitleg: t('aanmaken.voorMezelfUitleg') },
+            ].map(k => (
+              <button
+                key={String(k.waarde)}
+                type="button"
+                aria-pressed={voorMezelf === k.waarde}
+                onClick={() => setVoorMezelf(k.waarde)}
+                className={`text-start rounded-caroo border-2 p-4 transition-colors ${voorMezelf === k.waarde ? 'border-caroo-groen bg-caroo-groen-licht' : 'border-gray-200 bg-white'}`}
+              >
+                <span className="block font-semibold text-caroo-donker">{k.kop}</span>
+                <span className="block text-sm text-gray-600 mt-1">{k.uitleg}</span>
+              </button>
+            ))}
+          </div>
+        </fieldset>
+
         <div>
           <label className="input-label" htmlFor="naam">
             {t('aanmaken.naam')}
@@ -107,7 +113,7 @@ export default function GroepAanmakenPage() {
 
         <button
           type="submit"
-          disabled={laden || !naam.trim()}
+          disabled={laden || !naam.trim() || voorMezelf === null}
           className="btn-primary w-full"
         >
           {laden ? t('login.evenWachten') : t('aanmaken.verder')}

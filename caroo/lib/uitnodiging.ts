@@ -68,7 +68,8 @@ export async function maakUitnodiging(params: {
   const verlooptOp = new Date()
   verlooptOp.setDate(verlooptOp.getDate() + UITNODIGING_VERVALT_DAGEN)
 
-  const { data: uitnodiging, error } = await supabase.from('uitnodigingen').insert({
+  // Rechten (beheerder, groep in gebruik) zijn al gecontroleerd in de API-route
+  const { data: uitnodiging, error } = await createServiceClient().from('uitnodigingen').insert({
     groep_id: groepId,
     uitgenodigd_door: uitgenodigdDoor,
     email,

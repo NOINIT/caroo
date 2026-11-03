@@ -3,12 +3,14 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { verwijderLidUitGroep } from './actions'
+import { zetBeheerder } from '@/lib/acties/beheer'
 import { useT } from '@/lib/i18n/client'
 import { categorieTekst } from '@/lib/i18n/vertaal'
 
 interface Lid {
   id: string
   rol: string
+  beheerder?: boolean
   toegevoegd_op: string
   users: { id: string; naam: string; email: string } | null
 }
@@ -23,11 +25,12 @@ interface Categorie {
 interface Props {
   groepId: string
   huidigGebruikerId: string
+  eigenaarId: string
   leden: Lid[]
   categorieen: Categorie[]
 }
 
-export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden, categorieen: initieelCat }: Props) {
+export function BeheerClient({ groepId, huidigGebruikerId, eigenaarId, leden: initieelLeden, categorieen: initieelCat }: Props) {
   const [leden, setLeden] = useState(initieelLeden)
   const [categorieen, setCategorieen] = useState(initieelCat)
   const [bewerkCat, setBewerkCat] = useState<string | null>(null)
@@ -37,6 +40,14 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
   const [toonNieuweCat, setToonNieuweCat] = useState(false)
   const [laden, setLaden] = useState(false)
   const { t } = useT()
+
+  async function wisselBeheerder(lid: Lid) {
+    const aan = !(lid.rol === 'groepsbeheerder' || lid.beheerder)
+    const r = await zetBeheerder(groepId, lid.id, aan)
+    if ('error' in r && r.error) { alert(r.error); return }
+    setLeden(prev => prev.map(l => l.id !== lid.id ? l
+      : l.rol === 'oudere' ? { ...l, beheerder: aan } : { ...l, rol: aan ? 'groepsbeheerder' : 'mantelzorger', beheerder: aan }))
+  }
 
   async function verwijderLid(lidId: string) {
     if (!confirm(t('beheer.lidZeker'))) return
@@ -111,7 +122,20 @@ export function BeheerClient({ groepId, huidigGebruikerId, leden: initieelLeden,
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-caroo-donker text-sm">{lid.users?.naam || t('algemeen.onbekend')}</p>
-                  <p className="text-xs text-gray-600"><span dir="ltr">{lid.users?.email}</span> · {lid.rol === 'groepsbeheerder' ? t('dashboard.beheerder') : t(`rollen.${lid.rol as 'mantelzorger' | 'oudere'}`)}</p>
+                  <p className="text-xs text-gray-600">
+                    <span dir="ltr">{lid.users?.email}</span> · {lid.rol === 'groepsbeheerder' ? t('dashboard.beheerder') : t(`rollen.${lid.rol as 'mantelzorger' | 'oudere'}`)}
+                    {lid.rol === 'oudere' && lid.beheerder ? ` · ${t('dashboard.beheerder')}` : ''}
+                  </p>
+                  {lid.users?.id === eigenaarId ? (
+                    <p className="text-xs text-gray-500 mt-1">{t('beheer.eigenaarBeheerder')}</p>
+                  ) : !isZijzelf && (
+                    <button
+                      onClick={() => wisselBeheerder(lid)}
+                      className="text-xs text-caroo-groen font-medium mt-1 hover:underline"
+                    >
+                      {lid.rol === 'groepsbeheerder' || lid.beheerder ? t('beheer.geenBeheerderMeer') : t('beheer.maakBeheerder')}
+                    </button>
+                  )}
                 </div>
                 {!isZijzelf && (
                   <button

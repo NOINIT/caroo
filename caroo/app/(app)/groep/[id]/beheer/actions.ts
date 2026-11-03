@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient, createServiceClient } from '@/lib/supabase/server'
-import { heeftRecht } from '@/lib/rechten'
+import { isBeheerder } from '@/lib/rechten'
 import { getT } from '@/lib/i18n/server'
 
 /**
@@ -15,7 +15,7 @@ export async function verwijderLidUitGroep(groepId: string, lidId: string) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: t('algemeen.nietIngelogd') }
 
-  const magBeheren = await heeftRecht(groepId, ['groepsbeheerder'])
+  const magBeheren = await isBeheerder(groepId, user.id)
   if (!magBeheren) return { error: t('beheer.alleenBeheerder') }
 
   const service = createServiceClient()
@@ -33,3 +33,4 @@ export async function verwijderLidUitGroep(groepId: string, lidId: string) {
 
   return { succes: true }
 }
+

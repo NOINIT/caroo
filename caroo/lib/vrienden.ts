@@ -117,14 +117,14 @@ export async function vriendenStatus(userId: string, groepId: string) {
       .eq('status', 'bevestigen').or(`persoon_a.eq.${userId},persoon_b.eq.${userId}`),
     service.from('vriend_verzoeken').select('id, vriend_naam, regelt_naam')
       .eq('hoofdpersoon', userId).gt('aangemaakt_op', sinds).order('aangemaakt_op', { ascending: true }),
-    service.from('groepsleden').select('vrienden_zelf').eq('groep_id', groepId).eq('user_id', userId).maybeSingle(),
+    service.from('groepsleden').select('vrienden_zelf, beheerder').eq('groep_id', groepId).eq('user_id', userId).maybeSingle(),
   ])
   const lijst = lopend || []
   const naamVan = await namen(lijst.map(v => (v.persoon_a === userId ? v.persoon_b : v.persoon_a) as string))
   const vanAnder = (v: any) => naamVan.get(v.persoon_a === userId ? v.persoon_b : v.persoon_a) || ''
   const mijnJa = (v: any) => (v.persoon_a === userId ? v.ja_a : v.ja_b)
   return {
-    zelf: !!(lid as any)?.vrienden_zelf,
+    zelf: !!(lid as any)?.vrienden_zelf || !!(lid as any)?.beheerder,
     vragen: lijst.filter(v => !mijnJa(v)).map(v => ({ id: v.id as string, naam: vanAnder(v) })),
     wachten: lijst.filter(v => mijnJa(v)).map(v => ({ id: v.id as string, naam: vanAnder(v) })),
     verzoeken: (verzoeken || []).map(v => ({ id: v.id as string, vriendNaam: v.vriend_naam as string, regeltNaam: (v.regelt_naam as string) || null })),

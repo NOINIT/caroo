@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { maakUitnodiging, checkRateLimit } from '@/lib/uitnodiging'
-import { heeftRecht } from '@/lib/rechten'
+import { isBeheerder } from '@/lib/rechten'
+import { createServiceClient } from '@/lib/supabase/server'
+import { magGebruiken } from '@/lib/opzeggen'
 import { getT } from '@/lib/i18n/server'
 
 export async function POST(request: NextRequest) {
@@ -19,8 +21,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: t('auth.vulAlles') }, { status: 400 })
   }
 
-  const toegestaan = await heeftRecht(groepId, ['groepsbeheerder'])
-  if (!toegestaan) {
+  const { data: groep } = await createServiceClient().from('zorggroepen').select('betaald, gestopt_op, aangemaakt_op').eq('id', groepId).maybeSingle()
+  const toegestaan = (await isBeheerder(groepId, user.id)) && !!groep && magGebruiken(groep)
+  if (!toegestaan || !['mantelzorger', 'groepsbeheerder', 'oudere'].includes(rol)) {
     return NextResponse.json({ error: t('uitnodigen.geenToegang') }, { status: 403 })
   }
 

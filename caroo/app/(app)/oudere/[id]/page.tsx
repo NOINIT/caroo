@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { heeftRecht } from '@/lib/rechten'
 import { redirect } from 'next/navigation'
 import { OudereInterface } from '@/components/oudere/OudereInterface'
@@ -77,6 +77,24 @@ export default async function OuderePage({ params, searchParams }: { params: { i
     familieOmMeeTeSpelen(params.id, user.id).catch(() => []),
   ])
 
+  // Beheert de hoofdpersoon zelf? Dan krijgt ze een eenvoudig beheerblok bij Instellingen
+  let beheer = null
+  {
+    const service = createServiceClient()
+    const { data: ik } = await service.from('groepsleden').select('rol, beheerder').eq('groep_id', params.id).eq('user_id', user.id).maybeSingle()
+    if (ik && (ik.rol === 'groepsbeheerder' || ik.beheerder)) {
+      const [{ data: g }, { data: leden }] = await Promise.all([
+        service.from('zorggroepen').select('naam, betaald, gestopt_op, aangemaakt_op, eigenaar_id').eq('id', params.id).single(),
+        service.from('groepsleden').select('id, user_id, rol, beheerder, users:user_id (naam)').eq('groep_id', params.id).order('toegevoegd_op', { ascending: true }),
+      ])
+      if (g) beheer = {
+        groepId: params.id, ikId: user.id, eigenaarId: g.eigenaar_id as string,
+        groep: { naam: g.naam as string, betaald: g.betaald, gestopt_op: g.gestopt_op, aangemaakt_op: g.aangemaakt_op },
+        leden: (leden || []).map((l: any) => ({ id: l.id, userId: l.user_id, naam: l.users?.naam || '', rol: l.rol, beheerder: !!l.beheerder })),
+      }
+    }
+  }
+
   // Foto's staan in een afgeschermde opslag: tijdelijke links maken
   const fotosMetUrl = await Promise.all(
     (fotos || []).map(async (foto: any) => {
@@ -91,6 +109,7 @@ export default async function OuderePage({ params, searchParams }: { params: { i
       vrienden={vrienden}
       vriendenStatus={status}
       familie={familie}
+      beheer={beheer}
       groepId={params.id}
       userId={user.id}
       email={user.email || ''}

@@ -449,6 +449,9 @@ export const nl = {
   },
 
   beheer: {
+    eigenaarBeheerder: "Betaalt het abonnement en blijft beheerder",
+    maakBeheerder: "Maak beheerder",
+    geenBeheerderMeer: "Geen beheerder meer",
     lidZeker: 'Weet je zeker dat je dit lid wilt verwijderen?',
     categorieZeker: 'Weet je zeker dat je deze categorie wilt verwijderen?',
     lidVerwijderen: 'Lid verwijderen',
@@ -486,6 +489,11 @@ export const nl = {
   },
 
   aanmaken: {
+    voorWie: "Voor wie is Clanoo?",
+    voorMezelf: "Voor mezelf",
+    voorMezelfUitleg: "Je krijgt het eenvoudige scherm met grote knoppen en bepaalt zelf wie erbij mag.",
+    voorIemand: "Voor iemand anders",
+    voorIemandUitleg: "Jij beheert de groep en zet Clanoo klaar op de tablet van degene om wie het draait.",
     mislukt: 'Kon de zorggroep niet aanmaken.',
     intro: 'Geef je zorggroep een naam. Je kunt daarna meteen mensen uitnodigen.',
     naam: 'Naam van de zorggroep',
@@ -886,5 +894,22 @@ export const nl = {
       jijWit: "Jij speelt met wit",
       jijZwart: "Jij speelt met zwart",
     },
+  },
+
+  tabletBeheer: {
+    titel: "Beheer",
+    uitleg: "Jij beheert deze groep. Je bepaalt zelf wie erbij komt.",
+    uitnodigen: "Familie uitnodigen",
+    email: "E-mailadres",
+    magBeheren: "Mag ook beheren",
+    knop: "Maak een uitnodiging",
+    linkUitleg: "Stuur deze link. Hij werkt 7 dagen.",
+    deelTekst: "Ik nodig je uit voor mijn Clanoo:",
+    delen: "Stuur via WhatsApp",
+    kopieer: "Kopieer de link",
+    gekopieerd: "Gekopieerd",
+    leden: "Wie zit erin",
+    abonnement: "Abonnement",
+    bekijk: "Abonnement bekijken",
   },
 }

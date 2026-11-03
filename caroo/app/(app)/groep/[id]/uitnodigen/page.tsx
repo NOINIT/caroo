@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { heeftRecht } from '@/lib/rechten'
+import { isBeheerder } from '@/lib/rechten'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { UitnodigingFormulier } from './UitnodigingFormulier'
@@ -11,7 +11,7 @@ export default async function UitnodigingPage({ params }: { params: { id: string
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const heeftToegang = await heeftRecht(params.id, ['groepsbeheerder'])
+  const heeftToegang = await isBeheerder(params.id, user.id)
   if (!heeftToegang) redirect('/dashboard')
 
   const { data: groep } = await supabase

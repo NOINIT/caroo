@@ -5,6 +5,7 @@ import { MijnVerhaal } from './MijnVerhaal'
 import { BoodschappenLijst } from '@/components/boodschappen/BoodschappenLijst'
 import { Thuis, type Bezoekverzoek } from './Thuis'
 import { Vrienden } from './Vrienden'
+import { TabletBeheer, type BeheerGegevens } from './TabletBeheer'
 import type { VriendKaart, VriendenStatus, FamilieSpeler } from '@/lib/vrienden'
 import { InstellingenFormulier } from '@/components/instellingen/InstellingenFormulier'
 import { uitloggen } from '@/app/auth/actions'
@@ -33,11 +34,12 @@ interface Props {
   vrienden: VriendKaart[]
   vriendenStatus: VriendenStatus
   familie: FamilieSpeler[]
+  beheer: BeheerGegevens | null
 }
 
 export function OudereInterface({
   groepId, userId, email, naam, groepNaam, dagAfspraken, medicijnen, fotos,
-  stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid, meldingEmail, net_gekoppeld, vrienden, vriendenStatus, familie,
+  stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid, meldingEmail, net_gekoppeld, vrienden, vriendenStatus, familie, beheer,
 }: Props) {
   const [tipZichtbaar, setTipZichtbaar] = useState(!!net_gekoppeld)
   const [actieveTab, setActieveTab] = useState<Tab>('thuis')
@@ -114,7 +116,7 @@ export function OudereInterface({
           <TabMijnTip groepId={groepId} />
         )}
         {actieveTab === 'instellingen' && (
-          <TabInstellingen naam={naam} email={email} lettergrootte={lettergrootte} geluid={geluid} meldingEmail={meldingEmail} />
+          <TabInstellingen naam={naam} email={email} lettergrootte={lettergrootte} geluid={geluid} meldingEmail={meldingEmail} beheer={beheer} />
         )}
       </main>
 
@@ -282,12 +284,13 @@ function TabMijnTip({ groepId }: any) {
   )
 }
 
-function TabInstellingen({ naam, email, lettergrootte, geluid, meldingEmail }: { naam: string; email: string; lettergrootte: string; geluid: boolean; meldingEmail: boolean }) {
+function TabInstellingen({ naam, email, lettergrootte, geluid, meldingEmail, beheer }: { naam: string; email: string; lettergrootte: string; geluid: boolean; meldingEmail: boolean; beheer: BeheerGegevens | null }) {
   const { t } = useT()
   return (
     <div className="px-4 py-6 md:px-8">
       <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">{t('algemeen.instellingen')}</h2>
       <InstellingenFormulier naam={naam} email={email} lettergrootte={lettergrootte} geluid={geluid} meldingEmail={meldingEmail} groot />
+      {beheer && <TabletBeheer g={beheer} />}
       <form action={uitloggen} className="mt-8">
         <button
           type="submit"
