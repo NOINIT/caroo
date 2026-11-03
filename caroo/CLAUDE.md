@@ -2,6 +2,12 @@
 
 Familie-zorgapp van NOINIT. Next.js 14 (app router) + Supabase + Stripe, gehost op Vercel.
 
+## Kader (besluit 3-11-2026)
+- Clanoo is een zorg-app waarin de oudere centraal staat. Vrienden en spellen zijn er tegen eenzaamheid, geen los sociaal netwerk.
+- Toets voor elk nieuw idee: helpt het de oudere, of de familie om voor de oudere te zorgen? Zo niet, dan niet bouwen.
+- Tot de lancering (januari 2027) geen nieuwe functies, alleen wat nodig is om live te gaan.
+- Naar buiten heet alles Clanoo. Caroo is alleen de interne werknaam.
+
 ## Database
 - Migraties staan in `supabase/migrations/` en worden met de hand in de Supabase SQL Editor uitgevoerd.
 - **Elke nieuwe tabel krijgt in dezelfde migratie expliciete GRANTs** (sinds 30-10-2026 geeft Supabase die niet meer automatisch):
