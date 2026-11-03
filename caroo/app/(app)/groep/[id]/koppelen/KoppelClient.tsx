@@ -16,6 +16,7 @@ export function KoppelClient({ groepId, hoofdpersonen: start, terug }: { groepId
   const [bezig, setBezig] = useState(false)
   const [naam, setNaam] = useState('')
   const [email, setEmail] = useState('')
+  const [toestemming, setToestemming] = useState(false)
   const [gekopieerd, setGekopieerd] = useState(false)
   const [nu, setNu] = useState(Date.now())
 
@@ -36,13 +37,13 @@ export function KoppelClient({ groepId, hoofdpersonen: start, terug }: { groepId
   async function voegToe(e: React.FormEvent) {
     e.preventDefault()
     setBezig(true); setFout(null); setGekopieerd(false)
-    const r = await voegToeEnMaakCode(groepId, naam, email)
+    const r = await voegToeEnMaakCode(groepId, naam, email, toestemming)
     setBezig(false)
     if ('error' in r) { setFout(r.error ?? null); return }
     const nieuw = { id: r.hoofdpersoon.id, naam: r.hoofdpersoon.naam, geenEmail: !email.trim() }
     setHoofdpersonen(prev => [...prev, nieuw])
     setVoor(nieuw); setCode({ url: r.url, qr: r.qr, verloopt: r.verloopt })
-    setNaam(''); setEmail('')
+    setNaam(''); setEmail(''); setToestemming(false)
   }
 
   async function kopieer() {
@@ -110,7 +111,14 @@ export function KoppelClient({ groepId, hoofdpersonen: start, terug }: { groepId
           <input id="hp-email" type="email" className="input-field" value={email} onChange={e => setEmail(e.target.value)} dir="ltr" />
           <p className="text-xs text-gray-600 mt-1">{t('koppelen.geenEmailUitleg')}</p>
         </div>
-        <button type="submit" disabled={bezig || !naam.trim()} className="btn-primary w-full">
+        <label className="flex gap-3 items-start text-sm text-caroo-donker cursor-pointer">
+          <input type="checkbox" checked={toestemming} onChange={e => setToestemming(e.target.checked)} className="mt-0.5 w-5 h-5 accent-caroo-groen flex-shrink-0" />
+          <span>
+            {t('toestemming.familieVink', { naam: naam.trim().split(' ')[0] || t('algemeen.deHoofdpersoon') })}
+            <span className="block text-xs text-gray-600 mt-1">{t('toestemming.vertegenwoordiger', { naam: naam.trim().split(' ')[0] || t('algemeen.deHoofdpersoon') })}</span>
+          </span>
+        </label>
+        <button type="submit" disabled={bezig || !naam.trim() || !toestemming} className="btn-primary w-full">
           {bezig ? t('koppelen.bezig') : t('koppelen.toevoegen')}
         </button>
       </form>

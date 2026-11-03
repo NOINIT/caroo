@@ -6,6 +6,8 @@ import { getT } from '@/lib/i18n/server'
 import { rolTekst, datum, tijd } from '@/lib/i18n/vertaal'
 import { uitloggen } from '@/app/auth/actions'
 import AbonnementKnop from './AbonnementKnop'
+import { ToestemmingKaart } from '@/components/familie/ToestemmingKaart'
+import { binnenBedenktijd } from '@/lib/herroepen'
 import { FamilieSignalen } from '@/components/familie/FamilieSignalen'
 import { vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
 import { toegangVan } from '@/lib/opzeggen'
@@ -32,7 +34,7 @@ export default async function GroepPage({
   // Haal groepinfo op
   const { data: groep } = await supabase
     .from('zorggroepen')
-    .select('id, naam, betaald, eigenaar_id, gestopt_op, aangemaakt_op')
+    .select('id, naam, betaald, eigenaar_id, gestopt_op, aangemaakt_op, toestemming_gezondheid_op, abonnement_sinds')
     .eq('id', params.id)
     .single()
 
@@ -117,6 +119,9 @@ export default async function GroepPage({
   const welkom = searchParams.welkom === 'true'
   const { t, taal } = await getT()
   const nazorg = toegangVan(groep)
+  const hoofdpersoon = (leden || []).find((l: any) => l.rol === 'oudere') as any
+  const vraagToestemming = isBeheerder && !groep.toestemming_gezondheid_op && !!hoofdpersoon
+  const magHerroepen = isEigenaar && groep.betaald && binnenBedenktijd(groep.abonnement_sinds)
 
   return (
     <div className="max-w-md mx-auto min-h-screen pb-24">
@@ -187,6 +192,8 @@ export default async function GroepPage({
       )}
 
       <div className="px-4 py-4 space-y-4">
+        {vraagToestemming && <ToestemmingKaart groepId={groep.id} naam={hoofdpersoon?.users?.naam} />}
+
         <FamilieSignalen
           mijnNaam={mijnProfiel?.naam || t('algemeen.iemand')}
           mijnId={user.id}
@@ -376,6 +383,11 @@ export default async function GroepPage({
           {isEigenaar && groep.betaald && (
             <div className="mt-4 pt-4 border-t border-gray-100">
               <AbonnementKnop groepId={params.id} />
+              {magHerroepen && (
+                <Link href={`/groep/${params.id}/herroepen`} className="block mt-2 text-sm text-gray-600 hover:text-gray-800 underline">
+                  {t('herroepen.link')}
+                </Link>
+              )}
             </div>
           )}
         </div>

@@ -10,17 +10,18 @@ export default function GroepAanmakenPage() {
   const [fout, setFout] = useState<string | null>(null)
   const [laden, setLaden] = useState(false)
   const [voorMezelf, setVoorMezelf] = useState<boolean | null>(null)
+  const [toestemming, setToestemming] = useState(false)
   const router = useRouter()
   const { t } = useT()
 
   async function handleAanmaken(e: React.FormEvent) {
     e.preventDefault()
-    if (!naam.trim() || voorMezelf === null) return
+    if (!naam.trim() || voorMezelf === null || (voorMezelf && !toestemming)) return
 
     setLaden(true)
     setFout(null)
 
-    const r = await maakGroep(naam, voorMezelf)
+    const r = await maakGroep(naam, voorMezelf, toestemming)
     if ('error' in r) {
       setFout(r.error ?? t('aanmaken.mislukt'))
       setLaden(false)
@@ -93,6 +94,13 @@ export default function GroepAanmakenPage() {
           </p>
         </div>
 
+        {voorMezelf && (
+          <label className="flex gap-3 items-start text-sm text-caroo-donker cursor-pointer">
+            <input type="checkbox" checked={toestemming} onChange={e => setToestemming(e.target.checked)} className="mt-0.5 w-5 h-5 accent-caroo-groen flex-shrink-0" />
+            <span>{t('toestemming.zelfVink')}</span>
+          </label>
+        )}
+
         {fout && (
           <div className="bg-red-50 border border-red-200 text-red-700 rounded-caroo p-3 text-sm">
             {fout}
@@ -113,7 +121,7 @@ export default function GroepAanmakenPage() {
 
         <button
           type="submit"
-          disabled={laden || !naam.trim() || voorMezelf === null}
+          disabled={laden || !naam.trim() || voorMezelf === null || (voorMezelf && !toestemming)}
           className="btn-primary w-full"
         >
           {laden ? t('login.evenWachten') : t('aanmaken.verder')}

@@ -6,12 +6,16 @@ import { useT } from '@/lib/i18n/client'
 import { rolTekst } from '@/lib/i18n/vertaal'
 import { toegangVan } from '@/lib/opzeggen'
 import { zetBeheerder } from '@/lib/acties/beheer'
+import { binnenBedenktijd } from '@/lib/herroepen'
+import { ToestemmingKaart } from '@/components/familie/ToestemmingKaart'
 
 export interface BeheerGegevens {
   groepId: string
   ikId: string
   eigenaarId: string
   groep: { naam: string; betaald: boolean | null; gestopt_op: string | null; aangemaakt_op: string | null }
+  toestemming: boolean
+  abonnementSinds: string | null
   leden: { id: string; userId: string; naam: string; rol: string; beheerder: boolean }[]
 }
 
@@ -57,6 +61,8 @@ export function TabletBeheer({ g }: { g: BeheerGegevens }) {
         <p className="text-ou-base text-gray-700">{t('tabletBeheer.uitleg')}</p>
       </div>
 
+      {!g.toestemming && <ToestemmingKaart groepId={g.groepId} zelf />}
+
       {isEigenaar && (
         <div className="caroo-card space-y-2">
           <p className="text-ou-lg font-bold text-caroo-donker">{t('tabletBeheer.abonnement')}</p>
@@ -67,6 +73,9 @@ export function TabletBeheer({ g }: { g: BeheerGegevens }) {
           <Link href={`/betalen?groep=${g.groepId}&naam=${encodeURIComponent(g.groep.naam)}`} className="btn-secondary w-full block text-center text-ou-base py-4">
             {g.groep.betaald ? t('tabletBeheer.bekijk') : t('groep.kiesAbonnement')}
           </Link>
+          {g.groep.betaald && binnenBedenktijd(g.abonnementSinds) && (
+            <Link href={`/groep/${g.groepId}/herroepen`} className="block text-center text-ou-sm text-gray-700 underline pt-1">{t('herroepen.link')}</Link>
+          )}
         </div>
       )}
 

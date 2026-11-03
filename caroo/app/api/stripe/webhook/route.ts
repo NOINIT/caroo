@@ -43,6 +43,9 @@ export async function POST(request: Request) {
           gestopt_op: null,
           stripe_session_id: session.id,
           stripe_subscription_id: session.subscription ?? null,
+          // Vanaf nu loopt de bedenktijd van 14 dagen (herroepen)
+          abonnement_sinds: new Date().toISOString(),
+          herroepen_op: null,
         })
         .eq('id', groepId)
         .eq('betaald', false)
@@ -60,6 +63,11 @@ export async function POST(request: Request) {
   if (event.type === 'customer.subscription.deleted') {
     const subscription = event.data.object
     const subscriptionId = subscription.id
+
+    // Herroepen: dat regelt lib/acties/herroepen.ts zelf (de gratis maand kan dan doorlopen)
+    if (subscription.metadata?.herroepen === '1') {
+      return NextResponse.json({ ontvangen: true })
+    }
 
     const { error } = await supabase
       .from('zorggroepen')

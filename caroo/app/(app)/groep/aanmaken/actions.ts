@@ -8,16 +8,21 @@ import { getT } from '@/lib/i18n/server'
  * Voor mezelf: je bent de hoofdpersoon (eenvoudig scherm) en beheert zelf.
  * Voor iemand anders: je bent familie-beheerder en voegt de hoofdpersoon later toe.
  */
-export async function maakGroep(naam: string, voorMezelf: boolean) {
+export async function maakGroep(naam: string, voorMezelf: boolean, toestemming = false) {
   const { t } = await getT()
   const { data: { user } } = await createClient().auth.getUser()
   if (!user) return { error: t('algemeen.nietIngelogd') }
   const schoon = (naam || '').trim().slice(0, 60)
   if (!schoon) return { error: t('aanmaken.mislukt') }
+  // Voor mezelf: de hoofdpersoon geeft zelf toestemming voor gezondheidsgegevens
+  if (voorMezelf && !toestemming) return { error: t('toestemming.nodig') }
 
   const service = createServiceClient()
   const { data: groep, error } = await service.from('zorggroepen')
-    .insert({ naam: schoon, eigenaar_id: user.id }).select('id').single()
+    .insert({
+      naam: schoon, eigenaar_id: user.id,
+      ...(voorMezelf && toestemming ? { toestemming_gezondheid_op: new Date().toISOString(), toestemming_gezondheid_door: user.id } : {}),
+    }).select('id').single()
   if (error || !groep) return { error: t('aanmaken.mislukt') }
 
   const { error: lidFout } = await service.from('groepsleden').insert({
