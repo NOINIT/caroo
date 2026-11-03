@@ -9,6 +9,7 @@ const KEUZES = [
   { waarde: 'vader', label: 'Mijn vader' },
   { waarde: 'opa_oma', label: 'Opa of oma' },
   { waarde: 'partner', label: 'Mijn partner' },
+  { waarde: 'mezelf', label: 'Voor mezelf' },
   { waarde: 'anders', label: 'Iemand anders' },
 ]
 

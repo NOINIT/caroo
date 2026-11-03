@@ -4,7 +4,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { stuurMail, escapeHtml } from '@/lib/mail'
 import { MERK } from '@/lib/merk'
 
-const VOOR_WIE = ['moeder', 'vader', 'opa_oma', 'partner', 'anders']
+const VOOR_WIE = ['moeder', 'vader', 'opa_oma', 'partner', 'mezelf', 'anders']
 
 export async function meldAanOpWachtlijst(formData: FormData) {
   // Spam-val: dit veld is onzichtbaar voor mensen
