@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { InstellingenFormulier } from '@/components/instellingen/InstellingenFormulier'
 import { uitloggen } from '@/app/auth/actions'
 import { getT } from '@/lib/i18n/server'
+import { AccountVerwijderen } from '@/components/instellingen/AccountVerwijderen'
 
 export default async function InstellingenPage() {
   const supabase = createClient()
@@ -38,6 +39,7 @@ export default async function InstellingenPage() {
             {t('algemeen.uitloggen')}
           </button>
         </form>
+        <AccountVerwijderen />
       </div>
     </div>
   )

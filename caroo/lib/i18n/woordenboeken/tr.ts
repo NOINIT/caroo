@@ -380,6 +380,20 @@ export const tr: Woordenboek = {
     nodig: 'Önce izin kutusunu işaretle.',
   },
 
+  account: {
+    knop: 'Hesabı sil',
+    titel: 'Hesabın silinsin mi?',
+    uitleg: 'Hesabın ve verilerin silinir. Bir grupta paylaştıkların aile için adın olmadan kalır.',
+    eigenaar: 'Bir grup için ödeme yapıyorsan abonelik ödenen dönemin sonunda durur. Başka bir aile üyesi grubun sahibi olur.',
+    ja: 'Evet, hesabımı sil',
+    nee: 'Vazgeç',
+    bezig: 'Bir saniye...',
+    mislukt: 'Bu olmadı. hallo@noinit.nl adresine yaz, hemen hallederiz.',
+    klaar: 'Hesabın silindi.',
+    mailOnderwerp: 'Clanoo hesabın silindi',
+    mailTekst: 'Clanoo hesabın ve verilerin silindi. Bir grupta paylaştıkların aile için adın olmadan kalır. Bunu istemedin mi? hallo@noinit.nl adresine yaz.',
+  },
+
   herroepen: {
     link: 'Sözleşmeden buradan cayın',
     titel: 'Sözleşmeden buradan cayın',

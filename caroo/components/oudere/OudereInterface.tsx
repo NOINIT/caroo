@@ -1,5 +1,6 @@
 'use client'
 
+import { AccountVerwijderen } from '@/components/instellingen/AccountVerwijderen'
 import { useState } from 'react'
 import { MijnVerhaal } from './MijnVerhaal'
 import { BoodschappenLijst } from '@/components/boodschappen/BoodschappenLijst'
@@ -299,6 +300,7 @@ function TabInstellingen({ naam, email, lettergrootte, geluid, meldingEmail, beh
           {t('algemeen.uitloggen')}
         </button>
       </form>
+      <AccountVerwijderen groot />
     </div>
   )
 }

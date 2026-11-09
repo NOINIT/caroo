@@ -380,6 +380,20 @@ export const en: Woordenboek = {
     nodig: 'Please tick the permission box first.',
   },
 
+  account: {
+    knop: 'Delete account',
+    titel: 'Delete your account?',
+    uitleg: 'Your account and your data will be deleted. Anything you shared in a group stays there for the family, without your name.',
+    eigenaar: 'If you pay for a group, the subscription stops at the end of the paid period. Another family member becomes the owner of the group.',
+    ja: 'Yes, delete my account',
+    nee: 'Cancel',
+    bezig: 'One moment...',
+    mislukt: 'That did not work. Email us at hallo@noinit.nl and we will sort it out straight away.',
+    klaar: 'Your account has been deleted.',
+    mailOnderwerp: 'Your Clanoo account has been deleted',
+    mailTekst: 'Your Clanoo account and your data have been deleted. Anything you shared in a group stays there for the family, without your name. Did you not mean to do this? Email us at hallo@noinit.nl.',
+  },
+
   herroepen: {
     link: 'Withdraw from the contract here',
     titel: 'Withdraw from the contract here',

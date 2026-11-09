@@ -382,6 +382,20 @@ export const nl = {
     nodig: 'Zet eerst het vinkje voor toestemming.',
   },
 
+  account: {
+    knop: 'Account verwijderen',
+    titel: 'Je account verwijderen?',
+    uitleg: 'Je account en je gegevens worden verwijderd. Wat je in een groep deelde, blijft voor de familie staan, zonder je naam.',
+    eigenaar: 'Betaal je voor een groep, dan stopt het abonnement aan het einde van de betaalde periode. Een ander familielid wordt eigenaar van de groep.',
+    ja: 'Ja, verwijder mijn account',
+    nee: 'Toch niet',
+    bezig: 'Even geduld...',
+    mislukt: 'Dat lukte niet. Mail ons op hallo@noinit.nl, dan regelen we het meteen.',
+    klaar: 'Je account is verwijderd.',
+    mailOnderwerp: 'Je Clanoo-account is verwijderd',
+    mailTekst: 'Je Clanoo-account en je gegevens zijn verwijderd. Wat je in een groep deelde, blijft voor de familie staan, zonder je naam. Was dit niet de bedoeling? Mail ons op hallo@noinit.nl.',
+  },
+
   herroepen: {
     link: 'Herroep hier de overeenkomst',
     titel: 'Herroep hier de overeenkomst',
