@@ -6,7 +6,7 @@ name: Android-app
 on:
   workflow_dispatch:
   push:
-    branches: [android]
+    branches: [main, android]
     paths:
       - 'caroo/android/**'
       - 'caroo/capacitor.config.ts'
