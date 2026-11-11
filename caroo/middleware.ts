@@ -10,6 +10,7 @@ const PUBLIC_ROUTES = [
   '/auth/bevestig',
   '/auth/magic-link',
   '/api/stripe/webhook',
+  '/api/cron',
   '/sw.js',
   '/manifest.webmanifest',
   '/icons',

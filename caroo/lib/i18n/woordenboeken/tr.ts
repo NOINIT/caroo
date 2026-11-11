@@ -561,6 +561,15 @@ export const tr: Woordenboek = {
     prijsUitleg: 'İlk ay ücretsiz, ödeme bilgisi gerekmez. Sonrasında tüm aile için aylık €12,50.',
   },
 
+  proefMail: {
+    vijfOnderwerp: "{groep} için beş gün daha ücretsiz Clanoo",
+    vijfTekst: "{groep} için ücretsiz ay {datum} tarihine kadar sürüyor. Sonrasında Clanoo ile devam etmek ister misiniz? O zaman bir abonelik seçin.",
+    laatstOnderwerp: "{groep} için ücretsiz ay bitmek üzere",
+    laatstTekst: "{groep} için ücretsiz ay {datum} tarihinde bitiyor. Bir abonelik seçin, aileniz her zamanki gibi devam etsin.",
+    gratisMee: "Tek bir abonelik tüm grup için yeterli. Davet ettiğiniz herkes ücretsiz katılır.",
+    knop: "Abonelik seçin",
+    niets: "Hiçbir şey yapmazsanız grup ücretsiz aydan sonra durur. Hiçbir ücret alınmaz.",
+  },
   betalen: {
     appTitel: "Abonelik",
     appTekst: "Uygulamada abonelik başlatılamaz.",
