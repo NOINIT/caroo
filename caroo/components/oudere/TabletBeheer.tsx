@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useT } from '@/lib/i18n/client'
+import { useIsApp } from '@/lib/useIsApp'
 import { rolTekst } from '@/lib/i18n/vertaal'
 import { toegangVan } from '@/lib/opzeggen'
 import { zetBeheerder } from '@/lib/acties/beheer'
@@ -22,6 +23,7 @@ export interface BeheerGegevens {
 /** Voor een hoofdpersoon die zelf beheert: familie uitnodigen, beheerders kiezen, abonnement. Eenvoudig en groot. */
 export function TabletBeheer({ g }: { g: BeheerGegevens }) {
   const { t, datum } = useT()
+  const inApp = useIsApp()
   const [leden, setLeden] = useState(g.leden)
   const [email, setEmail] = useState('')
   const [magBeheren, setMagBeheren] = useState(false)
@@ -70,9 +72,11 @@ export function TabletBeheer({ g }: { g: BeheerGegevens }) {
             <p className="text-ou-base text-gray-700">{t('groep.proefLoopt', { datum: datum(toegang.tot, { day: 'numeric', month: 'long' }) })}</p>
           )}
           {toegang.toegang === 'geen' && <p className="text-ou-base text-gray-700">{t('groep.proefVoorbij')}</p>}
-          <Link href={`/betalen?groep=${g.groepId}&naam=${encodeURIComponent(g.groep.naam)}`} className="btn-secondary w-full block text-center text-ou-base py-4">
-            {g.groep.betaald ? t('tabletBeheer.bekijk') : t('groep.kiesAbonnement')}
-          </Link>
+          {!inApp && (
+            <Link href={`/betalen?groep=${g.groepId}&naam=${encodeURIComponent(g.groep.naam)}`} className="btn-secondary w-full block text-center text-ou-base py-4">
+              {g.groep.betaald ? t('tabletBeheer.bekijk') : t('groep.kiesAbonnement')}
+            </Link>
+          )}
           {g.groep.betaald && binnenBedenktijd(g.abonnementSinds) && (
             <Link href={`/groep/${g.groepId}/herroepen`} className="block text-center text-ou-sm text-caroo-groen font-semibold underline pt-1">{t('herroepen.link')}</Link>
           )}

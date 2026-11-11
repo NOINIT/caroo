@@ -562,6 +562,10 @@ export const tr: Woordenboek = {
   },
 
   betalen: {
+    appTitel: "Abonelik",
+    appTekst: "Uygulamada abonelik başlatılamaz.",
+    appVragen: "Sorunuz mu var? hallo@noinit.nl adresine e-posta gönderin.",
+    appTerug: "Geri",
     jouwGroep: 'Bakım grubunuz',
     titel: 'Aboneliğinizi seçin',
     activeer: '{groep} için. Tüm aile için tek fiyat. Davet ettiğin herkes ücretsiz yer alır.',

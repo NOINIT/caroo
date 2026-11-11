@@ -562,6 +562,10 @@ export const en: Woordenboek = {
   },
 
   betalen: {
+    appTitel: "Subscription",
+    appTekst: "You can't take out a subscription in the app.",
+    appVragen: "Questions? Email us at hallo@noinit.nl.",
+    appTerug: "Back",
     jouwGroep: 'Your care group',
     titel: 'Choose your plan',
     activeer: 'For {groep}. One price for the whole family. Everyone you invite takes part for free.',

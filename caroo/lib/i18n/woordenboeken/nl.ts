@@ -564,6 +564,10 @@ export const nl = {
   },
 
   betalen: {
+    appTitel: "Abonnement",
+    appTekst: "Een abonnement afsluiten kan niet in de app.",
+    appVragen: "Vragen? Mail ons op hallo@noinit.nl.",
+    appTerug: "Terug",
     jouwGroep: 'Jouw zorggroep',
     titel: 'Kies je abonnement',
     activeer: 'Voor {groep}. Eén prijs voor de hele familie. Iedereen die je uitnodigt, doet gratis mee.',
