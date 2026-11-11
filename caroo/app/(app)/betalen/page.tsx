@@ -7,6 +7,8 @@ import { useT } from '@/lib/i18n/client'
 import { MetVet } from '@/components/ui/MetVet'
 import { PRIJS, JAAR_PER_MAAND, JAAR_VOORDEEL, euro, type Plan } from '@/lib/prijzen'
 import { toegangVan } from '@/lib/opzeggen'
+import { useIsApp } from '@/lib/useIsApp'
+import Link from 'next/link'
 
 export default function BetalenPage() {
   const searchParams = useSearchParams()
@@ -20,6 +22,7 @@ export default function BetalenPage() {
   const [proefVoorbij, setProefVoorbij] = useState(false)
   const [oprichtersOver, setOprichtersOver] = useState<number | null>(null)
   const [plan, setPlan] = useState<Plan>('jaar')
+  const inApp = useIsApp()
 
   useEffect(() => {
     const supabase = createClient()
@@ -87,6 +90,20 @@ export default function BetalenPage() {
       uitleg: t('betalen.maandUitleg', { voordeel: euro(JAAR_VOORDEEL) }),
     },
   ]
+
+  // In de app sluit je geen abonnement af (regels van Google Play en de App Store)
+  if (inApp) {
+    return (
+      <div className="max-w-md mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold text-caroo-donker mb-3">{t('betalen.appTitel')}</h1>
+        {proefTot && <p className="text-gray-700 mb-3">{t('groep.proefLoopt', { datum: datum(proefTot, { day: 'numeric', month: 'long' }) })}</p>}
+        {proefVoorbij && <p className="text-gray-700 mb-3">{t('groep.proefVoorbij')}</p>}
+        <p className="text-gray-700 mb-3">{t('betalen.appTekst')}</p>
+        <p className="text-gray-700 mb-6">{t('betalen.appVragen')}</p>
+        <Link href={groepId ? `/groep/${groepId}` : '/dashboard'} className="btn-secondary w-full block text-center py-4">{t('betalen.appTerug')}</Link>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-md mx-auto px-4 py-8">

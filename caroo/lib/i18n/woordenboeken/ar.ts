@@ -566,6 +566,10 @@ export const ar: Woordenboek = {
   },
 
   betalen: {
+    appTitel: "الاشتراك",
+    appTekst: "لا يمكن بدء اشتراك داخل التطبيق.",
+    appVragen: "لديك أسئلة؟ راسلنا على hallo@noinit.nl.",
+    appTerug: "رجوع",
     jouwGroep: 'مجموعة الرعاية الخاصة بك',
     titel: 'اختر اشتراكك',
     activeer: 'لـ {groep}. سعر واحد للعائلة كلها. كل من تدعوه يشارك مجانًا.',

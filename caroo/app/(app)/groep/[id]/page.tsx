@@ -6,6 +6,7 @@ import { getT } from '@/lib/i18n/server'
 import { rolTekst, datum, tijd } from '@/lib/i18n/vertaal'
 import { uitloggen } from '@/app/auth/actions'
 import AbonnementKnop from './AbonnementKnop'
+import { isApp } from '@/lib/app-server'
 import { ToestemmingKaart } from '@/components/familie/ToestemmingKaart'
 import { binnenBedenktijd } from '@/lib/herroepen'
 import { FamilieSignalen } from '@/components/familie/FamilieSignalen'
@@ -22,6 +23,7 @@ export default async function GroepPage({
   params: { id: string }
   searchParams: { welkom?: string }
 }) {
+  const inApp = isApp()
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -168,7 +170,7 @@ export default async function GroepPage({
         <div className="bg-caroo-groen-licht border-b border-caroo-groen px-4 py-3">
           <p className="text-caroo-donker text-sm font-medium">
             {t('groep.proefLoopt', { datum: datum(taal, nazorg.tot, { day: 'numeric', month: 'long' }) })}{' '}
-            {isEigenaar && (
+            {isEigenaar && !inApp && (
               <Link href={`/betalen?groep=${groep.id}&naam=${encodeURIComponent(groep.naam)}`} className="underline">
                 {t('groep.kiesAbonnement')}
               </Link>
@@ -182,7 +184,7 @@ export default async function GroepPage({
         <div className="bg-caroo-oranje-licht border-b border-caroo-oranje px-4 py-3">
           <p className="text-caroo-donker text-sm font-medium">
             {isEigenaar ? t('groep.proefVoorbij') : t('groep.proefVoorbijLid')}{' '}
-            {isEigenaar && (
+            {isEigenaar && !inApp && (
               <Link href={`/betalen?groep=${groep.id}&naam=${encodeURIComponent(groep.naam)}`} className="underline">
                 {t('groep.kiesAbonnement')}
               </Link>
@@ -382,7 +384,7 @@ export default async function GroepPage({
 
           {isEigenaar && groep.betaald && (
             <div className="mt-4 pt-4 border-t border-gray-100">
-              <AbonnementKnop groepId={params.id} />
+              {!inApp && <AbonnementKnop groepId={params.id} />}
               {magHerroepen && (
                 <Link href={`/groep/${params.id}/herroepen`} className="block mt-2 text-sm text-caroo-groen font-medium hover:underline">
                   {t('herroepen.link')}

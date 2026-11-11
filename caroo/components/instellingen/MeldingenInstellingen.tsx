@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useT } from '@/lib/i18n/client'
-import { slaPushAbonnementOp, verwijderPushAbonnement, zetEmailMeldingen, stuurTestMelding } from '@/lib/acties/push'
+import { slaPushAbonnementOp, verwijderPushAbonnement, zetEmailMeldingen, stuurTestMelding, appMeldingenAan, zetAppMeldingenUit } from '@/lib/acties/push'
+import { isNativeApp } from '@/lib/app'
+import { appToestemming, zetAppMeldingenAan } from '@/lib/app-meldingen'
 
 function naarUint8(base64: string) {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4)
@@ -22,6 +24,12 @@ export function MeldingenInstellingen({ email: startEmail, groot = false }: { em
 
   useEffect(() => {
     ;(async () => {
+      if (isNativeApp()) {
+        const toestemming = await appToestemming().catch(() => 'prompt' as const)
+        if (toestemming === 'denied') return setPush('geblokkeerd')
+        setPush(toestemming === 'granted' && (await appMeldingenAan()) ? 'aan' : 'uit')
+        return
+      }
       const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent)
       const losseApp = window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone === true
       const kan = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window
@@ -39,6 +47,20 @@ export function MeldingenInstellingen({ email: startEmail, groot = false }: { em
   async function zetPushAan() {
     setBezig(true)
     setMelding('')
+    if (isNativeApp()) {
+      const uitkomst = await zetAppMeldingenAan().catch(() => 'mislukt' as const)
+      if (uitkomst === 'aan') {
+        setPush('aan')
+        await stuurTestMelding()
+        setMelding(t('instellingen.pushGelukt'))
+      } else if (uitkomst === 'geblokkeerd') {
+        setPush('geblokkeerd')
+      } else {
+        setMelding(t('instellingen.pushMislukt'))
+      }
+      setBezig(false)
+      return
+    }
     try {
       const sleutel = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
       if (!sleutel) throw new Error('nog niet ingesteld')
@@ -67,6 +89,13 @@ export function MeldingenInstellingen({ email: startEmail, groot = false }: { em
 
   async function zetPushUit() {
     setBezig(true)
+    if (isNativeApp()) {
+      await zetAppMeldingenUit()
+      setPush('uit')
+      setMelding('')
+      setBezig(false)
+      return
+    }
     const reg = await navigator.serviceWorker.getRegistration()
     const ab = await reg?.pushManager.getSubscription()
     if (ab) {

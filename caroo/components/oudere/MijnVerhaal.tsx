@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { isNativeApp } from '@/lib/app'
 import { createClient } from '@/lib/supabase/client'
 import { useT } from '@/lib/i18n/client'
 import Link from 'next/link'
@@ -28,7 +29,7 @@ export function MijnVerhaal({ groepId }: Props) {
   useEffect(() => {
     // Controleer of Web Speech API beschikbaar is
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-    setSpraaakBeschikbaar(!!SpeechRecognition)
+    setSpraaakBeschikbaar(!!SpeechRecognition || isNativeApp())
 
     // Haal eerdere entries op
     laadEntries()
@@ -46,7 +47,33 @@ export function MijnVerhaal({ groepId }: Props) {
     if (data) setEntries(data)
   }
 
+  // In de Android- en iPhone-app: de spraakherkenning van het toestel zelf.
+  // Die stopt na een stilte; zolang Rosa niet op stop tikt, luisteren we gewoon verder.
+  const appLuistert = useRef(false)
+  async function startAppSpraak() {
+    const { SpeechRecognition: Spraak } = await import('@capacitor-community/speech-recognition')
+    const rechten = await Spraak.requestPermissions().catch(() => null)
+    if (rechten?.speechRecognition !== 'granted') {
+      alert(t('verhaal.geenSpraakMelding'))
+      return
+    }
+    await Spraak.removeAllListeners()
+    let zin = ''
+    await Spraak.addListener('partialResults', d => { zin = d.matches?.[0] || zin })
+    await Spraak.addListener('listeningState', d => {
+      if (d.status !== 'stopped') return
+      if (zin.trim()) setTekst(prev => prev + (prev ? ' ' : '') + zin.trim())
+      zin = ''
+      if (appLuistert.current) Spraak.start({ language: info.spraak, partialResults: true, popup: false }).catch(() => { appLuistert.current = false; setLuistert(false) })
+      else setLuistert(false)
+    })
+    appLuistert.current = true
+    setLuistert(true)
+    await Spraak.start({ language: info.spraak, partialResults: true, popup: false }).catch(() => { appLuistert.current = false; setLuistert(false) })
+  }
+
   function startSpraaak() {
+    if (isNativeApp()) { startAppSpraak(); return }
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
 
     if (!SpeechRecognition) {
@@ -89,6 +116,10 @@ export function MijnVerhaal({ groepId }: Props) {
   }
 
   function stopSpraaak() {
+    if (appLuistert.current) {
+      appLuistert.current = false
+      import('@capacitor-community/speech-recognition').then(m => m.SpeechRecognition.stop()).catch(() => {})
+    }
     if (recognitionRef.current) {
       recognitionRef.current.stop()
       recognitionRef.current = null

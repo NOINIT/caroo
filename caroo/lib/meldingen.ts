@@ -4,6 +4,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { maakT, type TFunctie } from '@/lib/i18n/vertaal'
 import { isTaal, STANDAARD_TAAL, taalInfo, type Taal } from '@/lib/i18n/talen'
 import { isGeenEmail } from '@/lib/koppelen'
+import { stuurFcm } from '@/lib/fcm'
 
 export interface Melding {
   titel: string
@@ -87,17 +88,28 @@ export async function stuurMelding(userIds: string[], invoer: MeldingInvoer) {
         return stuurMail(o.email as string, meldingIn(taal), taal)
       })
 
-    if (pushIds.length > 0 && pushBeschikbaar()) {
+    if (pushIds.length > 0) {
       const { data: abonnementen } = await service
         .from('push_abonnementen')
-        .select('id, user_id, endpoint, p256dh, auth')
+        .select('id, user_id, endpoint, p256dh, auth, soort')
         .in('user_id', pushIds)
 
+      const webKlaar = pushBeschikbaar()
       for (const a of abonnementen || []) {
-        const payload = JSON.stringify(meldingIn(taalVan.get(a.user_id) ?? STANDAARD_TAAL))
+        const m = meldingIn(taalVan.get(a.user_id) ?? STANDAARD_TAAL)
+        if (a.soort === 'fcm') {
+          // Android- of iPhone-app
+          taken.push(
+            stuurFcm(a.endpoint, m).then(async uitkomst => {
+              if (uitkomst === 'weg') await service.from('push_abonnementen').delete().eq('id', a.id)
+            })
+          )
+          continue
+        }
+        if (!webKlaar || !a.p256dh || !a.auth) continue
         taken.push(
           webpush
-            .sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, payload, { TTL: 60 * 60 * 12 })
+            .sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, JSON.stringify(m), { TTL: 60 * 60 * 12 })
             .catch(async (err: any) => {
               // Telefoon heeft meldingen ingetrokken of de app verwijderd: opruimen
               if (err?.statusCode === 404 || err?.statusCode === 410) {

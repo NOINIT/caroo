@@ -1,0 +1,64 @@
+# Bouwt de Android-app van Clanoo.
+# Testversie (APK): ondertekend met een testsleutel, alleen om op eigen toestellen te installeren.
+# Google Play-versie (AAB): niet ondertekend; die wordt buiten GitHub ondertekend met de echte sleutel.
+name: Android-app
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [android]
+    paths:
+      - 'caroo/android/**'
+      - 'caroo/capacitor.config.ts'
+      - 'caroo/native/**'
+      - 'caroo/package.json'
+      - '.github/workflows/android.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  bouwen:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: caroo
+    env:
+      CLANOO_VERSIE_CODE: ${{ github.run_number }}
+      CLANOO_VERSIE: 1.0.${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Pakketten
+        run: npm ci --no-audit --no-fund
+      - name: Capacitor bijwerken
+        run: npx cap sync android
+      - name: Bouwen
+        working-directory: caroo/android
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease bundleRelease
+      - name: Testversie ondertekenen
+        working-directory: caroo/android
+        run: |
+          BT=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -1)
+          $BT/zipalign -f -p 4 app/build/outputs/apk/release/app-release-unsigned.apk clanoo-uitgelijnd.apk
+          $BT/apksigner sign --ks test-alleen.jks --ks-pass pass:clanoo-test --key-pass pass:clanoo-test \
+            --out ../Clanoo-test-${CLANOO_VERSIE}.apk clanoo-uitgelijnd.apk
+          cp app/build/outputs/bundle/release/app-release.aab ../Clanoo-${CLANOO_VERSIE}-onondertekend.aab
+      - name: Klaarzetten als release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-${{ env.CLANOO_VERSIE }}
+          name: Clanoo Android ${{ env.CLANOO_VERSIE }} (test)
+          prerelease: true
+          body: Testversie van de Android-app. Niet voor Google Play; die versie wordt apart ondertekend.
+          files: |
+            caroo/Clanoo-test-${{ env.CLANOO_VERSIE }}.apk
+            caroo/Clanoo-${{ env.CLANOO_VERSIE }}-onondertekend.aab

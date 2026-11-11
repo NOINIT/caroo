@@ -29,6 +29,13 @@ const PUBLIC_ROUTES = [
 const WEBSITE = ['/', '/privacy', '/en', '/tr', '/llms.txt']
 
 export async function middleware(request: NextRequest) {
+  // In de Android- en iPhone-app is er geen website met prijzen: meteen naar Clanoo zelf
+  const p = request.nextUrl.pathname
+  if ((p === '/' || p === '/en' || p === '/tr') && (request.headers.get('user-agent') || '').includes('ClanooApp')) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/dashboard'
+    return NextResponse.redirect(url)
+  }
   if (WEBSITE.includes(request.nextUrl.pathname)) return NextResponse.next()
 
   let supabaseResponse = NextResponse.next({ request })

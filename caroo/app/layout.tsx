@@ -5,6 +5,7 @@ import { getTaal } from '@/lib/i18n/server'
 import { maakT } from '@/lib/i18n/vertaal'
 import { taalInfo } from '@/lib/i18n/talen'
 import { TaalProvider } from '@/lib/i18n/client'
+import { NativeBrug } from '@/components/NativeBrug'
 
 // Atkinson Hyperlegible (Braille Institute, SIL Open Font License): extra goed leesbaar,
 // ook voor slechtzienden. De bestanden zitten in de app zelf, dus elk toestel toont
@@ -83,6 +84,7 @@ export default async function RootLayout({
     <html lang={taal} dir={info.dir} className={`${atkinson.variable} ${atkinsonExt.variable} ${notoArabisch.variable}`}>
       <body className="font-sans antialiased">
         <TaalProvider taal={taal}>{children}</TaalProvider>
+        <NativeBrug />
       </body>
     </html>
   )

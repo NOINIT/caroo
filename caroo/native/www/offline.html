@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Clanoo</title>
+<style>
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#1A2F5A;text-align:center;padding:24px;box-sizing:border-box}
+  .doos{max-width:380px}
+  svg{width:96px;height:96px;margin-bottom:20px}
+  h1{font-size:26px;margin:0 0 10px}
+  p{font-size:19px;line-height:1.5;color:#4A5875;margin:0 0 28px}
+  button{font:inherit;font-size:20px;font-weight:700;color:#fff;background:#1A7A6E;border:0;border-radius:14px;padding:16px 36px}
+</style>
+</head>
+<body>
+<div class="doos">
+  <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M55.2 20.5 A30 30 0 1 0 79.5 44.8" fill="none" stroke="#E8711A" stroke-width="15" stroke-linecap="round"/><circle cx="50" cy="50" r="13" fill="#1A7A6E"/></svg>
+  <h1 id="kop">Even geen internet</h1>
+  <p id="tekst">Clanoo heeft internet nodig. Kijk of wifi of mobiele data aanstaat.</p>
+  <button id="knop" onclick="location.href='https://clanoo.nl/dashboard'">Opnieuw proberen</button>
+</div>
+<script>
+  var taal=(navigator.language||'nl').slice(0,2)
+  var t={en:['No internet right now','Clanoo needs the internet. Check that wifi or mobile data is on.','Try again'],
+         tr:['Şu an internet yok','Clanoo internete ihtiyaç duyar. Wi-Fi veya mobil verinin açık olduğunu kontrol edin.','Tekrar dene'],
+         ar:['لا يوجد إنترنت الآن','يحتاج Clanoo إلى الإنترنت. تحقق من تشغيل الواي فاي أو بيانات الجوال.','حاول مرة أخرى']}[taal]
+  if(t){kop.textContent=t[0];tekst.textContent=t[1];knop.textContent=t[2];if(taal==='ar')document.dir='rtl'}
+  window.addEventListener('online',function(){location.href='https://clanoo.nl/dashboard'})
+</script>
+</body>
+</html>
