@@ -5,6 +5,7 @@ import { maakT, type TFunctie } from '@/lib/i18n/vertaal'
 import { isTaal, STANDAARD_TAAL, taalInfo, type Taal } from '@/lib/i18n/talen'
 import { isGeenEmail } from '@/lib/koppelen'
 import { stuurFcm } from '@/lib/fcm'
+import { stuurMail, escapeHtml } from '@/lib/mail'
 
 export interface Melding {
   titel: string
@@ -31,33 +32,31 @@ function pushBeschikbaar() {
   return true
 }
 
-function escape(t: string) {
-  return t.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!))
+/**
+ * Wat er buiten Clanoo zichtbaar is (op het vergrendelscherm, en bij Google, Apple en de maildienst),
+ * bevat nooit namen of inhoud. Alleen het soort nieuws. Wat er precies is, zie je in de app zelf.
+ */
+function neutraal(m: Melding, t: TFunctie): Melding {
+  const tag = m.tag || ''
+  const soort = tag.startsWith('bezoek') ? 'bezoek'
+    : tag.startsWith('samen') ? 'samen'
+    : tag.startsWith('spel') || tag.startsWith('potje') ? 'spel'
+    : tag.startsWith('vriend') || tag.startsWith('verzoek') || m.url.includes('/vrienden') ? 'vriend'
+    : 'algemeen'
+  return { titel: 'Clanoo', tekst: t(`meldingNeutraal.${soort}`), url: m.url, tag: m.tag }
 }
 
-async function stuurMail(naar: string, m: Melding, taal: Taal) {
+async function stuurMeldingMail(naar: string, m: Melding, taal: Taal) {
   const t = maakT(taal)
   const dir = taalInfo(taal).dir
-  const key = process.env.RESEND_API_KEY
-  if (!key) return
   const link = `${BASIS_URL}${m.url}`
   const html = `
     <div dir="${dir}" lang="${taal}" style="font-family:Arial,sans-serif;max-width:480px">
-      <h2 style="color:#1A2F5A">${escape(m.titel)}</h2>
-      <p style="font-size:17px;color:#333">${escape(m.tekst)}</p>
-      <p><a href="${link}" style="display:inline-block;padding:14px 28px;background:#1A7A6E;color:#fff;border-radius:10px;text-decoration:none;font-size:17px;font-weight:bold">${escape(t('mail.openClanoo'))}</a></p>
-      <p style="font-size:13px;color:#888">${escape(t('mail.waaromMelding'))}</p>
+      <p style="font-size:18px;color:#1A2F5A">${escapeHtml(m.tekst)}</p>
+      <p><a href="${link}" style="display:inline-block;padding:14px 28px;background:#1A7A6E;color:#fff;border-radius:10px;text-decoration:none;font-size:17px;font-weight:bold">${escapeHtml(t('mail.openClanoo'))}</a></p>
+      <p style="font-size:13px;color:#888">${escapeHtml(t('mail.waaromMelding'))}</p>
     </div>`
-  await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      from: process.env.MELDING_AFZENDER || 'Clanoo <clanoo@noinit.nl>',
-      to: [naar],
-      subject: m.titel,
-      html,
-    }),
-  }).catch(() => {})
+  await stuurMail({ naar, onderwerp: m.tekst, html })
 }
 
 /**
@@ -78,14 +77,17 @@ export async function stuurMelding(userIds: string[], invoer: MeldingInvoer) {
 
     const taalVan = new Map<string, Taal>()
     for (const o of ontvangers || []) taalVan.set(o.id, isTaal(o.taal) ? o.taal : STANDAARD_TAAL)
-    const meldingIn = (taal: Taal): Melding => (typeof invoer === 'function' ? invoer(maakT(taal)) : invoer)
+    const meldingIn = (taal: Taal): Melding => {
+      const t = maakT(taal)
+      return neutraal(typeof invoer === 'function' ? invoer(t) : invoer, t)
+    }
 
     const pushIds = (ontvangers || []).filter(o => o.melding_push).map(o => o.id)
     const taken: Promise<unknown>[] = (ontvangers || [])
       .filter(o => o.melding_email && o.email && !isGeenEmail(o.email))
       .map(o => {
         const taal = taalVan.get(o.id) ?? STANDAARD_TAAL
-        return stuurMail(o.email as string, meldingIn(taal), taal)
+        return stuurMeldingMail(o.email as string, meldingIn(taal), taal)
       })
 
     if (pushIds.length > 0) {

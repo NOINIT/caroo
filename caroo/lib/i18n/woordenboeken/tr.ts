@@ -570,6 +570,13 @@ export const tr: Woordenboek = {
     knop: "Abonelik seçin",
     niets: "Hiçbir şey yapmazsanız grup ücretsiz aydan sonra durur. Hiçbir ücret alınmaz.",
   },
+  meldingNeutraal: {
+    algemeen: "Clanoo'da sizin için yeni bir şey var.",
+    bezoek: "Bir ziyaretle ilgili haber var.",
+    samen: "Bir gezintiyle ilgili haber var.",
+    spel: "Bir oyunda yenilik var.",
+    vriend: "Bir arkadaştan haber var.",
+  },
   betalen: {
     appTitel: "Abonelik",
     appTekst: "Uygulamada abonelik başlatılamaz.",

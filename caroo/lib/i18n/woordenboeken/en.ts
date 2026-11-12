@@ -570,6 +570,13 @@ export const en: Woordenboek = {
     knop: "Choose a subscription",
     niets: "If you do nothing, the group stops after the free month. Nothing will be charged.",
   },
+  meldingNeutraal: {
+    algemeen: "There is something new for you in Clanoo.",
+    bezoek: "There is news about a visit.",
+    samen: "There is news about an outing.",
+    spel: "There is news in a game.",
+    vriend: "There is news from a friend.",
+  },
   betalen: {
     appTitel: "Subscription",
     appTekst: "You can't take out a subscription in the app.",

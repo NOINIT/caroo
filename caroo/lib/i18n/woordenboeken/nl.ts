@@ -572,6 +572,13 @@ export const nl = {
     knop: "Kies een abonnement",
     niets: "Doe je niets, dan stopt de groep na de gratis maand. Er wordt niets afgeschreven.",
   },
+  meldingNeutraal: {
+    algemeen: "Er is iets nieuws voor je in Clanoo.",
+    bezoek: "Er is nieuws over een bezoek.",
+    samen: "Er is nieuws over een uitje.",
+    spel: "Er is nieuws in een spelletje.",
+    vriend: "Er is nieuws van een vriend.",
+  },
   betalen: {
     appTitel: "Abonnement",
     appTekst: "Een abonnement afsluiten kan niet in de app.",
