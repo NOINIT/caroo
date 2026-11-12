@@ -26,7 +26,7 @@ function pushBeschikbaar() {
   const priv = process.env.VAPID_PRIVATE_KEY
   if (!pub || !priv) return false
   if (!vapidKlaar) {
-    webpush.setVapidDetails(process.env.VAPID_SUBJECT || 'mailto:caroo@noinit.nl', pub, priv)
+    webpush.setVapidDetails(process.env.VAPID_SUBJECT || 'mailto:clanoo@noinit.nl', pub, priv)
     vapidKlaar = true
   }
   return true
