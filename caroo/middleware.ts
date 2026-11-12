@@ -11,6 +11,7 @@ const PUBLIC_ROUTES = [
   '/auth/magic-link',
   '/api/stripe/webhook',
   '/api/cron',
+  '/api/oprichters',
   '/sw.js',
   '/manifest.webmanifest',
   '/icons',

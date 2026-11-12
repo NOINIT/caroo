@@ -655,11 +655,12 @@ a{color:#1A7A6E}a:hover{color:#145F56}a[style*="background: #C2570C"]:hover{back
       <p style="margin: 18px 0 0; font-size: 20px; line-height: 1.55; color: #4A5875; max-width: 620px;">Wie de groep start, betaalt. Iedereen die erbij komt, doet gratis mee. De eerste maand is gratis, zonder betaalgegevens.</p>
       <div style="margin-top: 44px; display: flex; flex-wrap: wrap; gap: 20px; align-items: stretch;">
         <div style="flex: 1 1 300px; background: #FFFFFF; border-radius: 28px; padding: 32px; border: 2px solid #E8711A; display: flex; flex-direction: column; box-sizing: border-box;">
-          <span style="align-self: flex-start; background: #FDF2EC; color: #B4510C; font-size: 14px; font-weight: 700; padding: 6px 12px; border-radius: 999px;">Alleen voor de eerste 100 families</span>
+          <span id="oprichterBadge" style="align-self: flex-start; background: #FDF2EC; color: #B4510C; font-size: 14px; font-weight: 700; padding: 6px 12px; border-radius: 999px;">Alleen voor de eerste 100 families</span>
           <div style="font-size: 18px; font-weight: 700; margin-top: 16px;">Oprichtersprijs</div>
           <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 14px; flex-wrap: wrap;"><span style="font-size: 52px; font-weight: 700; letter-spacing: -1.5px;">€69</span><span style="font-size: 17px; color: #4A5875;">het eerste jaar</span></div>
           <p style="margin: 8px 0 20px; font-size: 16px; line-height: 1.5; color: #4A5875;">Normaal €125 per jaar, je bespaart €56. Na je gratis maand betaal je het eerste jaar in één keer, daarna €125 per jaar.</p>
           <a href="/wachtlijst" style="margin-top: auto; display: block; text-align: center; background: #C2570C; color: #FFFFFF; text-decoration: none; font-size: 18px; font-weight: 700; padding: 15px; border-radius: 999px;">Reserveer je plek</a>
+          <p id="oprichterTeller" style="display: none; margin: 12px 0 0; text-align: center; font-size: 15px; font-weight: 700; color: #1A7A6E;"></p>
         </div>
         <div style="flex: 1 1 260px; background: #FFFFFF; border-radius: 28px; padding: 32px; display: flex; flex-direction: column; box-sizing: border-box;">
           <div style="font-size: 18px; font-weight: 700;">Per jaar</div>
@@ -755,6 +756,35 @@ a{color:#1A7A6E}a:hover{color:#145F56}a[style*="background: #C2570C"]:hover{back
   if('IntersectionObserver' in window) new IntersectionObserver(function(e){ zichtbaar=e[0].isIntersecting; }).observe(baan);
   setInterval(function(){ if(!speelt||!zichtbaar||document.hidden) return; v+=200/6000*100; if(v>=100) ga(dia+1); else teken(); },200);
   teken();
+})();
+</script>
+<script>
+/* Bezoekersstatistiek zonder cookies (Vercel Web Analytics) */
+window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script>
+(function () {
+  var taal = (document.documentElement.lang || 'nl').slice(0, 2);
+  /* Campagnekenmerk (utm) meegeven aan de knoppen, zodat de wachtlijst weet waar iemand vandaan kwam. Niets wordt opgeslagen in de browser. */
+  var q = new URLSearchParams(location.search), mee = new URLSearchParams();
+  ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'bron'].forEach(function (k) { if (q.get(k)) mee.set(k, q.get(k)); });
+  if (mee.toString()) document.querySelectorAll('a[href^="/wachtlijst"], a[href^="/registreer"]').forEach(function (a) {
+    a.href = a.getAttribute('href') + (a.getAttribute('href').indexOf('?') < 0 ? '?' : '&') + mee.toString();
+  });
+  /* Oprichtersplekken: na de lancering hoeveel er nog over zijn, daarvoor hoeveel families op de wachtlijst staan */
+  var T = {
+    nl: { over: function (n, t) { return 'Nog ' + n + ' van de ' + t + ' plekken'; }, vol: 'Alle oprichtersplekken zijn vergeven', wl: function (n) { return n + ' families staan al op de wachtlijst'; } },
+    en: { over: function (n, t) { return n + ' of ' + t + ' places left'; }, vol: 'All founder places have been taken', wl: function (n) { return n + ' families are already on the waiting list'; } },
+    tr: { over: function (n, t) { return t + ' yerden ' + n + ' tanesi kaldı'; }, vol: 'Tüm kurucu yerleri doldu', wl: function (n) { return n + ' aile şimdiden bekleme listesinde'; } }
+  }[taal] || null;
+  if (!T) return;
+  fetch('/api/oprichters').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+    if (!d) return;
+    var badge = document.getElementById('oprichterBadge'), teller = document.getElementById('oprichterTeller');
+    if (d.over < d.plekken && badge) badge.textContent = d.over > 0 ? T.over(d.over, d.plekken) : T.vol;
+    else if (d.wachtlijst && teller) { teller.textContent = T.wl(d.wachtlijst); teller.style.display = 'block'; }
+  }).catch(function () {});
 })();
 </script>
 </body>

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { CarooLogo } from '@/components/ui/CarooLogo'
 import { WachtlijstFormulier } from '@/components/wachtlijst/WachtlijstFormulier'
 import { MERK } from '@/lib/merk'
+import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
   title: `Wachtlijst · ${MERK.naam}`,
@@ -21,8 +22,9 @@ const voorDeHoofdpersoon = [
   'Foto’s van de familie en eigen verhalen inspreken',
 ]
 
-export default function WachtlijstPagina({ searchParams }: { searchParams: { bron?: string; utm_source?: string } }) {
-  const bron = searchParams.bron || searchParams.utm_source || ''
+export default function WachtlijstPagina({ searchParams }: { searchParams: { bron?: string; utm_source?: string; utm_campaign?: string; utm_content?: string } }) {
+  // Waar kwam iemand vandaan? bijvoorbeeld instagram-evenlangs-kopje (uit de utm-kenmerken van de campagne)
+  const bron = searchParams.bron || [searchParams.utm_source, searchParams.utm_campaign, searchParams.utm_content].filter(Boolean).join('-').toLowerCase().slice(0, 80)
   const o = MERK.oprichters
 
   return (
@@ -111,6 +113,7 @@ export default function WachtlijstPagina({ searchParams }: { searchParams: { bro
           <a href="/privacy" className="hover:underline">Privacy</a>
         </div>
       </footer>
+      <Analytics />
     </div>
   )
 }
