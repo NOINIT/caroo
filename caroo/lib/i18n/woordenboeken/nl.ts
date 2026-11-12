@@ -563,6 +563,12 @@ export const nl = {
     prijsUitleg: 'De eerste maand is gratis, zonder betaalgegevens. Daarna €12,50 per maand voor de hele familie.',
   },
 
+  uitnodigMail: {
+    onderwerp: "Wie hoort er nog bij {groep}?",
+    tekst: "{groep} staat klaar. Clanoo werkt het best als de familie meedoet: wie langskomt, wie belt, wie de boodschappen doet. Nodig je broer, zus of kinderen uit.",
+    gratis: "Het kost niets extra. Iedereen die je uitnodigt, doet gratis mee.",
+    knop: "Nodig iemand uit",
+  },
   proefMail: {
     vijfOnderwerp: "Nog vijf dagen gratis Clanoo voor {groep}",
     vijfTekst: "De gratis maand van {groep} loopt tot {datum}. Wil je daarna verder met Clanoo? Kies dan een abonnement.",
