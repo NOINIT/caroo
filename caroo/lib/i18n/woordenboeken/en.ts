@@ -561,6 +561,15 @@ export const en: Woordenboek = {
     prijsUitleg: 'The first month is free, no payment details needed. After that €12.50 per month for the whole family.',
   },
 
+  proefMail: {
+    vijfOnderwerp: "Five more free days of Clanoo for {groep}",
+    vijfTekst: "The free month for {groep} runs until {datum}. Want to keep using Clanoo after that? Choose a subscription.",
+    laatstOnderwerp: "The free month for {groep} is almost over",
+    laatstTekst: "The free month for {groep} ends on {datum}. Choose a subscription and your family can carry on as usual.",
+    gratisMee: "One subscription covers the whole group. Everyone you invited joins for free.",
+    knop: "Choose a subscription",
+    niets: "If you do nothing, the group stops after the free month. Nothing will be charged.",
+  },
   betalen: {
     appTitel: "Subscription",
     appTekst: "You can't take out a subscription in the app.",

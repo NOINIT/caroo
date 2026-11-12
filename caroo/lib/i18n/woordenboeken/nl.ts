@@ -563,6 +563,15 @@ export const nl = {
     prijsUitleg: 'De eerste maand is gratis, zonder betaalgegevens. Daarna €12,50 per maand voor de hele familie.',
   },
 
+  proefMail: {
+    vijfOnderwerp: "Nog vijf dagen gratis Clanoo voor {groep}",
+    vijfTekst: "De gratis maand van {groep} loopt tot {datum}. Wil je daarna verder met Clanoo? Kies dan een abonnement.",
+    laatstOnderwerp: "De gratis maand van {groep} is bijna voorbij",
+    laatstTekst: "De gratis maand van {groep} stopt op {datum}. Kies een abonnement, dan kan je familie gewoon verder.",
+    gratisMee: "Eén abonnement is genoeg voor de hele groep. Iedereen die je uitnodigde, doet gratis mee.",
+    knop: "Kies een abonnement",
+    niets: "Doe je niets, dan stopt de groep na de gratis maand. Er wordt niets afgeschreven.",
+  },
   betalen: {
     appTitel: "Abonnement",
     appTekst: "Een abonnement afsluiten kan niet in de app.",
