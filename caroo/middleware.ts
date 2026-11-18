@@ -19,6 +19,7 @@ const PUBLIC_ROUTES = [
   '/privacy',
   '/account-verwijderen',
   '/voorwaarden',
+  '/veelgestelde-vragen',
   '/koppel',
   '/vriend',
   '/site',
@@ -30,7 +31,7 @@ const PUBLIC_ROUTES = [
 ]
 
 // Statische websitepagina's: geen sessiecontrole nodig
-const WEBSITE = ['/', '/privacy', '/voorwaarden', '/account-verwijderen', '/en', '/tr', '/llms.txt']
+const WEBSITE = ['/', '/privacy', '/voorwaarden', '/veelgestelde-vragen', '/account-verwijderen', '/en', '/tr', '/llms.txt']
 
 export async function middleware(request: NextRequest) {
   // In de Android- en iPhone-app is er geen website met prijzen: meteen naar Clanoo zelf
