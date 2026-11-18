@@ -4,6 +4,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { stuurMail, escapeHtml } from '@/lib/mail'
 import { MERK } from '@/lib/merk'
 import { afmeldVoet } from '@/lib/wachtlijst-afmelden'
+import { WL, wlTaal } from '@/lib/wachtlijst-teksten'
 
 const VOOR_WIE = ['moeder', 'vader', 'opa_oma', 'partner', 'mezelf', 'anders']
 
@@ -17,9 +18,11 @@ export async function meldAanOpWachtlijst(formData: FormData) {
   const voorWie = VOOR_WIE.includes(voorWieRuw) ? voorWieRuw : null
   const bron = String(formData.get('bron') || '').replace(/[^a-z0-9\-_]/gi, '').slice(0, 80) || null
   const wilUpdates = formData.get('wil_updates') === 'on'
+  const taal = wlTaal(formData.get('taal'))
+  const w = WL[taal]
 
-  if (!naam) return { error: 'Vul je naam in.' }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return { error: 'Dit e-mailadres klopt niet helemaal.' }
+  if (!naam) return { error: w.form.foutNaam }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return { error: w.form.foutEmail }
 
   const service = createServiceClient()
   const { data: bestaand } = await service.from('wachtlijst').select('id, wil_updates').ilike('email', email).maybeSingle()
@@ -39,22 +42,22 @@ export async function meldAanOpWachtlijst(formData: FormData) {
   }
 
   const { data: nieuw, error } = await service.from('wachtlijst').insert({ naam, email, voor_wie: voorWie, bron, wil_updates: wilUpdates }).select('afmeld_code').single()
-  if (error || !nieuw) return { error: 'Aanmelden lukte niet. Probeer het zo nog eens.' }
+  if (error || !nieuw) return { error: w.form.foutAlgemeen }
 
   const voornaam = naam.split(' ')[0]
   const o = MERK.oprichters
   await stuurMail({
     naar: email,
-    onderwerp: `Je staat op de wachtlijst van ${MERK.naam}`,
+    onderwerp: w.mail.onderwerp,
     replyTo: MERK.contact,
     html: `
       <div style="font-family:Arial,sans-serif;max-width:520px;color:#1A2F5A">
-        <h2 style="color:#1A7A6E;margin-bottom:4px">Fijn dat je erbij bent, ${escapeHtml(voornaam)}</h2>
-        <p style="font-size:17px;line-height:1.55">Je staat op de wachtlijst van ${MERK.naam}. Zodra we opengaan, hoor je het als eerste.</p>
-        <p style="font-size:17px;line-height:1.55">De eerste ${o.aantal} families worden oprichtersfamilie. Zij betalen ${o.prijs} voor het eerste jaar in plaats van ${o.normaal}. Bij de lancering krijg je een mail met een link om je plek te nemen. Aanmelden voor de wachtlijst is vrijblijvend.</p>
-        <p style="font-size:17px;line-height:1.55">Vragen of ideeën? Antwoord gewoon op deze mail, die komt bij mij terecht.</p>
-        <p style="font-size:17px;line-height:1.55">Hartelijke groet,<br>Clanoo<br><span style="color:#6B7280;font-size:14px">${MERK.naam} is een initiatief van ${MERK.moederbedrijf}, ${MERK.plaats}</span></p>
-        ${afmeldVoet(nieuw.afmeld_code)}
+        <h2 style="color:#1A7A6E;margin-bottom:4px">${escapeHtml(w.mail.kop(voornaam))}</h2>
+        <p style="font-size:17px;line-height:1.55">${w.mail.p1}</p>
+        <p style="font-size:17px;line-height:1.55">${w.mail.p2(o.aantal, o.prijs, o.normaal)}</p>
+        <p style="font-size:17px;line-height:1.55">${w.mail.p3}</p>
+        <p style="font-size:17px;line-height:1.55">${w.mail.groet}<br>Clanoo<br><span style="color:#6B7280;font-size:14px">${w.mail.initiatief}</span></p>
+        ${afmeldVoet(nieuw.afmeld_code, taal)}
       </div>`,
   })
 
