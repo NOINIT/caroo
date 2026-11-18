@@ -21,6 +21,9 @@ export const tr: Woordenboek = {
     onbekend: 'Bilinmiyor',
     naarHome: 'Ana sayfaya git',
     taal: 'Dil',
+    akkoord: 'Devam ederek {voorwaarden} ve {privacy} kabul etmiş olursunuz.',
+    voorwaarden: 'genel koşulları',
+    privacy: 'gizlilik bildirimini',
   },
 
   stemming: {
@@ -557,8 +560,9 @@ export const tr: Woordenboek = {
     punt2: '✅ Takvim, görevler ve ilaç takvimi',
     punt3: '✅ Ses tanımalı Hikâyem',
     punt4: '✅ Fotoğraf albümü ve tavsiye paylaşma',
-    verder: 'Ödemeye geç →',
+    verder: 'Bakım grubu oluştur →',
     prijsUitleg: 'İlk ay ücretsiz, ödeme bilgisi gerekmez. Sonrasında tüm aile için aylık €12,50.',
+    toestemming: 'Bakımını üstlendiğimiz kişi Clanoo\'dan haberdar ve burada sağlığı dahil kendisiyle ilgili bilgileri paylaşmamızı kabul ediyor. Bu kişi artık buna kendisi karar veremiyorsa, yasal temsilcisi izin verir.',
   },
 
   uitnodigMail: {
@@ -575,6 +579,13 @@ export const tr: Woordenboek = {
     gratisMee: "Tek bir abonelik tüm grup için yeterli. Davet ettiğiniz herkes ücretsiz katılır.",
     knop: "Abonelik seçin",
     niets: "Hiçbir şey yapmazsanız grup ücretsiz aydan sonra durur. Hiçbir ücret alınmaz.",
+  },
+  meldingNeutraal: {
+    algemeen: "Clanoo'da sizin için yeni bir şey var.",
+    bezoek: "Bir ziyaretle ilgili haber var.",
+    samen: "Bir gezintiyle ilgili haber var.",
+    spel: "Bir oyunda yenilik var.",
+    vriend: "Bir arkadaştan haber var.",
   },
   betalen: {
     appTitel: "Abonelik",

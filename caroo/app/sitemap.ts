@@ -10,5 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: 'https://clanoo.nl/tr', lastModified: nu, changeFrequency: 'weekly', priority: 0.9, alternates: { languages: TALEN } },
     { url: 'https://clanoo.nl/wachtlijst', lastModified: nu, changeFrequency: 'monthly', priority: 0.8 },
     { url: 'https://clanoo.nl/privacy', lastModified: nu, changeFrequency: 'yearly', priority: 0.4 },
+    { url: 'https://clanoo.nl/account-verwijderen', lastModified: nu, changeFrequency: 'yearly', priority: 0.3 },
+    { url: 'https://clanoo.nl/voorwaarden', lastModified: nu, changeFrequency: 'yearly', priority: 0.3 },
   ]
 }

@@ -31,7 +31,7 @@ export default function WachtlijstPagina({ searchParams }: { searchParams: { bro
     <div className="min-h-screen bg-white text-caroo-donker">
       <header className="max-w-5xl mx-auto px-5 pt-6 pb-2 flex items-center justify-between">
         <a href="/" aria-label="Naar de startpagina van Clanoo"><CarooLogo size="md" /></a>
-        <span className="text-sm text-gray-600">Open op {MERK.lancering}</span>
+        <span className="text-sm text-gray-600">Open in 2027</span>
       </header>
 
       <main className="max-w-5xl mx-auto px-5 pb-16">
@@ -96,7 +96,7 @@ export default function WachtlijstPagina({ searchParams }: { searchParams: { bro
             </div>
             <div>
               <dt className="font-bold text-caroo-donker">Zit ik ergens aan vast?</dt>
-              <dd>Nee. De wachtlijst is vrijblijvend. Op {MERK.lancering} krijg je een mail en beslis je of je je plek neemt.</dd>
+              <dd>Nee. De wachtlijst is vrijblijvend. Bij de lancering krijg je een mail en beslis je of je je plek neemt.</dd>
             </div>
             <div>
               <dt className="font-bold text-caroo-donker">Wat gebeurt er met onze gegevens?</dt>

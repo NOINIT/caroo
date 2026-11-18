@@ -21,6 +21,9 @@ export const en: Woordenboek = {
     onbekend: 'Unknown',
     naarHome: 'Go to the homepage',
     taal: 'Language',
+    akkoord: 'By continuing you agree to the {voorwaarden} and the {privacy}.',
+    voorwaarden: 'terms and conditions',
+    privacy: 'privacy statement',
   },
 
   stemming: {
@@ -557,8 +560,9 @@ export const en: Woordenboek = {
     punt2: '✅ Calendar, tasks & medicine schedule',
     punt3: '✅ My story with speech recognition',
     punt4: '✅ Photo album & sharing tips',
-    verder: 'Continue to payment →',
+    verder: 'Create care group →',
     prijsUitleg: 'The first month is free, no payment details needed. After that €12.50 per month for the whole family.',
+    toestemming: 'The person we care for knows about Clanoo and agrees that we share information about them here, including about their health. If they can no longer decide this themselves, their legal representative gives permission.',
   },
 
   uitnodigMail: {
@@ -575,6 +579,13 @@ export const en: Woordenboek = {
     gratisMee: "One subscription covers the whole group. Everyone you invited joins for free.",
     knop: "Choose a subscription",
     niets: "If you do nothing, the group stops after the free month. Nothing will be charged.",
+  },
+  meldingNeutraal: {
+    algemeen: "There is something new for you in Clanoo.",
+    bezoek: "There is news about a visit.",
+    samen: "There is news about an outing.",
+    spel: "There is news in a game.",
+    vriend: "There is news from a friend.",
   },
   betalen: {
     appTitel: "Subscription",

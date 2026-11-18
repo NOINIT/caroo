@@ -8,9 +8,11 @@ const nextConfig = {
     return [
       { source: '/', headers: vers },
       { source: '/privacy', headers: vers },
+      { source: '/account-verwijderen', headers: vers },
+      { source: '/voorwaarden', headers: vers },
       { source: '/en', headers: vers },
       { source: '/tr', headers: vers },
-      { source: '/site/:pagina(index.html|privacy.html)', headers: vers },
+      { source: '/site/:pagina(index.html|privacy.html|voorwaarden.html|account-verwijderen.html)', headers: vers },
       { source: '/site/:taal(en|tr)/index.html', headers: vers },
     ]
   },
@@ -20,6 +22,8 @@ const nextConfig = {
       beforeFiles: [
         { source: '/', destination: '/site/index.html' },
         { source: '/privacy', destination: '/site/privacy.html' },
+        { source: '/account-verwijderen', destination: '/site/account-verwijderen.html' },
+        { source: '/voorwaarden', destination: '/site/voorwaarden.html' },
         { source: '/en', destination: '/site/en/index.html' },
         { source: '/tr', destination: '/site/tr/index.html' },
       ],

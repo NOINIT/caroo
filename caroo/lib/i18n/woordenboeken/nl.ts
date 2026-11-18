@@ -22,6 +22,9 @@ export const nl = {
     onbekend: 'Onbekend',
     naarHome: 'Ga naar de homepage',
     taal: 'Taal',
+    akkoord: 'Door verder te gaan ga je akkoord met de {voorwaarden} en de {privacy}.',
+    voorwaarden: 'algemene voorwaarden',
+    privacy: 'privacyverklaring',
   },
 
   stemming: {
@@ -559,8 +562,9 @@ export const nl = {
     punt2: '✅ Agenda, taken & medicijnenagenda',
     punt3: '✅ Mijn verhaal met spraakherkenning',
     punt4: '✅ Fotoalbum & tips delen',
-    verder: 'Verder naar betaling →',
+    verder: 'Zorggroep aanmaken →',
     prijsUitleg: 'De eerste maand is gratis, zonder betaalgegevens. Daarna €12,50 per maand voor de hele familie.',
+    toestemming: 'De persoon voor wie we zorgen weet van Clanoo en vindt het goed dat we hier gegevens over hem of haar delen, ook over gezondheid. Kan die persoon dat zelf niet meer beslissen, dan geeft de wettelijk vertegenwoordiger toestemming.',
   },
 
   uitnodigMail: {
@@ -577,6 +581,13 @@ export const nl = {
     gratisMee: "Eén abonnement is genoeg voor de hele groep. Iedereen die je uitnodigde, doet gratis mee.",
     knop: "Kies een abonnement",
     niets: "Doe je niets, dan stopt de groep na de gratis maand. Er wordt niets afgeschreven.",
+  },
+  meldingNeutraal: {
+    algemeen: "Er is iets nieuws voor je in Clanoo.",
+    bezoek: "Er is nieuws over een bezoek.",
+    samen: "Er is nieuws over een uitje.",
+    spel: "Er is nieuws in een spelletje.",
+    vriend: "Er is nieuws van een vriend.",
   },
   betalen: {
     appTitel: "Abonnement",
