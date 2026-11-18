@@ -13,3 +13,7 @@ GRANT ALL ON public.instellingen TO service_role;
 -- De lanceringsdatum zetten we pas als die vaststaat, bijvoorbeeld:
 -- INSERT INTO public.instellingen (naam, waarde) VALUES ('lancering_op', '2027-01-01T10:00:00+01:00')
 --   ON CONFLICT (naam) DO UPDATE SET waarde = EXCLUDED.waarde, bijgewerkt_op = NOW();
+
+-- Afmelden met één klik: elke aanmelding krijgt een eigen, onraadbare code voor de afmeldlink.
+ALTER TABLE public.wachtlijst ADD COLUMN IF NOT EXISTS afmeld_code UUID NOT NULL DEFAULT gen_random_uuid();
+CREATE UNIQUE INDEX IF NOT EXISTS wachtlijst_afmeld_code_idx ON public.wachtlijst (afmeld_code);

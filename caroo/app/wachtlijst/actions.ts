@@ -3,6 +3,7 @@
 import { createServiceClient } from '@/lib/supabase/server'
 import { stuurMail, escapeHtml } from '@/lib/mail'
 import { MERK } from '@/lib/merk'
+import { afmeldVoet } from '@/lib/wachtlijst-afmelden'
 
 const VOOR_WIE = ['moeder', 'vader', 'opa_oma', 'partner', 'mezelf', 'anders']
 
@@ -37,8 +38,8 @@ export async function meldAanOpWachtlijst(formData: FormData) {
     return { succes: true, voornaam: naam.split(' ')[0], alAangemeld: true }
   }
 
-  const { error } = await service.from('wachtlijst').insert({ naam, email, voor_wie: voorWie, bron, wil_updates: wilUpdates })
-  if (error) return { error: 'Aanmelden lukte niet. Probeer het zo nog eens.' }
+  const { data: nieuw, error } = await service.from('wachtlijst').insert({ naam, email, voor_wie: voorWie, bron, wil_updates: wilUpdates }).select('afmeld_code').single()
+  if (error || !nieuw) return { error: 'Aanmelden lukte niet. Probeer het zo nog eens.' }
 
   const voornaam = naam.split(' ')[0]
   const o = MERK.oprichters
@@ -53,7 +54,7 @@ export async function meldAanOpWachtlijst(formData: FormData) {
         <p style="font-size:17px;line-height:1.55">De eerste ${o.aantal} families worden oprichtersfamilie. Zij betalen ${o.prijs} voor het eerste jaar in plaats van ${o.normaal}. Bij de lancering krijg je een mail met een link om je plek te nemen. Aanmelden voor de wachtlijst is vrijblijvend.</p>
         <p style="font-size:17px;line-height:1.55">Vragen of ideeën? Antwoord gewoon op deze mail, die komt bij mij terecht.</p>
         <p style="font-size:17px;line-height:1.55">Hartelijke groet,<br>Clanoo<br><span style="color:#6B7280;font-size:14px">${MERK.naam} is een initiatief van ${MERK.moederbedrijf}, ${MERK.plaats}</span></p>
-        <p style="font-size:12px;color:#9CA3AF;margin-top:24px">Je ontvangt deze mail omdat je je aanmeldde voor de wachtlijst. Wil je eraf? Antwoord met "afmelden".</p>
+        ${afmeldVoet(nieuw.afmeld_code)}
       </div>`,
   })
 

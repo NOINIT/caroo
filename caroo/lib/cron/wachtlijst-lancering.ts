@@ -3,6 +3,7 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { stuurMail, escapeHtml } from '@/lib/mail'
 import { MERK } from '@/lib/merk'
 import { oprichtersplekkenOver } from '@/lib/stripe-kortingen'
+import { afmeldVoet } from '@/lib/wachtlijst-afmelden'
 
 const BASIS_URL = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://clanoo.nl'
 const DAG = 86400000
@@ -20,9 +21,9 @@ export async function lanceringOp(): Promise<Date | null> {
   return d && !isNaN(d.getTime()) ? d : null
 }
 
-const opmaak = (inhoud: string) => `<div style="font-family:Arial,sans-serif;max-width:520px;color:#1A2F5A;font-size:17px;line-height:1.55">${inhoud}
+const opmaak = (inhoud: string, code: string) => `<div style="font-family:Arial,sans-serif;max-width:520px;color:#1A2F5A;font-size:17px;line-height:1.55">${inhoud}
   <p>Hartelijke groet,<br>Clanoo<br><span style="color:#6B7280;font-size:14px">${MERK.naam} is een initiatief van ${MERK.moederbedrijf}, ${MERK.plaats}</span></p>
-  <p style="font-size:12px;color:#9CA3AF;margin-top:24px">Je ontvangt deze mail omdat je je aanmeldde voor de wachtlijst. Wil je eraf? Antwoord met "afmelden".</p></div>`
+  ${afmeldVoet(code)}</div>`
 const knop = (tekst: string, url: string) =>
   `<p><a href="${url}" style="display:inline-block;padding:14px 28px;background:#C2570C;color:#fff;border-radius:999px;text-decoration:none;font-weight:bold">${escapeHtml(tekst)}</a></p>`
 
@@ -38,7 +39,7 @@ export async function wachtlijstLancering(nu = new Date()) {
   const over = await oprichtersplekkenOver()
 
   // 1. De lanceringsmail
-  const { data: nieuw } = await service.from('wachtlijst').select('id, naam, email')
+  const { data: nieuw } = await service.from('wachtlijst').select('id, naam, email, afmeld_code')
     .is('lancering_mail_op', null).is('afgemeld_op', null).order('aangemeld_op').limit(PER_DAG)
   for (const w of nieuw || []) {
     const { data: gezet } = await service.from('wachtlijst').update({ lancering_mail_op: new Date().toISOString() })
@@ -53,7 +54,7 @@ export async function wachtlijstLancering(nu = new Date()) {
         <p>Vandaag gaat Clanoo open. Jij stond op de wachtlijst, dus je hoort het als eerste.</p>
         <p>Je begint met een gratis maand, zonder betaalgegevens.${over > 0 ? ` Neem je een abonnement terwijl er nog oprichtersplekken zijn, dan betaal je ${MERK.oprichters.prijs} voor het eerste jaar in plaats van ${MERK.oprichters.normaal}. Van de ${MERK.oprichters.aantal} plekken zijn er nog ${over} over.` : ''}</p>
         ${knop('Begin gratis', `${BASIS_URL}/registreer?bron=wachtlijst-lancering`)}
-        <p>Wie de groep start, betaalt. Iedereen die je uitnodigt, doet gratis mee.</p>`),
+        <p>Wie de groep start, betaalt. Iedereen die je uitnodigt, doet gratis mee.</p>`, w.afmeld_code),
     })
     if (ok) lancering++
     else await service.from('wachtlijst').update({ lancering_mail_op: null }).eq('id', w.id)
@@ -61,7 +62,7 @@ export async function wachtlijstLancering(nu = new Date()) {
 
   // 2. Drie dagen later een herinnering, alleen als er nog oprichtersplekken zijn en iemand nog geen account heeft
   if (over > 0) {
-    const { data: oud } = await service.from('wachtlijst').select('id, naam, email')
+    const { data: oud } = await service.from('wachtlijst').select('id, naam, email, afmeld_code')
       .lte('lancering_mail_op', new Date(nu.getTime() - 3 * DAG).toISOString())
       .is('lancering_herinnering_op', null).is('afgemeld_op', null).limit(PER_DAG - lancering)
     for (const w of oud || []) {
@@ -78,7 +79,7 @@ export async function wachtlijstLancering(nu = new Date()) {
           <p>Hoi ${voornaam},</p>
           <p>Clanoo is nu een paar dagen open. Van de ${MERK.oprichters.aantal} oprichtersplekken zijn er nog ${over} over.</p>
           <p>Begin met de gratis maand en kijk of het bij jullie past. Betaalgegevens heb je daarvoor niet nodig.</p>
-          ${knop('Begin gratis', `${BASIS_URL}/registreer?bron=wachtlijst-herinnering`)}`),
+          ${knop('Begin gratis', `${BASIS_URL}/registreer?bron=wachtlijst-herinnering`)}`, w.afmeld_code),
       })
       if (ok) herinnering++
       else await service.from('wachtlijst').update({ lancering_herinnering_op: null }).eq('id', w.id)
