@@ -11,10 +11,13 @@ const nextConfig = {
       { source: '/account-verwijderen', headers: vers },
       { source: '/voorwaarden', headers: vers },
       { source: '/veelgestelde-vragen', headers: vers },
+      { source: '/en/faq', headers: vers },
+      { source: '/tr/sss', headers: vers },
       { source: '/en', headers: vers },
       { source: '/tr', headers: vers },
       { source: '/site/:pagina(index.html|privacy.html|voorwaarden.html|account-verwijderen.html|veelgestelde-vragen.html)', headers: vers },
       { source: '/site/:taal(en|tr)/index.html', headers: vers },
+      { source: '/site/:pad(en/faq.html|tr/sss.html)', headers: vers },
     ]
   },
   async rewrites() {
@@ -26,6 +29,8 @@ const nextConfig = {
         { source: '/account-verwijderen', destination: '/site/account-verwijderen.html' },
         { source: '/voorwaarden', destination: '/site/voorwaarden.html' },
         { source: '/veelgestelde-vragen', destination: '/site/veelgestelde-vragen.html' },
+        { source: '/en/faq', destination: '/site/en/faq.html' },
+        { source: '/tr/sss', destination: '/site/tr/sss.html' },
         { source: '/en', destination: '/site/en/index.html' },
         { source: '/tr', destination: '/site/tr/index.html' },
       ],

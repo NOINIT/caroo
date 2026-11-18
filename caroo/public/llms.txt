@@ -34,4 +34,6 @@ Clanoo is een merk van NOINIT, Van der Steenhovenplein 44, 3317 NM Dordrecht (Kv
 - [Ana sayfa (Türkçe)](https://clanoo.nl/tr)
 - [Wachtlijst](https://clanoo.nl/wachtlijst)
 - [Veelgestelde vragen](https://clanoo.nl/veelgestelde-vragen)
+- [FAQ (English)](https://clanoo.nl/en/faq)
+- [SSS (Türkçe)](https://clanoo.nl/tr/sss)
 - [Privacyverklaring](https://clanoo.nl/privacy)

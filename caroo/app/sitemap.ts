@@ -12,6 +12,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: 'https://clanoo.nl/privacy', lastModified: nu, changeFrequency: 'yearly', priority: 0.4 },
     { url: 'https://clanoo.nl/account-verwijderen', lastModified: nu, changeFrequency: 'yearly', priority: 0.3 },
     { url: 'https://clanoo.nl/veelgestelde-vragen', lastModified: nu, changeFrequency: 'monthly', priority: 0.7 },
+    { url: 'https://clanoo.nl/en/faq', lastModified: nu, changeFrequency: 'monthly', priority: 0.6 },
+    { url: 'https://clanoo.nl/tr/sss', lastModified: nu, changeFrequency: 'monthly', priority: 0.6 },
     { url: 'https://clanoo.nl/voorwaarden', lastModified: nu, changeFrequency: 'yearly', priority: 0.3 },
   ]
 }
