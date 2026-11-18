@@ -1,6 +1,6 @@
 # Clanoo
 
-> Clanoo is een familie-app uit Nederland. De hoofdpersoon (bijvoorbeeld opa of oma) krijgt een eigen, eenvoudig scherm op de tablet. De familie gebruikt Clanoo op de telefoon. Clanoo start in januari 2027.
+> Clanoo is een familie-app uit Nederland. De hoofdpersoon (bijvoorbeeld opa of oma) krijgt een eigen, eenvoudig scherm op de tablet. De familie gebruikt Clanoo op de telefoon. Clanoo start in 2027.
 
 Clanoo is een merk van NOINIT, Van der Steenhovenplein 44, 3317 NM Dordrecht (KvK 42106653). Contact: hallo@noinit.nl.
 
@@ -33,4 +33,5 @@ Clanoo is een merk van NOINIT, Van der Steenhovenplein 44, 3317 NM Dordrecht (Kv
 - [Homepage (English)](https://clanoo.nl/en)
 - [Ana sayfa (Türkçe)](https://clanoo.nl/tr)
 - [Wachtlijst](https://clanoo.nl/wachtlijst)
+- [Veelgestelde vragen](https://clanoo.nl/veelgestelde-vragen)
 - [Privacyverklaring](https://clanoo.nl/privacy)
