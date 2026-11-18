@@ -51,7 +51,7 @@ export async function wachtlijstLancering(nu = new Date()) {
       html: opmaak(`
         <p>Hoi ${voornaam},</p>
         <p>Vandaag gaat Clanoo open. Jij stond op de wachtlijst, dus je hoort het als eerste.</p>
-        <p>Je begint met een gratis maand, zonder betaalgegevens. Kies je daarna een abonnement, dan betaal je als een van de eerste ${MERK.oprichters.aantal} families ${MERK.oprichters.prijs} voor het eerste jaar in plaats van ${MERK.oprichters.normaal}.</p>
+        <p>Je begint met een gratis maand, zonder betaalgegevens.${over > 0 ? ` Neem je een abonnement terwijl er nog oprichtersplekken zijn, dan betaal je ${MERK.oprichters.prijs} voor het eerste jaar in plaats van ${MERK.oprichters.normaal}. Van de ${MERK.oprichters.aantal} plekken zijn er nog ${over} over.` : ''}</p>
         ${knop('Begin gratis', `${BASIS_URL}/registreer?bron=wachtlijst-lancering`)}
         <p>Wie de groep start, betaalt. Iedereen die je uitnodigt, doet gratis mee.</p>`),
     })
