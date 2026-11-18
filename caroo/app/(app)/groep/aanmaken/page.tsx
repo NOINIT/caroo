@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { maakGroep } from './actions'
 import { useT } from '@/lib/i18n/client'
+import { MetLinks } from '@/components/ui/MetLinks'
 
 export default function GroepAanmakenPage() {
   const [naam, setNaam] = useState('')
@@ -118,6 +119,10 @@ export default function GroepAanmakenPage() {
           </ul>
           <p className="mt-3 font-bold text-caroo-groen">{t('aanmaken.prijsUitleg')}</p>
         </div>
+
+        <p className="text-sm text-gray-600">
+          <MetLinks tekst={t('algemeen.akkoord')} voorwaarden={t('algemeen.voorwaarden')} privacy={t('algemeen.privacy')} />
+        </p>
 
         <button
           type="submit"
