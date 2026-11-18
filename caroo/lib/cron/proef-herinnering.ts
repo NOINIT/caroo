@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import 'server-only'
 import { createServiceClient } from '@/lib/supabase/server'
 import { maakT } from '@/lib/i18n/vertaal'
 import { isTaal, STANDAARD_TAAL, taalInfo } from '@/lib/i18n/talen'
@@ -8,23 +8,15 @@ import { isGeenEmail } from '@/lib/koppelen'
 import { PRIJS } from '@/lib/prijzen'
 import { proefEinde } from '@/lib/opzeggen'
 
-export const dynamic = 'force-dynamic'
-
 const BASIS_URL = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://clanoo.nl'
 const DAG = 86400000
 
 /**
- * Elke ochtend (Vercel Cron): herinner wie een groep startte dat de gratis maand bijna voorbij is.
+ * Herinner wie een groep startte dat de gratis maand bijna voorbij is.
  * Mail 1 gaat 5 dagen voor het einde, mail 2 op de laatste dag. Elke mail gaat maar één keer:
- * de tijdstempel wordt eerst gezet, daarna pas verstuurd. Daarom kan deze route geen kwaad als
- * iemand anders hem aanroept; met CRON_SECRET in Vercel is hij bovendien afgeschermd.
+ * de tijdstempel wordt eerst gezet, daarna pas verstuurd.
  */
-export async function GET(request: NextRequest) {
-  const geheim = process.env.CRON_SECRET
-  if (geheim && request.headers.get('authorization') !== `Bearer ${geheim}`) {
-    return NextResponse.json({ fout: 'Geen toegang' }, { status: 401 })
-  }
-
+export async function proefHerinneringen() {
   const service = createServiceClient()
   const nu = Date.now()
   // Alleen groepen waarvan de gratis maand de komende 5 dagen afloopt
@@ -71,11 +63,11 @@ export async function GET(request: NextRequest) {
         <p>${escapeHtml(t('proefMail.gratisMee'))}</p>
         <p><a href="${link}" style="display:inline-block;padding:14px 28px;background:#1A7A6E;color:#fff;border-radius:10px;text-decoration:none;font-size:17px;font-weight:bold">${escapeHtml(t('proefMail.knop'))}</a></p>
         <p>${escapeHtml(t('proefMail.niets'))}</p>
-        <p>${escapeHtml(t('herroepen.mailGroet'))}<br>Clanoo · NOINIT</p></div>`,
+        <p>${escapeHtml(t('herroepen.mailGroet'))}<br>Clanoo</p></div>`,
     })
     if (ok) verstuurd++
     else await service.from('zorggroepen').update({ [kolom]: null }).eq('id', g.id) // morgen opnieuw proberen
   }
 
-  return NextResponse.json({ bekeken: groepen?.length || 0, verstuurd })
+  return { bekeken: groepen?.length || 0, verstuurd }
 }

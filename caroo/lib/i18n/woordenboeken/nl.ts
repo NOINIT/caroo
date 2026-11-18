@@ -567,6 +567,12 @@ export const nl = {
     toestemming: 'De persoon voor wie we zorgen weet van Clanoo en vindt het goed dat we hier gegevens over hem of haar delen, ook over gezondheid. Kan die persoon dat zelf niet meer beslissen, dan geeft de wettelijk vertegenwoordiger toestemming.',
   },
 
+  uitnodigMail: {
+    onderwerp: "Wie hoort er nog bij {groep}?",
+    tekst: "{groep} staat klaar. Clanoo werkt het best als de familie meedoet: wie langskomt, wie belt, wie de boodschappen doet. Nodig je broer, zus of kinderen uit.",
+    gratis: "Het kost niets extra. Iedereen die je uitnodigt, doet gratis mee.",
+    knop: "Nodig iemand uit",
+  },
   proefMail: {
     vijfOnderwerp: "Nog vijf dagen gratis Clanoo voor {groep}",
     vijfTekst: "De gratis maand van {groep} loopt tot {datum}. Wil je daarna verder met Clanoo? Kies dan een abonnement.",

@@ -565,6 +565,12 @@ export const en: Woordenboek = {
     toestemming: 'The person we care for knows about Clanoo and agrees that we share information about them here, including about their health. If they can no longer decide this themselves, their legal representative gives permission.',
   },
 
+  uitnodigMail: {
+    onderwerp: "Who else belongs in {groep}?",
+    tekst: "{groep} is ready. Clanoo works best when the family joins in: who visits, who calls, who does the shopping. Invite your brother, sister or children.",
+    gratis: "It costs nothing extra. Everyone you invite joins for free.",
+    knop: "Invite someone",
+  },
   proefMail: {
     vijfOnderwerp: "Five more free days of Clanoo for {groep}",
     vijfTekst: "The free month for {groep} runs until {datum}. Want to keep using Clanoo after that? Choose a subscription.",
