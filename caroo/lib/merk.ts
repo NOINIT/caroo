@@ -5,6 +5,6 @@ export const MERK = {
   moederbedrijf: 'NOINIT',
   plaats: 'Dordrecht',
   contact: 'hallo@noinit.nl',
-  lancering: '1 januari 2027',
+  lancering: '2027',
   oprichters: { aantal: 100, prijs: '€69', normaal: '€125' },
 }

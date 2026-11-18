@@ -49,8 +49,8 @@ export async function meldAanOpWachtlijst(formData: FormData) {
     html: `
       <div style="font-family:Arial,sans-serif;max-width:520px;color:#1A2F5A">
         <h2 style="color:#1A7A6E;margin-bottom:4px">Fijn dat je erbij bent, ${escapeHtml(voornaam)}</h2>
-        <p style="font-size:17px;line-height:1.55">Je staat op de wachtlijst van ${MERK.naam}. Op ${MERK.lancering} gaan we open, en dan hoor je het als eerste.</p>
-        <p style="font-size:17px;line-height:1.55">De eerste ${o.aantal} families worden oprichtersfamilie. Zij betalen ${o.prijs} voor het eerste jaar in plaats van ${o.normaal}. Op ${MERK.lancering} krijg je een mail met een link om je plek te nemen. Aanmelden voor de wachtlijst is vrijblijvend.</p>
+        <p style="font-size:17px;line-height:1.55">Je staat op de wachtlijst van ${MERK.naam}. Zodra we opengaan, hoor je het als eerste.</p>
+        <p style="font-size:17px;line-height:1.55">De eerste ${o.aantal} families worden oprichtersfamilie. Zij betalen ${o.prijs} voor het eerste jaar in plaats van ${o.normaal}. Bij de lancering krijg je een mail met een link om je plek te nemen. Aanmelden voor de wachtlijst is vrijblijvend.</p>
         <p style="font-size:17px;line-height:1.55">Vragen of ideeën? Antwoord gewoon op deze mail, die komt bij mij terecht.</p>
         <p style="font-size:17px;line-height:1.55">Hartelijke groet,<br>Farzana<br><span style="color:#6B7280;font-size:14px">${MERK.naam} is een initiatief van ${MERK.moederbedrijf}, ${MERK.plaats}</span></p>
         <p style="font-size:12px;color:#9CA3AF;margin-top:24px">Je ontvangt deze mail omdat je je aanmeldde voor de wachtlijst. Wil je eraf? Antwoord met "afmelden".</p>

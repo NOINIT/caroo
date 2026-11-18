@@ -41,7 +41,7 @@ export function WachtlijstFormulier({ bron }: { bron: string }) {
           {klaar.alAangemeld
             ? 'We hebben je gegevens bijgewerkt.'
             : 'We hebben je een bevestiging gemaild. Kijk ook even bij ongewenste mail.'}{' '}
-          Op {MERK.lancering} hoor je als eerste van ons.
+          Bij de lancering hoor je als eerste van ons.
         </p>
       </div>
     )
