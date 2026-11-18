@@ -48,7 +48,7 @@ export async function uitnodigFamilie() {
         <p>${escapeHtml(t('uitnodigMail.tekst', { groep: g.naam as string }))}</p>
         <p>${escapeHtml(t('uitnodigMail.gratis'))}</p>
         <p><a href="${BASIS_URL}/groep/${g.id}/uitnodigen" style="display:inline-block;padding:14px 28px;background:#1A7A6E;color:#fff;border-radius:10px;text-decoration:none;font-weight:bold">${escapeHtml(t('uitnodigMail.knop'))}</a></p>
-        <p>${escapeHtml(t('herroepen.mailGroet'))}<br>Clanoo · NOINIT</p></div>`,
+        <p>${escapeHtml(t('herroepen.mailGroet'))}<br>Clanoo</p></div>`,
     })
     if (ok) verstuurd++
   }

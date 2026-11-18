@@ -21,7 +21,7 @@ export async function lanceringOp(): Promise<Date | null> {
 }
 
 const opmaak = (inhoud: string) => `<div style="font-family:Arial,sans-serif;max-width:520px;color:#1A2F5A;font-size:17px;line-height:1.55">${inhoud}
-  <p>Hartelijke groet,<br>Farzana<br><span style="color:#6B7280;font-size:14px">${MERK.naam} is een initiatief van ${MERK.moederbedrijf}, ${MERK.plaats}</span></p>
+  <p>Hartelijke groet,<br>Clanoo<br><span style="color:#6B7280;font-size:14px">${MERK.naam} is een initiatief van ${MERK.moederbedrijf}, ${MERK.plaats}</span></p>
   <p style="font-size:12px;color:#9CA3AF;margin-top:24px">Je ontvangt deze mail omdat je je aanmeldde voor de wachtlijst. Wil je eraf? Antwoord met "afmelden".</p></div>`
 const knop = (tekst: string, url: string) =>
   `<p><a href="${url}" style="display:inline-block;padding:14px 28px;background:#C2570C;color:#fff;border-radius:999px;text-decoration:none;font-weight:bold">${escapeHtml(tekst)}</a></p>`

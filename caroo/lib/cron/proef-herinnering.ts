@@ -63,7 +63,7 @@ export async function proefHerinneringen() {
         <p>${escapeHtml(t('proefMail.gratisMee'))}</p>
         <p><a href="${link}" style="display:inline-block;padding:14px 28px;background:#1A7A6E;color:#fff;border-radius:10px;text-decoration:none;font-size:17px;font-weight:bold">${escapeHtml(t('proefMail.knop'))}</a></p>
         <p>${escapeHtml(t('proefMail.niets'))}</p>
-        <p>${escapeHtml(t('herroepen.mailGroet'))}<br>Clanoo · NOINIT</p></div>`,
+        <p>${escapeHtml(t('herroepen.mailGroet'))}<br>Clanoo</p></div>`,
     })
     if (ok) verstuurd++
     else await service.from('zorggroepen').update({ [kolom]: null }).eq('id', g.id) // morgen opnieuw proberen
