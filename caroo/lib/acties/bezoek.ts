@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { stuurMelding, groepsledenBehalve } from '@/lib/meldingen'
 import { getT } from '@/lib/i18n/server'
 import { wanneerTekst, hoofdletter } from '@/lib/i18n/vertaal'
-import { BEL_GELDIG_UUR } from '@/lib/stemming'
+import { BEL_GELDIG_UUR, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
 
 export async function vraagBezoekAan(groepId: string) {
   const supabase = createClient()
@@ -12,8 +12,19 @@ export async function vraagBezoekAan(groepId: string) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: t('algemeen.nietIngelogd') }
 
+  // Staat er al een open bezoekverzoek? Dan dat laten zien, niet nog een.
+  const geldig = new Date(Date.now() - BEZOEK_GELDIG_UUR * 3600 * 1000).toISOString()
+  const { data: open } = await supabase
+    .from('bezoekverzoeken')
+    .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer')
+    .eq('groep_id', groepId).eq('aangevraagd_door', user.id).eq('soort', 'bezoek')
+    .is('reactie_door', null).is('ingetrokken_op', null).gt('aangemaakt_op', geldig)
+    .limit(1).maybeSingle()
+  if (open) return { verzoek: open }
+
   const { data: profiel } = await supabase.from('users').select('naam').eq('id', user.id).single()
   const naam = profiel?.naam || t('algemeen.deHoofdpersoon')
+  const alGemeld = await vandaagAlGemeld(groepId, user.id, 'bezoek')
 
   // RLS controleert dat je lid bent van deze groep
   const { data, error } = await supabase
@@ -23,6 +34,8 @@ export async function vraagBezoekAan(groepId: string) {
     .single()
 
   if (error || !data) return { error: t('algemeen.lukteNiet') }
+  // Vandaag al eens gevraagd (en ingetrokken)? Het verzoek staat er, maar de familie krijgt niet nog een melding.
+  if (alGemeld) return { verzoek: data }
 
   const familie = await groepsledenBehalve(groepId, user.id)
   await stuurMelding(familie, tt => ({
@@ -48,9 +61,10 @@ export async function vraagBelAan(groepId: string) {
     .from('bezoekverzoeken')
     .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer')
     .eq('groep_id', groepId).eq('aangevraagd_door', user.id).eq('soort', 'bellen')
-    .is('reactie_door', null).gt('aangemaakt_op', sinds)
+    .is('reactie_door', null).is('ingetrokken_op', null).gt('aangemaakt_op', sinds)
     .limit(1).maybeSingle()
   if (open) return { verzoek: open }
+  const alGemeld = await vandaagAlGemeld(groepId, user.id, 'bellen')
 
   const { data: profiel } = await supabase.from('users').select('naam').eq('id', user.id).single()
   const naam = profiel?.naam || t('algemeen.deHoofdpersoon')
@@ -60,6 +74,7 @@ export async function vraagBelAan(groepId: string) {
     .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer')
     .single()
   if (error || !data) return { error: t('algemeen.lukteNiet') }
+  if (alGemeld) return { verzoek: data }
 
   const familie = await groepsledenBehalve(groepId, user.id)
   await stuurMelding(familie, tt => ({
@@ -87,6 +102,7 @@ export async function reageerOpBezoek(verzoekId: string, wanneer: string) {
     .update({ reactie_door: user.id, reactie_naam: naam, reactie_wanneer: schoon, reactie_op: new Date().toISOString() })
     .eq('id', verzoekId)
     .is('reactie_door', null)
+    .is('ingetrokken_op', null)
     .select('groep_id, aangevraagd_door, aangevraagd_naam, soort')
     .maybeSingle()
 
@@ -127,4 +143,26 @@ export async function reageerOpBezoek(verzoekId: string, wanneer: string) {
   }
 
   return { succes: true, naam }
+}
+
+/** Heeft deze persoon de afgelopen 24 uur al zo'n verzoek gedaan (ook als het is ingetrokken)? */
+async function vandaagAlGemeld(groepId: string, userId: string, soort: 'bezoek' | 'bellen') {
+  const { count } = await createClient()
+    .from('bezoekverzoeken')
+    .select('id', { count: 'exact', head: true })
+    .eq('groep_id', groepId).eq('aangevraagd_door', userId).eq('soort', soort)
+    .gt('aangemaakt_op', new Date(Date.now() - 24 * 3600 * 1000).toISOString())
+  return (count || 0) > 0
+}
+
+/** Verzoek intrekken. Het blijft bewaard met een tijdstip, zodat opnieuw vragen niet weer iedereen stoort. */
+export async function trekVerzoekIn(verzoekId: string) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: true }
+  const { error } = await supabase
+    .from('bezoekverzoeken')
+    .update({ ingetrokken_op: new Date().toISOString() })
+    .eq('id', verzoekId).eq('aangevraagd_door', user.id).is('reactie_door', null)
+  return error ? { error: true } : { ok: true }
 }

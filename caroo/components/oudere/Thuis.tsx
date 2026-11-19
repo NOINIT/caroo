@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { STEMMINGEN, stemmingInfo, vandaagNL, BEZOEK_GELDIG_UUR, BEL_GELDIG_UUR } from '@/lib/stemming'
 import { speelGeluid } from '@/lib/geluid'
-import { vraagBezoekAan, vraagBelAan } from '@/lib/acties/bezoek'
+import { vraagBezoekAan, vraagBelAan, trekVerzoekIn } from '@/lib/acties/bezoek'
 import { useT } from '@/lib/i18n/client'
 import { wanneerTekst, hoofdletter, stemmingLabel } from '@/lib/i18n/vertaal'
 
@@ -62,6 +62,7 @@ export function Thuis({
       .eq('groep_id', groepId)
       .eq('aangevraagd_door', userId)
       .eq('soort', 'bezoek')
+      .is('ingetrokken_op', null)
       .gt('aangemaakt_op', sinds)
       .order('aangemaakt_op', { ascending: false })
       .limit(1)
@@ -74,6 +75,7 @@ export function Thuis({
       .eq('groep_id', groepId)
       .eq('aangevraagd_door', userId)
       .eq('soort', 'bellen')
+      .is('ingetrokken_op', null)
       .gt('aangemaakt_op', belSinds)
       .order('aangemaakt_op', { ascending: false })
       .limit(1)
@@ -121,8 +123,7 @@ export function Thuis({
   async function trekBelIn() {
     if (!bel) return
     speelGeluid('tik')
-    const supabase = createClient()
-    await supabase.from('bezoekverzoeken').delete().eq('id', bel.id)
+    await trekVerzoekIn(bel.id)
     setBel(null)
   }
 
@@ -138,8 +139,7 @@ export function Thuis({
   async function trekIn() {
     if (!bezoek) return
     speelGeluid('tik')
-    const supabase = createClient()
-    await supabase.from('bezoekverzoeken').delete().eq('id', bezoek.id)
+    await trekVerzoekIn(bezoek.id)
     setBezoek(null)
   }
 

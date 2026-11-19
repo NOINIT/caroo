@@ -221,7 +221,7 @@ export async function vakerBezoekGevraagd(groepId: string) {
   const week = 7 * 86400000
   const sinds = new Date(Date.now() - 5 * week).toISOString()
   const { data } = await service.from('bezoekverzoeken').select('aangevraagd_naam, aangemaakt_op')
-    .eq('groep_id', groepId).eq('soort', 'bezoek').gt('aangemaakt_op', sinds)
+    .eq('groep_id', groepId).eq('soort', 'bezoek').is('ingetrokken_op', null).gt('aangemaakt_op', sinds)
   const grens = Date.now() - week
   const dezeWeek = (data || []).filter(r => new Date(r.aangemaakt_op).getTime() > grens)
   const eerder = (data || []).length - dezeWeek.length

@@ -60,6 +60,7 @@ export default async function OuderePage({ params, searchParams }: { params: { i
       .eq('groep_id', params.id)
       .eq('aangevraagd_door', user.id)
       .eq('soort', 'bezoek')
+      .is('ingetrokken_op', null)
       .gt('aangemaakt_op', bezoekSinds)
       .order('aangemaakt_op', { ascending: false })
       .limit(1)

@@ -77,6 +77,7 @@ export default async function GroepPage({
       .from('bezoekverzoeken')
       .select('id, aangevraagd_naam, aangemaakt_op, reactie_naam, reactie_wanneer, soort')
       .eq('groep_id', params.id)
+      .is('ingetrokken_op', null)
       .gt('aangemaakt_op', new Date(Date.now() - BEZOEK_GELDIG_UUR * 3600 * 1000).toISOString())
       .order('aangemaakt_op', { ascending: false }),
     supabase.from('users').select('naam').eq('id', user.id).single(),
