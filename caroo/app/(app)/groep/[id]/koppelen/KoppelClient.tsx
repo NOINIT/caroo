@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useT } from '@/lib/i18n/client'
 import { maakCode, meldAf, voegToeEnMaakCode } from './actions'
 
-interface Hoofdpersoon { id: string; naam: string; geenEmail: boolean }
+interface Hoofdpersoon { id: string; naam: string; geenEmail: boolean; zelf?: boolean }
 interface Code { url: string; qr: string; verloopt: string }
 
 export function KoppelClient({ groepId, hoofdpersonen: start, terug }: { groepId: string; hoofdpersonen: Hoofdpersoon[]; terug?: { url: string; naam: string } | null }) {
@@ -104,9 +104,13 @@ export function KoppelClient({ groepId, hoofdpersonen: start, terug }: { groepId
         <div className="space-y-3">
           {hoofdpersonen.map(h => (
             <div key={h.id} className="space-y-2">
+              {h.zelf ? (
+                <p className="caroo-card text-sm text-gray-700">{t('koppelen.zelfInloggen', { naam: h.naam })}</p>
+              ) : (
               <button onClick={() => maak(h)} disabled={bezig} className="btn-primary w-full text-lg py-4">
                 📱 {t('koppelen.knop', { naam: h.naam })}
               </button>
+              )}
               {afgemeld === h.id ? (
                 <p className="text-sm text-caroo-groen" role="status">✓ {t('koppelen.afmeldKlaar', { naam: h.naam })}</p>
               ) : afmelden === h.id ? (

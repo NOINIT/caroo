@@ -40,6 +40,9 @@ export async function verwijderAccount() {
       .eq('groep_id', g.id).eq('user_id', nieuw.user_id)
   }
 
+  // Gezondheidsgegevens van deze persoon zelf gaan mee weg (de smileys staan met naam in de groep)
+  await service.from('stemmingen').delete().eq('user_id', user.id)
+
   const email = user.email
   const { error } = await service.auth.admin.deleteUser(user.id)
   if (error) { console.error('Account verwijderen mislukt', user.id, error); return { error: t('account.mislukt') } }

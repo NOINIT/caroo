@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   const serviceClient = createServiceClient()
   const { data: groep, error: groepError } = await serviceClient
     .from('zorggroepen')
-    .select('id, naam, betaald, eigenaar_id, aangemaakt_op, gestopt_op')
+    .select('id, naam, betaald, eigenaar_id, aangemaakt_op, gestopt_op, stripe_session_id')
     .eq('id', groepId)
     .eq('eigenaar_id', user.id)
     .single()
@@ -48,6 +48,16 @@ export async function POST(request: Request) {
     if (!groep.gestopt_op && groep.aangemaakt_op) {
       const einde = proefEinde(groep.aangemaakt_op).getTime()
       if (einde - Date.now() > 49 * 3600 * 1000) subscriptionData.trial_end = Math.floor(einde / 1000)
+    }
+
+    // Staat er nog een oude betaalpagina open (ander tabblad, terugknop)? Die sluiten we, zodat er niet twee keer betaald kan worden.
+    if (groep.stripe_session_id) {
+      try {
+        const oud = await stripe.checkout.sessions.retrieve(groep.stripe_session_id)
+        if (oud.status === 'open') await stripe.checkout.sessions.expire(oud.id)
+      } catch (e) {
+        console.warn('Oude checkout niet gesloten', e)
+      }
     }
 
     const session = await stripe.checkout.sessions.create({

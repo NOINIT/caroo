@@ -59,6 +59,15 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Update mislukt' }, { status: 500 })
       }
 
+      // Al betaald en dit is een tweede abonnement (twee betaalpagina's tegelijk)? Dan stoppen we het en geven het geld terug.
+      if (!geactiveerd?.length && session.subscription) {
+        const { data: huidig } = await supabase.from('zorggroepen').select('stripe_subscription_id').eq('id', groepId).maybeSingle()
+        if (huidig?.stripe_subscription_id && huidig.stripe_subscription_id !== session.subscription) {
+          await dubbelTerug(stripe, session, groepId)
+          return NextResponse.json({ ontvangen: true })
+        }
+      }
+
       // Bevestiging met de bedenktijd erin, in de taal van wie betaalde (één keer, alleen bij een nieuwe activering)
       const naar = session.customer_details?.email || session.customer_email
       if (geactiveerd?.length && naar) {
@@ -106,4 +115,34 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({ ontvangen: true })
+}
+
+/** Een tweede abonnement voor een groep die al betaalt: stoppen, terugbetalen en ons laten weten. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function dubbelTerug(stripe: any, session: any, groepId: string) {
+  let terug = 'niet nodig (nog niets betaald)'
+  try {
+    const sub = await stripe.subscriptions.retrieve(session.subscription, { expand: ['latest_invoice.payment_intent'] })
+    await stripe.subscriptions.cancel(session.subscription)
+    const pi = sub?.latest_invoice?.payment_intent
+    const piId = typeof pi === 'string' ? pi : pi?.id
+    if (session.payment_status === 'paid') {
+      if (piId) {
+        await stripe.refunds.create({ payment_intent: piId })
+        terug = 'teruggestort'
+      } else {
+        terug = 'NIET automatisch teruggestort, graag handmatig doen in Stripe'
+      }
+    }
+  } catch (e) {
+    console.error('Dubbel abonnement stoppen mislukt', e)
+    terug = 'MISLUKT, graag handmatig stoppen en terugstorten in Stripe'
+  }
+  console.warn(`Dubbel abonnement ${session.subscription} voor groep ${groepId}: ${terug}`)
+  await stuurMail({
+    naar: MERK.contact,
+    onderwerp: 'Clanoo: dubbel abonnement gestopt',
+    html: `<p>Groep ${escapeHtml(groepId)} betaalde al. Een tweede abonnement (${escapeHtml(String(session.subscription))}) is gestopt.</p>
+      <p>Geld: ${escapeHtml(terug)}.</p><p>Klant: ${escapeHtml(session.customer_details?.email || session.customer_email || 'onbekend')}</p>`,
+  }).catch(() => {})
 }

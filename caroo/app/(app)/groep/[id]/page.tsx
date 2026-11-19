@@ -8,6 +8,7 @@ import { uitloggen } from '@/app/auth/actions'
 import AbonnementKnop from './AbonnementKnop'
 import { isApp } from '@/lib/app-server'
 import { ToestemmingKaart } from '@/components/familie/ToestemmingKaart'
+import { ToestemmingIntrekken } from '@/components/familie/ToestemmingIntrekken'
 import { binnenBedenktijd } from '@/lib/herroepen'
 import { FamilieSignalen } from '@/components/familie/FamilieSignalen'
 import { vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
@@ -195,6 +196,7 @@ export default async function GroepPage({
 
       <div className="px-4 py-4 space-y-4">
         {vraagToestemming && <ToestemmingKaart groepId={groep.id} naam={hoofdpersoon?.users?.naam} />}
+        {isBeheerder && !!groep.toestemming_gezondheid_op && <div className="px-1"><ToestemmingIntrekken groepId={groep.id} /></div>}
 
         <FamilieSignalen
           mijnNaam={mijnProfiel?.naam || t('algemeen.iemand')}
@@ -346,7 +348,7 @@ export default async function GroepPage({
             ))}
           </div>
 
-          {(isBeheerder || mijnLidschap?.rol === 'mantelzorger') && (nazorg.toegang === 'actief' || nazorg.toegang === 'proef') && (
+          {isBeheerder && (nazorg.toegang === 'actief' || nazorg.toegang === 'proef') && (
             <Link
               href={`/groep/${params.id}/koppelen`}
               className="mt-3 text-caroo-groen text-sm font-medium flex items-center gap-1 hover:underline"

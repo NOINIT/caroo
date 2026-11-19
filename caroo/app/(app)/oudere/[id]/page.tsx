@@ -32,7 +32,7 @@ export default async function OuderePage({ params, searchParams }: { params: { i
     { count: aantalBoodschappen },
   ] = await Promise.all([
     supabase.from('users').select('naam, lettergrootte, geluid, melding_email').eq('id', user.id).single(),
-    supabase.from('zorggroepen').select('id, naam').eq('id', params.id).single(),
+    supabase.from('zorggroepen').select('id, naam, toestemming_gezondheid_op').eq('id', params.id).single(),
     supabase
       .from('afspraken')
       .select('id, titel, start_tijd, beschrijving, agenda_categorieen (naam, kleur)')
@@ -116,6 +116,7 @@ export default async function OuderePage({ params, searchParams }: { params: { i
       email={user.email || ''}
       naam={profiel?.naam || t('oudere.lieveGebruiker')}
       groepNaam={groep?.naam || ''}
+      toestemming={!!(groep as any)?.toestemming_gezondheid_op}
       dagAfspraken={dagAfspraken || []}
       medicijnen={medicijnen || []}
       fotos={fotosMetUrl}

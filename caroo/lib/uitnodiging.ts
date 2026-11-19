@@ -3,6 +3,10 @@ import type { Rol } from '@/types/database'
 import crypto from 'crypto'
 import { getT } from '@/lib/i18n/server'
 
+/** E-mailadres letterlijk zoeken met ilike: % en _ zijn anders jokertekens */
+const letterlijk = (email: string) => email.trim().replace(/[\\%_]/g, c => '\\' + c)
+const zelfdeAdres = (a?: string | null, b?: string | null) => !!a && !!b && a.trim().toLowerCase() === b.trim().toLowerCase()
+
 export const MAX_UITNODIGINGEN_PER_DAG = 10
 export const UITNODIGING_VERVALT_DAGEN = 7
 
@@ -61,7 +65,7 @@ export async function maakUitnodiging(params: {
     .from('uitnodigingen')
     .update({ verloopt_op: new Date().toISOString() })
     .eq('groep_id', groepId)
-    .ilike('email', email)
+    .ilike('email', letterlijk(email))
     .eq('gebruikt', false)
     .gt('verloopt_op', new Date().toISOString())
 
@@ -158,13 +162,14 @@ type AcceptatieResultaat =
 
 export async function accepteerUitnodiging(
   token: string,
-  userId: string
+  userId: string,
+  userEmail?: string | null
 ): Promise<AcceptatieResultaat> {
   const supabase = createServiceClient()
 
   const { data: uitnodiging } = await supabase
     .from('uitnodigingen')
-    .select('id, groep_id, rol, gebruikt, verloopt_op')
+    .select('id, groep_id, rol, gebruikt, verloopt_op, email')
     .eq('token', token)
     .single()
 
@@ -186,6 +191,11 @@ export async function accepteerUitnodiging(
 
   if (new Date(uitnodiging.verloopt_op) < new Date()) {
     return { error: t('uitnodigingFout.verlopen') }
+  }
+
+  // Een uitnodiging is persoonlijk: alleen met een account op het uitgenodigde adres
+  if (!zelfdeAdres(uitnodiging.email, userEmail)) {
+    return { error: t('uitnodigingFout.anderAdres', { email: maskeer(uitnodiging.email as string) }) }
   }
 
   const uitkomst = await voegToeAanGroep(uitnodiging, userId)
@@ -216,7 +226,7 @@ export async function verwerkOpenUitnodigingen(user: {
 
   const token = user.user_metadata?.uitnodiging_token as string | undefined
   if (token) {
-    const resultaat = await accepteerUitnodiging(token, user.id)
+    const resultaat = await accepteerUitnodiging(token, user.id, user.email)
     if ('groepId' in resultaat && !resultaat.alLid) eersteGroep = resultaat.groepId
 
     // Token opruimen zodat dit maar één keer gebeurt
@@ -229,7 +239,7 @@ export async function verwerkOpenUitnodigingen(user: {
     const { data: open } = await supabase
       .from('uitnodigingen')
       .select('id, groep_id, rol')
-      .ilike('email', user.email)
+      .ilike('email', letterlijk(user.email))
       .eq('gebruikt', false)
       .gt('verloopt_op', new Date().toISOString())
 
@@ -240,4 +250,10 @@ export async function verwerkOpenUitnodigingen(user: {
   }
 
   return eersteGroep
+}
+
+/** j***@gmail.com: genoeg om je eigen adres te herkennen, niet om het van een ander te lezen */
+function maskeer(email: string) {
+  const [naam, domein] = email.split('@')
+  return `${naam.slice(0, 1)}***@${domein || ''}`
 }

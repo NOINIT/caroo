@@ -255,6 +255,7 @@ export const nl = {
   },
 
   uitnodigingFout: {
+    anderAdres: 'Deze uitnodiging is voor {email}. Log in of maak een account met dat adres, of vraag om een nieuwe uitnodiging.',
     maxPerDag: 'Je kunt maximaal {aantal} uitnodigingen per dag versturen.',
     nietAangemaakt: 'Kon uitnodiging niet aanmaken.',
     nietGevonden: 'Uitnodiging niet gevonden.',
@@ -373,6 +374,10 @@ export const nl = {
   },
 
   toestemming: {
+    intrekLink: 'Toestemming voor gezondheidsgegevens intrekken',
+    intrekVraag: 'Dan wissen we de smileys en medicijnen in deze groep. De rest van Clanoo blijft werken. Wil je dat?',
+    intrekJa: 'Ja, trek in',
+    ingetrokken: 'Toestemming ingetrokken. De smileys en medicijnen zijn gewist.',
     familieVink: '{naam} weet van Clanoo en vindt het goed dat de familie bijhoudt welke medicijnen er zijn en hoe het gaat.',
     vertegenwoordiger: 'Kan {naam} dat zelf niet meer beslissen? Dan geeft de wettelijk vertegenwoordiger toestemming.',
     zelfVink: 'Ik vind het goed dat mijn familie in Clanoo ziet welke medicijnen ik heb en hoe het met me gaat.',
@@ -691,7 +696,10 @@ export const nl = {
     linkUitleg: 'Geen camera? Stuur de link naar de tablet. Hij werkt één keer en 15 minuten.',
     bestaat: 'Dit e-mailadres heeft al een account. Nodig deze persoon uit via Leden uitnodigen.',
     mislukt: 'Dat lukte niet. Probeer het nog eens.',
-    geenRechten: 'Alleen de beheerder of een mantelzorger kan een tablet koppelen.',
+    geenRechten: 'Alleen de beheerder kan een tablet koppelen.',
+    zelfInloggen: '{naam} logt zelf in met een eigen account. Een koppelcode is dan niet nodig.',
+    gekoppeldTitel: 'Tablet gekoppeld voor {naam}',
+    gekoppeldTekst: 'Was jij dit niet? Meld de tablet dan af in Clanoo.',
     koppelLink: '📱 Tablet van de hoofdpersoon koppelen',
     welkomTitel: 'Hallo {naam}',
     welkomTekst: 'Deze tablet wordt jouw Clanoo. Tik op de knop om te beginnen.',

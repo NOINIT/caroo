@@ -253,6 +253,7 @@ export const tr: Woordenboek = {
   },
 
   uitnodigingFout: {
+    anderAdres: 'Bu davet {email} adresi için. O adresle giriş yapın veya hesap oluşturun ya da yeni bir davet isteyin.',
     maxPerDag: 'Günde en fazla {aantal} davet gönderebilirsiniz.',
     nietAangemaakt: 'Davet oluşturulamadı.',
     nietGevonden: 'Davet bulunamadı.',
@@ -371,6 +372,10 @@ export const tr: Woordenboek = {
   },
 
   toestemming: {
+    intrekLink: 'Sağlık verileri için onayı geri çek',
+    intrekVraag: 'Bu gruptaki gülen yüzleri ve ilaçları sileriz. Clanoo\'nun geri kalanı çalışmaya devam eder. Bunu istiyor musunuz?',
+    intrekJa: 'Evet, geri çek',
+    ingetrokken: 'Onay geri çekildi. Gülen yüzler ve ilaçlar silindi.',
     familieVink: '{naam} Clanoo\'yu biliyor ve ailenin ilaçları ve durumunu takip etmesine izin veriyor.',
     vertegenwoordiger: '{naam} buna artık kendisi karar veremiyorsa, yasal temsilcisi izin verir.',
     zelfVink: 'Ailemin Clanoo\'da hangi ilaçları kullandığımı ve nasıl olduğumu görmesine izin veriyorum.',
@@ -689,7 +694,10 @@ export const tr: Woordenboek = {
     linkUitleg: 'Kamera yok mu? Bağlantıyı tablete gönderin. Bir kez ve 15 dakika çalışır.',
     bestaat: 'Bu e-posta adresinin zaten bir hesabı var. Bu kişiyi Üye davet et ile davet edin.',
     mislukt: 'Olmadı. Lütfen tekrar deneyin.',
-    geenRechten: 'Tableti yalnızca yönetici veya bir bakıcı bağlayabilir.',
+    geenRechten: 'Tableti yalnızca yönetici bağlayabilir.',
+    zelfInloggen: '{naam} kendi hesabıyla giriş yapıyor. Bağlantı kodu gerekmez.',
+    gekoppeldTitel: '{naam} için tablet bağlandı',
+    gekoppeldTekst: 'Bunu siz yapmadıysanız tableti Clanoo\'da oturumdan çıkarın.',
     koppelLink: '📱 Ana kişinin tabletini bağla',
     welkomTitel: 'Merhaba {naam}',
     welkomTekst: 'Bu tablet sizin Clanoo\'nuz olacak. Başlamak için düğmeye dokunun.',

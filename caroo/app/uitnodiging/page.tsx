@@ -25,7 +25,7 @@ export default async function UitnodigingPage({
 
   // Al ingelogd: direct accepteren en doorsturen
   if (user) {
-    const resultaat = await accepteerUitnodiging(token, user.id)
+    const resultaat = await accepteerUitnodiging(token, user.id, user.email)
     if ('groepId' in resultaat) {
       if (resultaat.alLid) {
         // Deze uitnodiging is voor iemand anders: niet verbruiken, wel uitleggen

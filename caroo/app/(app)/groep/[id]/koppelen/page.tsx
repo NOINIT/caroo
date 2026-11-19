@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
-import { magKoppelen, isGeenEmail } from '@/lib/koppelen'
+import { magKoppelenBeheerder as magKoppelen, isGeenEmail, logtZelfIn } from '@/lib/koppelen'
 import { getT } from '@/lib/i18n/server'
 import { KoppelClient } from './KoppelClient'
 import { bekijkVriendUitnodiging } from '@/lib/acties/vrienden'
@@ -19,11 +19,12 @@ export default async function KoppelenPage({ params, searchParams }: { params: {
   // Kwam je hier via een vrienduitnodiging? Dan een knop terug, met de naam van wie uitnodigde
   const terug = /^\/vriend\/[A-Za-z0-9_-]{20,64}$/.test(searchParams.terug || '') ? searchParams.terug! : null
   const uitnodiging = terug ? await bekijkVriendUitnodiging(terug.slice(8)) : null
-  const hoofdpersonen = (leden || []).map((l: any) => ({
+  const hoofdpersonen = await Promise.all((leden || []).map(async (l: any) => ({
     id: l.user_id as string,
     naam: (l.users?.naam as string) || t('algemeen.deHoofdpersoon'),
     geenEmail: isGeenEmail(l.users?.email),
-  }))
+    zelf: await logtZelfIn(params.id, l.user_id),
+  })))
 
   return (
     <div className="max-w-md mx-auto px-4 py-6">

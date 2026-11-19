@@ -1,7 +1,7 @@
 'use server'
 
 import { createServiceClient } from '@/lib/supabase/server'
-import { magKoppelen, maakKoppelcode, meldTabletAf, voegHoofdpersoonToe } from '@/lib/koppelen'
+import { magKoppelenBeheerder as magKoppelen, maakKoppelcode, meldTabletAf, voegHoofdpersoonToe } from '@/lib/koppelen'
 import { magGebruiken } from '@/lib/opzeggen'
 import { getT } from '@/lib/i18n/server'
 import { legToestemmingVast } from '@/lib/toestemming'

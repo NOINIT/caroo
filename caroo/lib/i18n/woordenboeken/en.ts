@@ -253,6 +253,7 @@ export const en: Woordenboek = {
   },
 
   uitnodigingFout: {
+    anderAdres: 'This invitation is for {email}. Sign in or create an account with that address, or ask for a new invitation.',
     maxPerDag: 'You can send up to {aantal} invitations a day.',
     nietAangemaakt: "Couldn't create the invitation.",
     nietGevonden: 'Invitation not found.',
@@ -371,6 +372,10 @@ export const en: Woordenboek = {
   },
 
   toestemming: {
+    intrekLink: 'Withdraw consent for health data',
+    intrekVraag: 'We will then delete the smileys and medicines in this group. The rest of Clanoo keeps working. Is that what you want?',
+    intrekJa: 'Yes, withdraw',
+    ingetrokken: 'Consent withdrawn. The smileys and medicines have been deleted.',
     familieVink: '{naam} knows about Clanoo and agrees that the family keeps track of medicines and how things are going.',
     vertegenwoordiger: 'If {naam} can no longer decide this, the legal representative gives permission.',
     zelfVink: 'I agree that my family can see in Clanoo which medicines I take and how I am doing.',
@@ -689,7 +694,10 @@ export const en: Woordenboek = {
     linkUitleg: 'No camera? Send the link to the tablet. It works once and for 15 minutes.',
     bestaat: 'This email address already has an account. Invite this person via Invite members.',
     mislukt: 'That didn\'t work. Please try again.',
-    geenRechten: 'Only the admin or a carer can connect a tablet.',
+    geenRechten: 'Only the admin can connect a tablet.',
+    zelfInloggen: '{naam} signs in with their own account. A connection code is not needed.',
+    gekoppeldTitel: 'Tablet connected for {naam}',
+    gekoppeldTekst: 'Wasn\'t this you? Then sign the tablet out in Clanoo.',
     koppelLink: '📱 Connect the main person\'s tablet',
     welkomTitel: 'Hello {naam}',
     welkomTekst: 'This tablet will be your Clanoo. Tap the button to start.',

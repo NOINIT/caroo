@@ -2,6 +2,7 @@ import 'server-only'
 import crypto from 'crypto'
 import QRCode from 'qrcode'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { stuurMelding } from '@/lib/meldingen'
 
 /** Hoe lang een QR-code werkt */
 export const KOPPEL_MINUTEN = 15
@@ -29,6 +30,30 @@ export async function magKoppelen(groepId: string) {
   return user
 }
 
+/**
+ * Mag deze gebruiker een tablet koppelen of afmelden? Alleen een beheerder: met een koppelcode
+ * log je in als de hoofdpersoon, en dat mag niet iedereen in de familie.
+ */
+export async function magKoppelenBeheerder(groepId: string) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
+  const { data } = await createServiceClient()
+    .from('groepsleden').select('rol, beheerder').eq('groep_id', groepId).eq('user_id', user.id).maybeSingle()
+  if (!data || !(data.rol === 'groepsbeheerder' || data.beheerder)) return null
+  return user
+}
+
+/** Logt deze hoofdpersoon zelf in (eigen account, beheert zelf)? Dan geen koppelcode: dat zou inloggen als haar zijn. */
+export async function logtZelfIn(groepId: string, hoofdpersoonId: string) {
+  const service = createServiceClient()
+  const [{ data: lid }, { data: groep }] = await Promise.all([
+    service.from('groepsleden').select('beheerder').eq('groep_id', groepId).eq('user_id', hoofdpersoonId).maybeSingle(),
+    service.from('zorggroepen').select('eigenaar_id').eq('id', groepId).maybeSingle(),
+  ])
+  return !!lid?.beheerder || groep?.eigenaar_id === hoofdpersoonId
+}
+
 /** Maak een eenmalige code voor de tablet van een hoofdpersoon in deze groep */
 export async function maakKoppelcode(groepId: string, hoofdpersoonId: string, doorId: string) {
   const service = createServiceClient()
@@ -39,6 +64,7 @@ export async function maakKoppelcode(groepId: string, hoofdpersoonId: string, do
     .eq('user_id', hoofdpersoonId)
     .maybeSingle()
   if (lid?.rol !== 'oudere') return null
+  if (await logtZelfIn(groepId, hoofdpersoonId)) return null
 
   // Oude, nog niet gebruikte codes voor deze persoon laten vervallen
   await service.from('koppelcodes').delete().eq('user_id', hoofdpersoonId).is('gebruikt_op', null)
@@ -102,6 +128,16 @@ export async function gebruikKoppelcode(code: string): Promise<{ groepId: string
   await supabase.auth.signOut().catch(() => {})
   const { error: fout } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'magiclink' })
   if (fout) return null
+
+  // De beheerders horen dat er een toestel is gekoppeld. Klopt dat niet, dan melden ze het af.
+  const { data: beheerders } = await service.from('groepsleden').select('user_id, rol, beheerder').eq('groep_id', gevonden.groepId)
+  const naar = (beheerders || []).filter(b => (b.rol === 'groepsbeheerder' || b.beheerder) && b.user_id !== gevonden.userId).map(b => b.user_id as string)
+  await stuurMelding(naar, tt => ({
+    titel: tt('koppelen.gekoppeldTitel', { naam: gevonden.naam.split(' ')[0] }),
+    tekst: tt('koppelen.gekoppeldTekst'),
+    url: `/groep/${gevonden.groepId}/koppelen`,
+    tag: `koppel-${gevonden.id}`,
+  })).catch(() => {})
   return { groepId: gevonden.groepId }
 }
 
