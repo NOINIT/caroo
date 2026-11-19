@@ -698,6 +698,10 @@ export const en: Woordenboek = {
     ongeldigTekst: 'A code works once and only for 15 minutes. Ask your family for a new one.',
     beginschermTip: 'Put Clanoo on the home screen. iPad: tap Share, then "Add to Home Screen". Android: tap ⋮, then "Add to Home screen".',
     sluiten: 'Close',
+    afmeldLink: 'Lost {naam}’s tablet? Sign it out',
+    afmeldVraag: '{naam} will be signed out on all tablets and phones. Within an hour Clanoo will be closed there. Then link a tablet again with a new QR code. Nothing is lost.',
+    afmeldJa: 'Yes, sign out',
+    afmeldKlaar: '{naam} has been signed out. Within an hour Clanoo will be closed on the old tablet.',
   },
 
   vrienden: {

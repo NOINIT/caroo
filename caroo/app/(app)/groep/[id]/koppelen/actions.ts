@@ -1,7 +1,7 @@
 'use server'
 
 import { createServiceClient } from '@/lib/supabase/server'
-import { magKoppelen, maakKoppelcode, voegHoofdpersoonToe } from '@/lib/koppelen'
+import { magKoppelen, maakKoppelcode, meldTabletAf, voegHoofdpersoonToe } from '@/lib/koppelen'
 import { magGebruiken } from '@/lib/opzeggen'
 import { getT } from '@/lib/i18n/server'
 import { legToestemmingVast } from '@/lib/toestemming'
@@ -36,4 +36,11 @@ export async function voegToeEnMaakCode(groepId: string, naam: string, email: st
   await legToestemmingVast(groepId, user.id)
   const code = await maakKoppelcode(groepId, r.userId, user.id)
   return code ? { ...code, hoofdpersoon: { id: r.userId, naam: naam.trim() } } : { error: t('koppelen.mislukt') }
+}
+
+export async function meldAf(groepId: string, hoofdpersoonId: string) {
+  const { t } = await getT()
+  const user = await magKoppelen(groepId)
+  if (!user) return { error: t('koppelen.geenRechten') }
+  return (await meldTabletAf(groepId, hoofdpersoonId)) ? { ok: true } : { error: t('koppelen.mislukt') }
 }

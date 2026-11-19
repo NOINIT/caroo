@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useT } from '@/lib/i18n/client'
-import { maakCode, voegToeEnMaakCode } from './actions'
+import { maakCode, meldAf, voegToeEnMaakCode } from './actions'
 
 interface Hoofdpersoon { id: string; naam: string; geenEmail: boolean }
 interface Code { url: string; qr: string; verloopt: string }
@@ -19,6 +19,8 @@ export function KoppelClient({ groepId, hoofdpersonen: start, terug }: { groepId
   const [toestemming, setToestemming] = useState(false)
   const [gekopieerd, setGekopieerd] = useState(false)
   const [nu, setNu] = useState(Date.now())
+  const [afmelden, setAfmelden] = useState<string | null>(null)
+  const [afgemeld, setAfgemeld] = useState<string | null>(null)
 
   useEffect(() => {
     const timer = setInterval(() => setNu(Date.now()), 15000)
@@ -44,6 +46,14 @@ export function KoppelClient({ groepId, hoofdpersonen: start, terug }: { groepId
     setHoofdpersonen(prev => [...prev, nieuw])
     setVoor(nieuw); setCode({ url: r.url, qr: r.qr, verloopt: r.verloopt })
     setNaam(''); setEmail(''); setToestemming(false)
+  }
+
+  async function bevestigAfmelden(h: Hoofdpersoon) {
+    setBezig(true); setFout(null)
+    const r = await meldAf(groepId, h.id)
+    setBezig(false); setAfmelden(null)
+    if ('error' in r) { setFout(r.error ?? null); return }
+    setAfgemeld(h.id)
   }
 
   async function kopieer() {
@@ -93,9 +103,26 @@ export function KoppelClient({ groepId, hoofdpersonen: start, terug }: { groepId
       {hoofdpersonen.length > 0 && (
         <div className="space-y-3">
           {hoofdpersonen.map(h => (
-            <button key={h.id} onClick={() => maak(h)} disabled={bezig} className="btn-primary w-full text-lg py-4">
-              📱 {t('koppelen.knop', { naam: h.naam })}
-            </button>
+            <div key={h.id} className="space-y-2">
+              <button onClick={() => maak(h)} disabled={bezig} className="btn-primary w-full text-lg py-4">
+                📱 {t('koppelen.knop', { naam: h.naam })}
+              </button>
+              {afgemeld === h.id ? (
+                <p className="text-sm text-caroo-groen" role="status">✓ {t('koppelen.afmeldKlaar', { naam: h.naam })}</p>
+              ) : afmelden === h.id ? (
+                <div className="rounded-caroo bg-gray-50 p-3 text-sm text-gray-700 space-y-3">
+                  <p>{t('koppelen.afmeldVraag', { naam: h.naam })}</p>
+                  <div className="flex gap-3">
+                    <button onClick={() => bevestigAfmelden(h)} disabled={bezig} className="btn-secondary text-sm py-2">{t('koppelen.afmeldJa')}</button>
+                    <button onClick={() => setAfmelden(null)} className="text-sm text-gray-600 underline px-2">{t('algemeen.annuleren')}</button>
+                  </div>
+                </div>
+              ) : (
+                <button onClick={() => { setAfmelden(h.id); setAfgemeld(null) }} className="text-sm text-gray-600 underline">
+                  {t('koppelen.afmeldLink', { naam: h.naam })}
+                </button>
+              )}
+            </div>
           ))}
         </div>
       )}
