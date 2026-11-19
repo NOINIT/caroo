@@ -12,10 +12,7 @@ export default function AfmeldPagina({ searchParams }: { searchParams: { c?: str
       <CarooLogo />
       <h1 className="mt-10 text-3xl font-bold">Afmelden voor de wachtlijst</h1>
       {code ? (
-        <>
-          <p className="mt-4 mb-8 text-lg text-gray-700">Wil je geen mails meer van {MERK.naam} over de wachtlijst? Tik dan op de knop.</p>
-          <AfmeldKnop code={code} />
-        </>
+        <AfmeldKnop code={code} vraag={`Geen mails meer van ${MERK.naam} over de wachtlijst? Dan meld je je hier af.`} />
       ) : (
         <p className="mt-4 text-lg text-gray-700">Deze link is niet compleet. Mail ons op hallo@noinit.nl, dan melden we je af.</p>
       )}
