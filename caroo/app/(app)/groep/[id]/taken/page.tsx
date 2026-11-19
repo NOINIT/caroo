@@ -6,7 +6,8 @@ import { TakenClient } from './TakenClient'
 import { getT } from '@/lib/i18n/server'
 import { magGebruiken } from '@/lib/opzeggen'
 
-export default async function TakenPage({ params }: { params: { id: string } }) {
+export default async function TakenPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')

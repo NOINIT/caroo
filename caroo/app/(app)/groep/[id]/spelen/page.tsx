@@ -6,7 +6,11 @@ import { magGebruiken } from '@/lib/opzeggen'
 import { Spellen } from '@/components/oudere/Spellen'
 
 /** Een familielid speelt een spelletje met de hoofdpersoon uit de eigen groep */
-export default async function SpelenPage({ params, searchParams }: { params: { id: string }; searchParams: { met?: string } }) {
+export default async function SpelenPage(
+  props: { params: Promise<{ id: string }>; searchParams: Promise<{ met?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const { data: { user } } = await createClient().auth.getUser()
   if (!user) redirect('/login')
   const { t } = await getT()

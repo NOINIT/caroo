@@ -2,6 +2,8 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 export function createClient() {
+  // Next 15: cookies() is async. De Supabase-client mag de cookies async lezen en zetten,
+  // dus createClient zelf blijft gewoon synchroon.
   const cookieStore = cookies()
 
   return createServerClient(
@@ -9,13 +11,14 @@ export function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll()
+        async getAll() {
+          return (await cookieStore).getAll()
         },
-        setAll(cookiesToSet) {
+        async setAll(cookiesToSet) {
           try {
+            const store = await cookieStore
             cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
+              store.set(name, value, options)
             )
           } catch {
             // Server Component — cookies kunnen niet worden gezet

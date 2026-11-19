@@ -20,10 +20,10 @@ export async function getTaal(): Promise<Taal> {
     }
   } catch {}
 
-  const cookie = cookies().get(TAAL_COOKIE)?.value
+  const cookie = (await cookies()).get(TAAL_COOKIE)?.value
   if (isTaal(cookie)) return cookie
 
-  const browser = headers().get('accept-language') || ''
+  const browser = (await headers()).get('accept-language') || ''
   for (const deel of browser.split(',')) {
     const code = deel.trim().slice(0, 2).toLowerCase()
     if (isTaal(code)) return code

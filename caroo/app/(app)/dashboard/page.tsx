@@ -8,11 +8,12 @@ import { uitloggen } from '@/app/auth/actions'
 import { getT } from '@/lib/i18n/server'
 import { toegangVan } from '@/lib/opzeggen'
 
-export default async function DashboardPage({
-  searchParams
-}: {
-  searchParams: { welkom?: string; groep?: string; uitnodiging?: string }
-}) {
+export default async function DashboardPage(
+  props: {
+    searchParams: Promise<{ welkom?: string; groep?: string; uitnodiging?: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 

@@ -6,7 +6,8 @@ import { getT } from '@/lib/i18n/server'
 
 const LINK = 'text-caroo-groen font-medium underline'
 
-export default async function HulpPage({ params }: { params: { id: string } }) {
+export default async function HulpPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!(await heeftRecht(params.id, ['groepsbeheerder', 'mantelzorger']))) redirect(`/groep/${params.id}`)
   const { t } = await getT()
   const supabase = createClient()

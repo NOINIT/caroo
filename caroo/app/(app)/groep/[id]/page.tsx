@@ -17,14 +17,15 @@ import { samenAfsprakenVanGroep, vakerBezoekGevraagd, vriendVerzoekenVanGroep, s
 import { VriendVerzoeken } from '@/components/familie/VriendVerzoeken'
 import { SamenAfspraken } from '@/components/familie/SamenAfspraken'
 
-export default async function GroepPage({
-  params,
-  searchParams,
-}: {
-  params: { id: string }
-  searchParams: { welkom?: string }
-}) {
-  const inApp = isApp()
+export default async function GroepPage(
+  props: {
+    params: Promise<{ id: string }>
+    searchParams: Promise<{ welkom?: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
+  const inApp = await isApp()
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 

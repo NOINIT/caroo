@@ -7,7 +7,11 @@ import { vriendenVanGroep, vriendVerzoekenVanGroep, MAX_VRIENDEN } from '@/lib/v
 import { magGebruiken } from '@/lib/opzeggen'
 import { VriendenBeheer } from './VriendenBeheer'
 
-export default async function VriendenPage({ params, searchParams }: { params: { id: string }; searchParams: { verzoek?: string } }) {
+export default async function VriendenPage(
+  props: { params: Promise<{ id: string }>; searchParams: Promise<{ verzoek?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const user = await magKoppelen(params.id)
   if (!user) redirect(`/groep/${params.id}`)
   const { t } = await getT()

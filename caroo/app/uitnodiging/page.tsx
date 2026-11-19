@@ -8,11 +8,12 @@ import { TaalKiezer } from '@/components/TaalKiezer'
 import { getT } from '@/lib/i18n/server'
 import type { TFunctie } from '@/lib/i18n/vertaal'
 
-export default async function UitnodigingPage({
-  searchParams,
-}: {
-  searchParams: { token?: string }
-}) {
+export default async function UitnodigingPage(
+  props: {
+    searchParams: Promise<{ token?: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
   const token = searchParams.token
   const { t } = await getT()
 

@@ -6,7 +6,11 @@ import { getT } from '@/lib/i18n/server'
 import { KoppelClient } from './KoppelClient'
 import { bekijkVriendUitnodiging } from '@/lib/acties/vrienden'
 
-export default async function KoppelenPage({ params, searchParams }: { params: { id: string }; searchParams: { terug?: string } }) {
+export default async function KoppelenPage(
+  props: { params: Promise<{ id: string }>; searchParams: Promise<{ terug?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const user = await magKoppelen(params.id)
   if (!user) redirect(`/groep/${params.id}`)
   const { t } = await getT()

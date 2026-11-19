@@ -7,7 +7,8 @@ import { AfmeldKnop } from './AfmeldKnop'
 
 export const metadata: Metadata = { title: `Afmelden · ${MERK.naam}`, robots: { index: false } }
 
-export default function AfmeldPagina({ searchParams }: { searchParams: { c?: string; taal?: string } }) {
+export default async function AfmeldPagina(props: { searchParams: Promise<{ c?: string; taal?: string }> }) {
+  const searchParams = await props.searchParams;
   const code = searchParams.c || ''
   const taal = wlTaal(searchParams.taal)
   const tekst = AFMELD[taal]

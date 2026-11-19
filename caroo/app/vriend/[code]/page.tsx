@@ -9,7 +9,8 @@ export const metadata = { robots: { index: false } }
 
 // De andere familie geeft hier akkoord. Er gebeurt pas iets na een tik op Akkoord,
 // zodat een voorbeeldweergave (bijv. in WhatsApp) de uitnodiging niet opmaakt.
-export default async function VriendUitnodiging({ params }: { params: { code: string } }) {
+export default async function VriendUitnodiging(props: { params: Promise<{ code: string }> }) {
+  const params = await props.params;
   const { t } = await getT()
   const uitnodiging = await bekijkVriendUitnodiging(params.code)
   const { data: { user } } = await createClient().auth.getUser()

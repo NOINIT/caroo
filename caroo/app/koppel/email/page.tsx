@@ -4,7 +4,8 @@ import { leesKoppelEmailToken } from '@/lib/koppelen'
 import { BevestigKnop } from './BevestigKnop'
 
 // Het adres wordt pas gekoppeld na een tik op de knop, zodat een virusscanner de link niet opmaakt.
-export default async function KoppelEmailPagina({ searchParams }: { searchParams: { t?: string } }) {
+export default async function KoppelEmailPagina(props: { searchParams: Promise<{ t?: string }> }) {
+  const searchParams = await props.searchParams;
   const { t } = await getT()
   const token = searchParams.t || ''
   const geldig = leesKoppelEmailToken(token)

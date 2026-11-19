@@ -9,7 +9,8 @@ import { HerroepFormulier } from './HerroepFormulier'
 export const dynamic = 'force-dynamic'
 
 // Herroepingsfunctie (EU-richtlijn 2023/2673): 14 dagen na het afsluiten van een abonnement.
-export default async function HerroepenPagina({ params }: { params: { id: string } }) {
+export default async function HerroepenPagina(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')

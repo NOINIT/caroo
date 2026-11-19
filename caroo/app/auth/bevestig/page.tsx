@@ -2,11 +2,12 @@ import { BevestigKnop } from './BevestigKnop'
 import { CarooLogo } from '@/components/ui/CarooLogo'
 import { getT } from '@/lib/i18n/server'
 
-export default async function BevestigPage({
-  searchParams,
-}: {
-  searchParams: { token_hash?: string; type?: string; next?: string }
-}) {
+export default async function BevestigPage(
+  props: {
+    searchParams: Promise<{ token_hash?: string; type?: string; next?: string }>
+  }
+) {
+  const searchParams = await props.searchParams;
   const { t } = await getT()
   return (
     <div className="min-h-screen bg-gradient-to-br from-caroo-groen-licht to-white flex flex-col">

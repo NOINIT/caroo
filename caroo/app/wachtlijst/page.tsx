@@ -8,12 +8,14 @@ import { WL, wlTaal } from '@/lib/wachtlijst-teksten'
 
 type Zoek = { bron?: string; utm_source?: string; utm_campaign?: string; utm_content?: string; taal?: string }
 
-export function generateMetadata({ searchParams }: { searchParams: Zoek }): Metadata {
+export async function generateMetadata(props: { searchParams: Promise<Zoek> }): Promise<Metadata> {
+  const searchParams = await props.searchParams;
   const w = WL[wlTaal(searchParams.taal)]
   return { title: `${w.titel} · ${MERK.naam}`, description: `${w.omschrijving} ${MERK.tagline}.` }
 }
 
-export default function WachtlijstPagina({ searchParams }: { searchParams: Zoek }) {
+export default async function WachtlijstPagina(props: { searchParams: Promise<Zoek> }) {
+  const searchParams = await props.searchParams;
   const taal = wlTaal(searchParams.taal)
   const w = WL[taal]
   // Waar kwam iemand vandaan? bijvoorbeeld instagram-evenlangs-kopje (uit de utm-kenmerken van de campagne)

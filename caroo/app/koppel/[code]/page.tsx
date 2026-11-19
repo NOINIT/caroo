@@ -5,7 +5,8 @@ import { StartKnop } from './StartKnop'
 
 // De code zelf wordt pas gebruikt als iemand op Start tikt,
 // zodat een voorbeeldweergave (bijv. in WhatsApp) hem niet opmaakt.
-export default async function KoppelPagina({ params }: { params: { code: string } }) {
+export default async function KoppelPagina(props: { params: Promise<{ code: string }> }) {
+  const params = await props.params;
   const { t } = await getT()
   const gevonden = await bekijkKoppelcode(params.code)
   return (

@@ -6,7 +6,11 @@ import { vandaagNL, BEZOEK_GELDIG_UUR } from '@/lib/stemming'
 import { getT } from '@/lib/i18n/server'
 import { vriendenOverzicht, vriendenStatus, familieOmMeeTeSpelen } from '@/lib/vrienden'
 
-export default async function OuderePage({ params, searchParams }: { params: { id: string }; searchParams: { nieuw?: string } }) {
+export default async function OuderePage(
+  props: { params: Promise<{ id: string }>; searchParams: Promise<{ nieuw?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')

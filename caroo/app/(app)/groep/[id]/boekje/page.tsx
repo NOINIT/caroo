@@ -10,7 +10,8 @@ import { BoekjeInhoud } from './BoekjeInhoud'
  * Te bewaren als PDF via de printfunctie van de browser.
  * Blijft na het opzeggen nog 30 dagen bereikbaar.
  */
-export default async function BoekjePage({ params }: { params: { id: string } }) {
+export default async function BoekjePage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')

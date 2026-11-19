@@ -6,7 +6,8 @@ import { AgendaClient } from './AgendaClient'
 import { getT } from '@/lib/i18n/server'
 import { magGebruiken } from '@/lib/opzeggen'
 
-export default async function AgendaPage({ params }: { params: { id: string } }) {
+export default async function AgendaPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
