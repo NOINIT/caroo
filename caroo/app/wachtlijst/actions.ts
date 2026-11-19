@@ -35,13 +35,16 @@ export async function meldAanOpWachtlijst(formData: FormData) {
         naam,
         voor_wie: voorWie,
         wil_updates: wilUpdates || bestaand.wil_updates,
+        taal,
+        // Weer aangemeld na afmelden: dan staat iemand weer op de lijst
+        afgemeld_op: null,
         bijgewerkt_op: new Date().toISOString(),
       })
       .eq('id', bestaand.id)
     return { succes: true, voornaam: naam.split(' ')[0], alAangemeld: true }
   }
 
-  const { data: nieuw, error } = await service.from('wachtlijst').insert({ naam, email, voor_wie: voorWie, bron, wil_updates: wilUpdates }).select('afmeld_code').single()
+  const { data: nieuw, error } = await service.from('wachtlijst').insert({ naam, email, voor_wie: voorWie, bron, wil_updates: wilUpdates, taal }).select('afmeld_code').single()
   if (error || !nieuw) return { error: w.form.foutAlgemeen }
 
   const voornaam = naam.split(' ')[0]

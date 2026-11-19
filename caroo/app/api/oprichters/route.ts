@@ -10,7 +10,7 @@ export const revalidate = 300
 export async function GET() {
   const [over, { count }] = await Promise.all([
     oprichtersplekkenOver(),
-    createServiceClient().from('wachtlijst').select('id', { count: 'exact', head: true }),
+    createServiceClient().from('wachtlijst').select('id', { count: 'exact', head: true }).is('afgemeld_op', null),
   ])
   return NextResponse.json(
     { plekken: PRIJS.oprichterPlekken, over, wachtlijst: (count ?? 0) >= 10 ? count : null },
