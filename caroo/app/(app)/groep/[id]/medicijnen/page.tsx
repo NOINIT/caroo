@@ -16,7 +16,7 @@ export default async function MedicijnenPage({ params }: { params: { id: string 
 
   const { data: groep } = await supabase
     .from('zorggroepen')
-    .select('id, naam, betaald, gestopt_op, aangemaakt_op')
+    .select('id, naam, betaald, gestopt_op, aangemaakt_op, toestemming_gezondheid_op')
     .eq('id', params.id)
     .single()
 
@@ -48,12 +48,21 @@ export default async function MedicijnenPage({ params }: { params: { id: string 
           <h1 className="font-bold text-caroo-donker">{t('groep.tegels.medicijnen')} — {groep.naam}</h1>
         </div>
       </header>
+      {!groep.toestemming_gezondheid_op ? (
+        <div className="p-4">
+          <div className="caroo-card space-y-3">
+            <p className="text-gray-700">{t('medicijnen.eerstToestemming')}</p>
+            <Link href={`/groep/${params.id}`} className="btn-primary inline-block">{t('medicijnen.naarToestemming')}</Link>
+          </div>
+        </div>
+      ) : (
       <MedicijnenClient
         groepId={params.id}
         medicijnen={medicijnen || []}
         registratiesVandaag={registraties || []}
         vandaag={vandaag}
       />
+      )}
     </div>
   )
 }

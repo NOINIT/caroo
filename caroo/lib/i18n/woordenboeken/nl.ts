@@ -470,6 +470,8 @@ export const nl = {
   },
 
   medicijnen: {
+    eerstToestemming: 'Medicijnen zijn gezondheidsgegevens. Daarvoor is eerst toestemming nodig van de hoofdpersoon of de beheerder.',
+    naarToestemming: 'Naar de groep',
     vandaag: '📅 Vandaag: {datum}',
     toevoegen: '＋ Medicijn toevoegen',
     naam: 'Naam medicijn',

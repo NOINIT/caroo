@@ -114,7 +114,7 @@ export async function wachtlijstLancering(nu = new Date()) {
       const { data: gezet } = await service.from('wachtlijst').update({ lancering_herinnering_op: new Date().toISOString() })
         .eq('id', w.id).is('lancering_herinnering_op', null).select('id')
       if (!gezet?.length) continue
-      const { count } = await service.from('users').select('id', { count: 'exact', head: true }).ilike('email', w.email)
+      const { count } = await service.from('users').select('id', { count: 'exact', head: true }).eq('email', String(w.email).toLowerCase())
       if (count) continue // al begonnen
       const voornaam = escapeHtml((w.naam || '').split(' ')[0])
       const taal = taalVan(w.taal)

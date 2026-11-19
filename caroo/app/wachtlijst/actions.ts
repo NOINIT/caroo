@@ -25,7 +25,7 @@ export async function meldAanOpWachtlijst(formData: FormData) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return { error: w.form.foutEmail }
 
   const service = createServiceClient()
-  const { data: bestaand } = await service.from('wachtlijst').select('id, wil_updates').ilike('email', email).maybeSingle()
+  const { data: bestaand } = await service.from('wachtlijst').select('id, wil_updates').eq('email', email).maybeSingle()
 
   if (bestaand) {
     // Al aangemeld: gegevens bijwerken, geen tweede mail
@@ -49,6 +49,14 @@ export async function meldAanOpWachtlijst(formData: FormData) {
 
   const voornaam = naam.split(' ')[0]
   const o = MERK.oprichters
+  // Rem tegen misbruik: komen er in tien minuten ineens heel veel aanmeldingen binnen (een script dat
+  // andermans adressen invult), dan sturen we geen bevestigingsmails meer tot het rustig is.
+  const { count: recent } = await service.from('wachtlijst').select('id', { count: 'exact', head: true })
+    .gt('aangemeld_op', new Date(Date.now() - 10 * 60000).toISOString())
+  if ((recent ?? 0) > 30) {
+    console.warn('Wachtlijst: veel aanmeldingen in korte tijd, geen bevestigingsmail', recent)
+    return { succes: true, voornaam }
+  }
   await stuurMail({
     naar: email,
     onderwerp: w.mail.onderwerp,

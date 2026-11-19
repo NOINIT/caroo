@@ -472,6 +472,8 @@ export const ar: Woordenboek = {
   },
 
   medicijnen: {
+    eerstToestemming: 'الأدوية بيانات صحية. يلزم أولًا موافقة الشخص الرئيسي أو المسؤول.',
+    naarToestemming: 'إلى المجموعة',
     vandaag: '📅 اليوم: {datum}',
     toevoegen: '＋ إضافة دواء',
     naam: 'اسم الدواء',

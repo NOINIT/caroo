@@ -95,6 +95,7 @@ export function OudereInterface({
             aantalBoodschappen={aantalBoodschappen}
             nieuwsteFoto={fotos[0] ? { url: fotos[0].url, beschrijving: fotos[0].onderschrift, door: fotos[0].door } : null}
             gaNaar={tab => setActieveTab(tab)}
+            toestemming={!!toestemming}
           />
         )}
         {actieveTab === 'mijn_dag' && (

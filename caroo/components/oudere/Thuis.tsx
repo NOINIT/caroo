@@ -27,11 +27,13 @@ interface Props {
   aantalBoodschappen: number
   nieuwsteFoto: { url: string; beschrijving: string | null; door: string | null } | null
   gaNaar: (tab: 'boodschappen' | 'fotos' | 'mijn_dag') => void
+  /** Toestemming voor gezondheidsgegevens: zonder die geen smileys */
+  toestemming?: boolean
 }
 
 export function Thuis({
   groepId, userId, naam, dagAfspraken, medicijnen,
-  stemmingVandaag, bezoek: startBezoek, aantalBoodschappen, nieuwsteFoto, gaNaar,
+  stemmingVandaag, bezoek: startBezoek, aantalBoodschappen, nieuwsteFoto, gaNaar, toestemming = true,
 }: Props) {
   const [stemming, setStemming] = useState<number | null>(stemmingVandaag)
   const [kiest, setKiest] = useState(stemmingVandaag === null)
@@ -151,7 +153,8 @@ export function Thuis({
 
       {/* Op een liggende tablet: stemming en bezoek naast elkaar */}
       <div className="space-y-5 md:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-6">
-      {/* Stemming van vandaag */}
+      {/* Stemming van vandaag (alleen met toestemming voor gezondheidsgegevens) */}
+      {toestemming && (
       <section className="rounded-caroo-lg bg-caroo-groen-licht border-2 border-caroo-groen p-5 md:p-6 md:flex md:flex-col md:justify-center">
         {kiest || !gekozen ? (
           <>
@@ -188,6 +191,7 @@ export function Thuis({
           </div>
         )}
       </section>
+      )}
 
 
       {/* Ik wil bezoek */}

@@ -3,6 +3,7 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { getT } from '@/lib/i18n/server'
+import { veiligPad } from '@/lib/inlog-afronden'
 
 export async function registreer(formData: FormData) {
   const supabase = createClient()
@@ -21,7 +22,7 @@ export async function registreer(formData: FormData) {
     return { error: t('auth.wachtwoordKort') }
   }
 
-  const next = redirectNaar || '/dashboard'
+  const next = veiligPad(redirectNaar)
   const tokenMatch = next.match(/[?&]token=([a-f0-9]+)/)
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
@@ -76,13 +77,14 @@ export async function inloggen(formData: FormData) {
     return { error: error.message }
   }
 
-  redirect(redirectNaar || '/dashboard')
+  // Alleen paden binnen Clanoo: een link als ?redirectNaar=https://nep-site.nl mag niet na het inloggen doorsturen
+  redirect(veiligPad(redirectNaar))
 }
 
 export async function stuurBevestigingOpnieuw(email: string, redirectNaar?: string | null) {
   const supabase = createClient()
   const { t } = await getT()
-  const next = redirectNaar || '/dashboard'
+  const next = veiligPad(redirectNaar)
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
   if (!email) return { error: t('auth.vulEerstEmail') }

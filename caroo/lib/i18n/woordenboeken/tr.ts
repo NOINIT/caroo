@@ -468,6 +468,8 @@ export const tr: Woordenboek = {
   },
 
   medicijnen: {
+    eerstToestemming: 'İlaçlar sağlık verisidir. Önce ana kişinin veya yöneticinin onayı gerekir.',
+    naarToestemming: 'Gruba git',
     vandaag: '📅 Bugün: {datum}',
     toevoegen: '＋ İlaç ekle',
     naam: 'İlaç adı',

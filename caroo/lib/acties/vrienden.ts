@@ -11,6 +11,7 @@ import type { TFunctie } from '@/lib/i18n/vertaal'
 import {
   MAX_VRIENDEN, VRIEND_UITNODIGING_DAGEN, aantalVrienden, ander, groepVan, hashCode, isHoofdpersoonIn,
   isVervoer, nieuweCode, persoonVan, vervoerVan, vriendschapVan, type Kant, type Vervoer, type Vriendschap,
+  veiligId,
 } from '@/lib/vrienden'
 
 const BASIS = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://clanoo.nl'
@@ -126,7 +127,7 @@ export async function bekijkVriendUitnodiging(code: string) {
 async function controleerKoppeling(a: string, b: string) {
   const service = createServiceClient()
   const { count: al } = await service.from('vriendschappen').select('id', { count: 'exact', head: true }).in('status', ['bevestigen', 'actief'])
-    .or(`and(persoon_a.eq.${a},persoon_b.eq.${b}),and(persoon_a.eq.${b},persoon_b.eq.${a})`)
+    .or(`and(persoon_a.eq.${veiligId(a)},persoon_b.eq.${veiligId(b)}),and(persoon_a.eq.${veiligId(b)},persoon_b.eq.${veiligId(a)})`)
   if (al) return 'vrienden.familie.foutAl' as const
   // A telt zijn eigen open uitnodiging al mee
   if ((await aantalVrienden(a)) > MAX_VRIENDEN || (await aantalVrienden(b)) >= MAX_VRIENDEN) return 'vrienden.familie.foutMax' as const

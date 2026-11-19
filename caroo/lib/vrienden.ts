@@ -13,6 +13,10 @@ export type Kant = 'a' | 'b'
 export const VERVOER: Vervoer[] = ['zelf', 'nodig', 'verschilt']
 export const isVervoer = (v: unknown): v is Vervoer => typeof v === 'string' && (VERVOER as string[]).includes(v)
 
+/** Alleen een echte uuid gaat een .or()-filter in; al het andere wordt een id dat nergens bij hoort */
+export const veiligId = (id: string) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id || '') ? id : '00000000-0000-0000-0000-000000000000'
+
 export const hashCode = (code: string) => crypto.createHash('sha256').update(code).digest('hex')
 export const nieuweCode = () => crypto.randomBytes(24).toString('base64url')
 
@@ -56,7 +60,7 @@ export async function aantalVrienden(persoonId: string) {
   const nu = new Date().toISOString()
   const [{ count: actief }, { count: open }] = await Promise.all([
     service.from('vriendschappen').select('id', { count: 'exact', head: true })
-      .in('status', ['actief', 'bevestigen']).or(`persoon_a.eq.${persoonId},persoon_b.eq.${persoonId}`),
+      .in('status', ['actief', 'bevestigen']).or(`persoon_a.eq.${veiligId(persoonId)},persoon_b.eq.${veiligId(persoonId)}`),
     service.from('vriendschappen').select('id', { count: 'exact', head: true })
       .eq('status', 'uitgenodigd').eq('persoon_a', persoonId).gt('verloopt_op', nu),
   ])
@@ -81,7 +85,7 @@ async function namen(ids: string[]) {
 export async function vriendenOverzicht(userId: string) {
   const service = createServiceClient()
   const { data } = await service.from('vriendschappen').select(VELDEN)
-    .eq('status', 'actief').or(`persoon_a.eq.${userId},persoon_b.eq.${userId}`)
+    .eq('status', 'actief').or(`persoon_a.eq.${veiligId(userId)},persoon_b.eq.${veiligId(userId)}`)
     .order('actief_sinds', { ascending: true })
   const lijst = (data || []) as Vriendschap[]
   if (!lijst.length) return []
@@ -114,7 +118,7 @@ export async function vriendenStatus(userId: string, groepId: string) {
   const sinds = new Date(Date.now() - 30 * 86400000).toISOString()
   const [{ data: lopend }, { data: verzoeken }, { data: lid }] = await Promise.all([
     service.from('vriendschappen').select('id, persoon_a, persoon_b, ja_a, ja_b')
-      .eq('status', 'bevestigen').or(`persoon_a.eq.${userId},persoon_b.eq.${userId}`),
+      .eq('status', 'bevestigen').or(`persoon_a.eq.${veiligId(userId)},persoon_b.eq.${veiligId(userId)}`),
     service.from('vriend_verzoeken').select('id, vriend_naam, regelt_naam')
       .eq('hoofdpersoon', userId).gt('aangemaakt_op', sinds).order('aangemaakt_op', { ascending: true }),
     service.from('groepsleden').select('vrienden_zelf, beheerder').eq('groep_id', groepId).eq('user_id', userId).maybeSingle(),
@@ -155,7 +159,7 @@ export async function vriendenVanGroep(groepId: string) {
   const service = createServiceClient()
   const nu = new Date().toISOString()
   const [{ data: actief }, { data: open }, { data: zelf }] = await Promise.all([
-    service.from('vriendschappen').select(VELDEN).in('status', ['actief', 'bevestigen']).or(`groep_a.eq.${groepId},groep_b.eq.${groepId}`),
+    service.from('vriendschappen').select(VELDEN).in('status', ['actief', 'bevestigen']).or(`groep_a.eq.${veiligId(groepId)},groep_b.eq.${veiligId(groepId)}`),
     service.from('vriendschappen').select(VELDEN + ', aangemaakt_op').eq('status', 'uitgenodigd').eq('groep_a', groepId).gt('verloopt_op', nu),
     service.from('groepsleden').select('user_id').eq('groep_id', groepId).eq('rol', 'oudere').eq('vrienden_zelf', true),
   ])
@@ -184,7 +188,7 @@ export async function vriendenVanGroep(groepId: string) {
 export async function samenAfsprakenVanGroep(groepId: string) {
   const service = createServiceClient()
   const { data: vs } = await service.from('vriendschappen').select(VELDEN)
-    .eq('status', 'actief').or(`groep_a.eq.${groepId},groep_b.eq.${groepId}`)
+    .eq('status', 'actief').or(`groep_a.eq.${veiligId(groepId)},groep_b.eq.${veiligId(groepId)}`)
   const lijst = (vs || []) as Vriendschap[]
   if (!lijst.length) return []
   const { data: afspraken } = await service.from('vriend_afspraken')

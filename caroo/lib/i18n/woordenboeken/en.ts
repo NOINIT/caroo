@@ -468,6 +468,8 @@ export const en: Woordenboek = {
   },
 
   medicijnen: {
+    eerstToestemming: 'Medicines are health data. Consent from the main person or the admin is needed first.',
+    naarToestemming: 'Go to the group',
     vandaag: '📅 Today: {datum}',
     toevoegen: '＋ Add medicine',
     naam: 'Medicine name',
