@@ -700,6 +700,10 @@ export const nl = {
     ongeldigTekst: 'Een code werkt één keer en maar 15 minuten. Vraag je familie om een nieuwe.',
     beginschermTip: 'Zet Clanoo op het beginscherm. iPad: tik op Delen en dan op "Zet op beginscherm". Android: tik op ⋮ en dan op "Toevoegen aan startscherm".',
     sluiten: 'Sluiten',
+    afmeldLink: 'Tablet van {naam} kwijt? Meld hem af',
+    afmeldVraag: '{naam} wordt afgemeld op alle tablets en telefoons. Binnen een uur is Clanoo daar dicht. Daarna koppel je een tablet opnieuw met een nieuwe QR-code. Er gaat niets verloren.',
+    afmeldJa: 'Ja, meld af',
+    afmeldKlaar: '{naam} is afgemeld. Binnen een uur is Clanoo dicht op de oude tablet.',
   },
 
   vrienden: {

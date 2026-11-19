@@ -137,3 +137,19 @@ export async function voegHoofdpersoonToe(groepId: string, naam: string, email: 
   if (lidFout) return { error: 'mislukt' as const }
   return { userId }
 }
+
+/** Meld de tablet (en elk ander toestel) van een hoofdpersoon in deze groep af. Binnen een uur is het toestel uitgelogd. */
+export async function meldTabletAf(groepId: string, hoofdpersoonId: string) {
+  const service = createServiceClient()
+  const { data: lid } = await service
+    .from('groepsleden')
+    .select('rol')
+    .eq('groep_id', groepId)
+    .eq('user_id', hoofdpersoonId)
+    .maybeSingle()
+  if (lid?.rol !== 'oudere') return false
+  await service.from('koppelcodes').delete().eq('user_id', hoofdpersoonId).is('gebruikt_op', null)
+  const { error } = await service.rpc('meld_tablet_af', { p_user: hoofdpersoonId })
+  if (error) { console.error('Tablet afmelden mislukt', error); return false }
+  return true
+}

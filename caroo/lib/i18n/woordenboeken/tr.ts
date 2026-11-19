@@ -698,6 +698,10 @@ export const tr: Woordenboek = {
     ongeldigTekst: 'Bir kod yalnızca bir kez ve 15 dakika çalışır. Ailenizden yeni bir kod isteyin.',
     beginschermTip: 'Clanoo\'yu ana ekrana ekleyin. iPad: Paylaş\'a, sonra "Ana Ekrana Ekle"ye dokunun. Android: ⋮ simgesine, sonra "Ana ekrana ekle"ye dokunun.',
     sluiten: 'Kapat',
+    afmeldLink: '{naam} adlı kişinin tableti mi kayboldu? Oturumu kapat',
+    afmeldVraag: '{naam} tüm tablet ve telefonlarda oturumdan çıkarılacak. Bir saat içinde Clanoo orada kapanır. Sonra yeni bir QR koduyla tableti tekrar bağlarsın. Hiçbir şey kaybolmaz.',
+    afmeldJa: 'Evet, oturumu kapat',
+    afmeldKlaar: '{naam} oturumdan çıkarıldı. Bir saat içinde eski tablette Clanoo kapanır.',
   },
 
   vrienden: {
