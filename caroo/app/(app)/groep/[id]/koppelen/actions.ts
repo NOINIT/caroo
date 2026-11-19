@@ -31,7 +31,8 @@ export async function voegToeEnMaakCode(groepId: string, naam: string, email: st
   const schoon = email.trim()
   if (schoon && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(schoon)) return { error: t('koppelen.mislukt') }
 
-  const r = await voegHoofdpersoonToe(groepId, naam, schoon || null, taal)
+  const { data: ik } = await createServiceClient().from('users').select('naam').eq('id', user.id).maybeSingle()
+  const r = await voegHoofdpersoonToe(groepId, naam, schoon || null, taal, (ik?.naam || '').split(' ')[0])
   if ('error' in r) return { error: r.error === 'bestaat' ? t('koppelen.bestaat') : t('koppelen.mislukt') }
   await legToestemmingVast(groepId, user.id)
   const code = await maakKoppelcode(groepId, r.userId, user.id)

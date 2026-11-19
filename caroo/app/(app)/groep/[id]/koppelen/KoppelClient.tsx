@@ -42,7 +42,7 @@ export function KoppelClient({ groepId, hoofdpersonen: start, terug }: { groepId
     const r = await voegToeEnMaakCode(groepId, naam, email, toestemming)
     setBezig(false)
     if ('error' in r) { setFout(r.error ?? null); return }
-    const nieuw = { id: r.hoofdpersoon.id, naam: r.hoofdpersoon.naam, geenEmail: !email.trim() }
+    const nieuw = { id: r.hoofdpersoon.id, naam: r.hoofdpersoon.naam, geenEmail: true }
     setHoofdpersonen(prev => [...prev, nieuw])
     setVoor(nieuw); setCode({ url: r.url, qr: r.qr, verloopt: r.verloopt })
     setNaam(''); setEmail(''); setToestemming(false)

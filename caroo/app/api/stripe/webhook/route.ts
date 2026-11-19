@@ -91,6 +91,29 @@ export async function POST(request: Request) {
     }
   }
 
+  // Betaling bij verlenging mislukt en Stripe geeft het op ('unpaid'): dan gaat de groep dicht, net als bij opzeggen.
+  // 'past_due' laten we open: Stripe probeert het dan nog een paar keer.
+  if (event.type === 'customer.subscription.updated') {
+    const subscription = event.data.object
+    if (['unpaid', 'incomplete_expired'].includes(subscription.status)) {
+      const { error } = await supabase
+        .from('zorggroepen')
+        .update({ betaald: false, gestopt_op: new Date().toISOString() })
+        .eq('stripe_subscription_id', subscription.id)
+        .eq('betaald', true)
+      if (error) console.error('Groep dichtzetten na mislukte betaling mislukt:', error)
+      else console.log(`⚠️ Abonnement ${subscription.id} onbetaald — groep gesloten`)
+    } else if (subscription.status === 'active') {
+      // Toch nog betaald na 'unpaid': weer open
+      await supabase
+        .from('zorggroepen')
+        .update({ betaald: true, gestopt_op: null })
+        .eq('stripe_subscription_id', subscription.id)
+        .eq('betaald', false)
+        .is('herroepen_op', null)
+    }
+  }
+
   // Verwerk opzegging abonnement
   if (event.type === 'customer.subscription.deleted') {
     const subscription = event.data.object

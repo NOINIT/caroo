@@ -18,9 +18,14 @@ export async function maakGroep(naam: string, voorMezelf: boolean, toestemming =
   if (voorMezelf && !toestemming) return { error: t('toestemming.nodig') }
 
   const service = createServiceClient()
+  // Eén gratis maand per account: heeft deze persoon al een groep, dan loopt de proef vanaf die eerste groep
+  const { data: eerste } = await service.from('zorggroepen')
+    .select('aangemaakt_op').eq('eigenaar_id', user.id)
+    .order('aangemaakt_op', { ascending: true }).limit(1).maybeSingle()
   const { data: groep, error } = await service.from('zorggroepen')
     .insert({
       naam: schoon, eigenaar_id: user.id,
+      ...(eerste?.aangemaakt_op ? { aangemaakt_op: eerste.aangemaakt_op } : {}),
       ...(voorMezelf && toestemming ? { toestemming_gezondheid_op: new Date().toISOString(), toestemming_gezondheid_door: user.id } : {}),
     }).select('id').single()
   if (error || !groep) return { error: t('aanmaken.mislukt') }

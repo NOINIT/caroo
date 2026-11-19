@@ -145,16 +145,19 @@ export async function gebruikKoppelcode(code: string): Promise<{ groepId: string
  * Voeg een hoofdpersoon direct toe aan de groep, zonder uitnodiging per mail.
  * Zonder e-mailadres krijgt de hoofdpersoon een intern adres; inloggen gaat dan alleen via de QR-code.
  */
-export async function voegHoofdpersoonToe(groepId: string, naam: string, email: string | null, taal: string) {
+export async function voegHoofdpersoonToe(groepId: string, naam: string, email: string | null, taal: string, doorNaam = '') {
   const service = createServiceClient()
   const schoneNaam = naam.trim().slice(0, 60)
-  const adres = email
-    ? email.trim().toLowerCase()
-    : `hoofdpersoon-${crypto.randomBytes(8).toString('hex')}@${GEEN_EMAIL_DOMEIN}`
+  const echt = email ? email.trim().toLowerCase() : null
+  // Het account krijgt altijd eerst een intern adres. Een echt adres komt er pas bij
+  // als de eigenaar van dat adres het zelf bevestigt (zie koppelEmailLink).
+  const adres = `hoofdpersoon-${crypto.randomBytes(8).toString('hex')}@${GEEN_EMAIL_DOMEIN}`
 
   // Bestaat dit adres al, dan niet zomaar iemand aan een groep toevoegen: dan via een uitnodiging
-  const { data: bestaand } = await service.from('users').select('id').ilike('email', adres).maybeSingle()
-  if (bestaand) return { error: 'bestaat' as const }
+  if (echt) {
+    const { data: bestaand } = await service.from('users').select('id').eq('email', echt).maybeSingle()
+    if (bestaand) return { error: 'bestaat' as const }
+  }
 
   const { data: aangemaakt, error } = await service.auth.admin.createUser({
     email: adres,
@@ -171,7 +174,64 @@ export async function voegHoofdpersoonToe(groepId: string, naam: string, email: 
   }
   const { error: lidFout } = await service.from('groepsleden').insert({ groep_id: groepId, user_id: userId, rol: 'oudere' })
   if (lidFout) return { error: 'mislukt' as const }
+  if (echt) await stuurEmailBevestiging(userId, echt, schoneNaam, doorNaam, taal).catch(() => {})
   return { userId }
+}
+
+// ---- Eigen e-mailadres bevestigen (hoofdpersoon) ----
+const EMAIL_GELDIG_DAGEN = 14
+const b64 = (s: string) => Buffer.from(s).toString('base64url')
+const handtekening = (data: string) =>
+  crypto.createHmac('sha256', process.env.SUPABASE_SERVICE_ROLE_KEY!).update('koppel-email:' + data).digest('base64url')
+
+export function koppelEmailToken(userId: string, email: string) {
+  const data = `${userId}.${b64(email)}.${Date.now() + EMAIL_GELDIG_DAGEN * 86400000}`
+  return `${data}.${handtekening(data)}`
+}
+
+export function leesKoppelEmailToken(token: string): { userId: string; email: string } | null {
+  const delen = (token || '').split('.')
+  if (delen.length !== 4) return null
+  const [userId, mail, tot, sig] = delen
+  const data = `${userId}.${mail}.${tot}`
+  const goed = handtekening(data)
+  if (sig.length !== goed.length || !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(goed))) return null
+  if (Number(tot) < Date.now()) return null
+  return { userId, email: Buffer.from(mail, 'base64url').toString() }
+}
+
+async function stuurEmailBevestiging(userId: string, email: string, naam: string, door: string, taal: string) {
+  const { maakT } = await import('@/lib/i18n/vertaal')
+  const { stuurMail, escapeHtml } = await import('@/lib/mail')
+  const t = maakT((taal as any) || 'nl')
+  const link = `${process.env.NEXT_PUBLIC_APP_URL}/koppel/email?t=${koppelEmailToken(userId, email)}`
+  await stuurMail({
+    naar: email,
+    onderwerp: t('koppelEmail.onderwerp'),
+    html: `<div style="font-family:Arial,sans-serif;font-size:17px;line-height:1.55;color:#1A2F5A;max-width:560px">
+      <p>${escapeHtml(t('koppelEmail.hallo', { naam: naam.split(' ')[0] }))}</p>
+      <p>${escapeHtml(door ? t('koppelEmail.tekst', { door }) : t('koppelEmail.tekstZonder'))}</p>
+      <p><a href="${link}" style="display:inline-block;background:#1A7A6E;color:#fff;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:bold">${escapeHtml(t('koppelEmail.knop'))}</a></p>
+      <p style="color:#5B6780;font-size:15px">${escapeHtml(t('koppelEmail.nietJij'))}</p>
+      <p>Clanoo</p></div>`,
+  })
+}
+
+/** De eigenaar van het adres bevestigt: vanaf nu kan de hoofdpersoon ook met dit adres inloggen. */
+export async function bevestigKoppelEmail(token: string) {
+  const gelezen = leesKoppelEmailToken(token)
+  if (!gelezen) return { error: 'verlopen' as const }
+  const service = createServiceClient()
+  const { data: wie } = await service.from('users').select('email').eq('id', gelezen.userId).maybeSingle()
+  if (!wie) return { error: 'verlopen' as const }
+  if (wie.email === gelezen.email) return { ok: true, email: gelezen.email }
+  if (!isGeenEmail(wie.email)) return { error: 'verlopen' as const }
+  const { data: bezet } = await service.from('users').select('id').eq('email', gelezen.email).maybeSingle()
+  if (bezet) return { error: 'bezet' as const }
+  const { error } = await service.auth.admin.updateUserById(gelezen.userId, { email: gelezen.email, email_confirm: true })
+  if (error) return { error: /already|registered|exists/i.test(error.message) ? 'bezet' as const : 'mislukt' as const }
+  await service.from('users').update({ email: gelezen.email }).eq('id', gelezen.userId)
+  return { ok: true, email: gelezen.email }
 }
 
 /** Meld de tablet (en elk ander toestel) van een hoofdpersoon in deze groep af. Binnen een uur is het toestel uitgelogd. */
