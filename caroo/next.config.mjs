@@ -8,12 +8,33 @@ const nextConfig = {
   // De websitepagina's altijd vers ophalen, zodat een prijswijziging meteen zichtbaar is
   async headers() {
     const vers = [{ key: 'Cache-Control', value: 'no-cache, must-revalidate' }]
+    // Content Security Policy: scripts, beelden en verbindingen alleen van Clanoo zelf en van onze Supabase.
+    // Lukt een aanvaller het ooit om een script in een pagina te krijgen, dan kan dat geen gegevens naar een andere site sturen.
+    const supa = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://edqplzxjnjoriyspezbm.supabase.co'
+    const supaWs = supa.replace(/^https:/, 'wss:')
+    const dev = process.env.NODE_ENV !== 'production'
+    const csp = [
+      "default-src 'self'",
+      `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ''}`,
+      "style-src 'self' 'unsafe-inline'",
+      `img-src 'self' data: blob: ${supa}`,
+      `media-src 'self' blob: ${supa}`,
+      "font-src 'self' data:",
+      `connect-src 'self' ${supa} ${supaWs}${dev ? ' ws:' : ''}`,
+      "worker-src 'self' blob:",
+      "manifest-src 'self'",
+      "frame-src 'none'",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "object-src 'none'",
+      "form-action 'self'",
+    ].join('; ')
     // Veiligheidsheaders op elke pagina
     const veilig = [
       { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains' },
       { key: 'X-Content-Type-Options', value: 'nosniff' },
       { key: 'X-Frame-Options', value: 'DENY' },
-      { key: 'Content-Security-Policy', value: "frame-ancestors 'none'; base-uri 'self'; object-src 'none'" },
+      { key: 'Content-Security-Policy', value: csp },
       { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
       { key: 'Permissions-Policy', value: 'camera=(self), microphone=(self), geolocation=(), payment=(), usb=()' },
     ]

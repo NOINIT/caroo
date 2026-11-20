@@ -75,7 +75,8 @@ export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: P
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    const ext = geselecteerd.name.split('.').pop()
+    // Extensie volgt het bestandstype, niet de bestandsnaam (een .html die zich als foto voordoet wordt gewoon .jpg)
+    const ext = ({ 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/heic': 'heic' } as Record<string, string>)[geselecteerd.type] || 'jpg'
     const pad = `${groepId}/${Date.now()}.${ext}`
 
     const { error: uploadFout } = await supabase.storage

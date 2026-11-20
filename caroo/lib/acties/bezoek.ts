@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { stuurMelding, groepsledenBehalve } from '@/lib/meldingen'
 import { getT } from '@/lib/i18n/server'
 import { wanneerTekst, hoofdletter } from '@/lib/i18n/vertaal'
@@ -96,8 +96,13 @@ export async function reageerOpBezoek(verzoekId: string, wanneer: string) {
   const naam = profiel?.naam || t('algemeen.iemand')
   const schoon = (wanneer || '').trim().slice(0, 40)
 
-  // Alleen als nog niemand heeft gereageerd (RLS: alleen groepsleden)
-  const { data, error } = await supabase
+  // Eerst met je eigen rechten kijken of je dit verzoek mag zien (dus lid bent van de groep).
+  // Het bijwerken zelf gaat via de server: de database laat leden een verzoek niet rechtstreeks aanpassen.
+  const { data: zichtbaar } = await supabase.from('bezoekverzoeken').select('id').eq('id', verzoekId).maybeSingle()
+  if (!zichtbaar) return { error: t('algemeen.lukteNiet') }
+
+  // Alleen als nog niemand heeft gereageerd
+  const { data, error } = await createServiceClient()
     .from('bezoekverzoeken')
     .update({ reactie_door: user.id, reactie_naam: naam, reactie_wanneer: schoon, reactie_op: new Date().toISOString() })
     .eq('id', verzoekId)
@@ -160,7 +165,7 @@ export async function trekVerzoekIn(verzoekId: string) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: true }
-  const { error } = await supabase
+  const { error } = await createServiceClient()
     .from('bezoekverzoeken')
     .update({ ingetrokken_op: new Date().toISOString() })
     .eq('id', verzoekId).eq('aangevraagd_door', user.id).is('reactie_door', null)
