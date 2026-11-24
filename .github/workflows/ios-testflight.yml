@@ -1,0 +1,61 @@
+# Bouwt de iPhone- en iPad-app, ondertekent hem en stuurt hem naar TestFlight.
+# Start alleen met de hand (Actions > iOS naar TestFlight > Run workflow).
+# Nodig: het geheim ASC_KEY_P8 (de inhoud van AuthKey_NSTR5FY732.p8), gezet door een vertrouwd persoon.
+name: iOS naar TestFlight
+
+on:
+  workflow_dispatch:
+
+env:
+  ASC_KEY_ID: NSTR5FY732
+  ASC_ISSUER_ID: 06157261-4c78-4b08-bbee-1fb977db3165
+  TEAM_ID: J4ZDQR3G75
+
+jobs:
+  testflight:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: caroo
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Pakketten
+        run: npm ci --no-audit --no-fund
+      - name: Capacitor bijwerken
+        run: npx cap sync ios
+      - name: CocoaPods
+        working-directory: caroo/ios/App
+        run: pod install
+      - name: Apple-sleutel klaarzetten
+        env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          test -n "$ASC_KEY_P8" || { echo "Het geheim ASC_KEY_P8 ontbreekt"; exit 1; }
+          echo "$ASC_KEY_P8" > "$RUNNER_TEMP/asc.p8"
+      - name: Archiveren en ondertekenen
+        working-directory: caroo/ios/App
+        run: |
+          set -o pipefail
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/Clanoo.xcarchive" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/asc.p8" \
+            -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Automatic \
+            MARKETING_VERSION=1.0 CURRENT_PROJECT_VERSION=${{ github.run_number }} \
+            archive | tail -60
+      - name: Naar App Store Connect sturen
+        working-directory: caroo/ios
+        run: |
+          set -o pipefail
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/Clanoo.xcarchive" \
+            -exportOptionsPlist ExportOptions.plist -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$RUNNER_TEMP/asc.p8" \
+            -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID" | tail -40
+      - name: Sleutel opruimen
+        if: always()
+        run: rm -f "$RUNNER_TEMP/asc.p8"
