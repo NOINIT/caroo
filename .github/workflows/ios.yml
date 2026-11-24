@@ -1,0 +1,41 @@
+# Bouwt de iPhone- en iPad-app van Clanoo op een Mac van GitHub.
+# Nu nog zonder ondertekening: dit controleert alleen of de app goed bouwt.
+# Ondertekenen en naar App Store Connect sturen komt erbij zodra het Apple-account actief is.
+name: iOS-app
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, ios]
+    paths:
+      - 'caroo/ios/**'
+      - 'caroo/capacitor.config.ts'
+      - 'caroo/native/**'
+      - 'caroo/package.json'
+      - '.github/workflows/ios.yml'
+
+jobs:
+  bouwen:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: caroo
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Pakketten
+        run: npm ci --no-audit --no-fund
+      - name: Capacitor bijwerken
+        run: npx cap sync ios
+      - name: CocoaPods
+        working-directory: caroo/ios/App
+        run: pod install
+      - name: Bouwen (simulator, zonder ondertekening)
+        working-directory: caroo/ios/App
+        run: |
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build | tail -40
+          test ${PIPESTATUS[0]} -eq 0
