@@ -299,6 +299,7 @@ export const tr: Woordenboek = {
     stuurLink: 'Giriş bağlantısı gönder',
     nogGeenAccount: 'Henüz hesabınız yok mu?',
     registreer: 'Ücretsiz kaydolun',
+    vergeten: "Şifreni mi unuttun?",
   },
 
   registreer: {
@@ -1026,5 +1027,23 @@ export const tr: Woordenboek = {
     leden: "Kimler var",
     abonnement: "Abonelik",
     bekijk: "Aboneliği gör",
+  },
+  wachtwoord: {
+    vergetenTitel: "Şifremi unuttum",
+    vergetenUitleg: "E-posta adresini yaz. Yeni bir şifre seçmen için düğmeli bir e-posta göndereceğiz.",
+    stuur: "E-postayı gönder",
+    gestuurdTitel: "E-postanı kontrol et",
+    gestuurd: "Bu e-posta adresiyle bir hesap varsa, e-postan yolda. Spam klasörüne de bak.",
+    terug: "Girişe dön",
+    nieuwTitel: "Yeni bir şifre seç",
+    nieuwUitleg: "En az 8 karakter. Bundan sonra bu şifreyle giriş yaparsın.",
+    nieuw: "Yeni şifre",
+    herhaal: "Aynı şifreyi tekrar yaz",
+    nietGelijk: "İki şifre aynı değil.",
+    zelfde: "Bu senin şu anki şifren. Başka bir şifre seç.",
+    opslaan: "Şifreyi kaydet",
+    opgeslagen: "Yeni şifren kaydedildi.",
+    verder: "Clanoo'ya devam et",
+    kiezenKnop: "Yeni şifre seç",
   },
 }

@@ -194,6 +194,52 @@ export async function stuurOudereInloglink(token: string, naam: string) {
   return { success: true, email: maskeerEmail(uitnodiging.email) }
 }
 
+/**
+ * Wachtwoord vergeten: Supabase stuurt een mail met een eenmalige link.
+ * We zeggen altijd hetzelfde, ook als het adres niet bestaat, zodat niemand
+ * kan uitproberen welke e-mailadressen een account hebben.
+ */
+export async function wachtwoordVergeten(formData: FormData) {
+  const supabase = createClient()
+  const { t } = await getT()
+  const email = String(formData.get('email') || '').trim()
+  if (!email) return { error: t('auth.vulEmail') }
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${baseUrl}/auth/callback?next=${encodeURIComponent('/wachtwoord-nieuw')}`,
+  })
+
+  if (error && /rate limit|security purposes|seconds/i.test(error.message)) {
+    return { error: t('auth.netGestuurdMail') }
+  }
+  return { success: true }
+}
+
+/** Nieuw wachtwoord opslaan. Kan alleen met de sessie uit de wachtwoordmail (of als je al bent ingelogd). */
+export async function nieuwWachtwoord(formData: FormData) {
+  const supabase = createClient()
+  const { t } = await getT()
+  const wachtwoord = String(formData.get('wachtwoord') || '')
+  const herhaal = String(formData.get('herhaal') || '')
+
+  if (wachtwoord.length < 8) return { error: t('auth.wachtwoordKort') }
+  if (wachtwoord !== herhaal) return { error: t('wachtwoord.nietGelijk') }
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: t('algemeen.nietIngelogd') }
+
+  const { error } = await supabase.auth.updateUser({ password: wachtwoord })
+  if (error) {
+    if (error.code === 'same_password' || /different from the old/i.test(error.message)) {
+      return { error: t('wachtwoord.zelfde') }
+    }
+    if (error.code === 'weak_password') return { error: t('auth.wachtwoordKort') }
+    return { error: t('algemeen.lukteNiet') }
+  }
+  return { success: true }
+}
+
 export async function uitloggen() {
   const supabase = createClient()
   await supabase.auth.signOut()

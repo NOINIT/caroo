@@ -299,6 +299,7 @@ export const en: Woordenboek = {
     stuurLink: 'Send login link',
     nogGeenAccount: "Don't have an account yet?",
     registreer: 'Sign up for free',
+    vergeten: "Forgot your password?",
   },
 
   registreer: {
@@ -1026,5 +1027,23 @@ export const en: Woordenboek = {
     leden: "Who is in it",
     abonnement: "Subscription",
     bekijk: "View subscription",
+  },
+  wachtwoord: {
+    vergetenTitel: "Forgot your password",
+    vergetenUitleg: "Enter your email address. We'll send you an email with a button to choose a new password.",
+    stuur: "Send the email",
+    gestuurdTitel: "Check your email",
+    gestuurd: "If there's an account with this email address, an email is on its way. Please check your spam folder too.",
+    terug: "Back to log in",
+    nieuwTitel: "Choose a new password",
+    nieuwUitleg: "At least 8 characters. You'll use it to log in from now on.",
+    nieuw: "New password",
+    herhaal: "Same password again",
+    nietGelijk: "The two passwords don't match.",
+    zelfde: "This is your current password. Please choose a different one.",
+    opslaan: "Save password",
+    opgeslagen: "Your new password has been saved.",
+    verder: "Continue to Clanoo",
+    kiezenKnop: "Choose a new password",
   },
 }

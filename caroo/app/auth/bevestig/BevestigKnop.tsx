@@ -38,7 +38,7 @@ export function BevestigKnop({ tokenHash, type, next }: { tokenHash: string; typ
       <input type="hidden" name="type" value={type} />
       <input type="hidden" name="next" value={next} />
       <button type="submit" disabled={laden} className="btn-primary w-full text-ou-base py-5">
-        {laden ? t('algemeen.evenGeduld') : t('bevestig.knop')}
+        {laden ? t('algemeen.evenGeduld') : type === 'recovery' ? t('wachtwoord.kiezenKnop') : t('bevestig.knop')}
       </button>
     </form>
   )

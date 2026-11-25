@@ -170,6 +170,11 @@ function LoginForm() {
               required
               className="input-field"
             />
+            <div className="text-end mt-2">
+              <Link href="/wachtwoord-vergeten" className="text-sm text-caroo-groen font-medium hover:underline">
+                {t('login.vergeten')}
+              </Link>
+            </div>
           </div>
           <button
             type="submit"

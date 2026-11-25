@@ -5,6 +5,7 @@ const PUBLIC_ROUTES = [
   '/',
   '/login',
   '/registreer',
+  '/wachtwoord-vergeten',
   '/uitnodiging',
   '/auth/callback',
   '/auth/bevestig',

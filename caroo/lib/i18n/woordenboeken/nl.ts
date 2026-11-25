@@ -301,6 +301,7 @@ export const nl = {
     stuurLink: 'Stuur inloglink',
     nogGeenAccount: 'Nog geen account?',
     registreer: 'Registreer je gratis',
+    vergeten: "Wachtwoord vergeten?",
   },
 
   registreer: {
@@ -1028,5 +1029,23 @@ export const nl = {
     leden: "Wie zit erin",
     abonnement: "Abonnement",
     bekijk: "Abonnement bekijken",
+  },
+  wachtwoord: {
+    vergetenTitel: "Wachtwoord vergeten",
+    vergetenUitleg: "Vul je e-mailadres in. Je krijgt een mail met een knop om een nieuw wachtwoord te kiezen.",
+    stuur: "Stuur de mail",
+    gestuurdTitel: "Check je e-mail",
+    gestuurd: "Als er een account is met dit e-mailadres, staat er nu een mail voor je klaar. Kijk ook even in je spamfolder.",
+    terug: "Terug naar inloggen",
+    nieuwTitel: "Kies een nieuw wachtwoord",
+    nieuwUitleg: "Minimaal 8 tekens. Daarna log je voortaan hiermee in.",
+    nieuw: "Nieuw wachtwoord",
+    herhaal: "Nog een keer hetzelfde wachtwoord",
+    nietGelijk: "De twee wachtwoorden zijn niet hetzelfde.",
+    zelfde: "Dit is je huidige wachtwoord. Kies een ander.",
+    opslaan: "Wachtwoord opslaan",
+    opgeslagen: "Je nieuwe wachtwoord is opgeslagen.",
+    verder: "Verder naar Clanoo",
+    kiezenKnop: "Nieuw wachtwoord kiezen",
   },
 }
