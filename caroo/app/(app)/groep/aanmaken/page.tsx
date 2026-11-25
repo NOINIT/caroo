@@ -115,6 +115,8 @@ export default function GroepAanmakenPage() {
             <li>{t('aanmaken.punt2')}</li>
             <li>{t('aanmaken.punt3')}</li>
             <li>{t('aanmaken.punt4')}</li>
+            <li>{t('aanmaken.punt5')}</li>
+            <li>{t('aanmaken.punt6')}</li>
             <li>{t('registreer.avg')}</li>
           </ul>
           <p className="mt-3 font-bold text-caroo-groen">{t('aanmaken.prijsUitleg')}</p>
