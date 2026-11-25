@@ -1,6 +1,6 @@
 import { CarooLogo } from '@/components/ui/CarooLogo'
 import { TaalKiezer } from '@/components/TaalKiezer'
-import { Analytics } from '@vercel/analytics/next'
+import { WebStatistiek } from '@/components/WebStatistiek'
 
 export default function AuthLayout({
   children,
@@ -22,7 +22,7 @@ export default function AuthLayout({
         © {new Date().getFullYear()} NOINIT · Clanoo
       </footer>
       {/* Bezoekersstatistiek zonder cookies; alleen op inloggen en registreren, niet in de app zelf */}
-      <Analytics />
+      <WebStatistiek />
     </div>
   )
 }

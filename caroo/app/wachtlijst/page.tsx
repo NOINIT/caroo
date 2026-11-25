@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { CarooLogo } from '@/components/ui/CarooLogo'
 import { WachtlijstFormulier } from '@/components/wachtlijst/WachtlijstFormulier'
 import { MERK } from '@/lib/merk'
-import { Analytics } from '@vercel/analytics/next'
+import { WebStatistiek } from '@/components/WebStatistiek'
 
 import { WL, wlTaal } from '@/lib/wachtlijst-teksten'
 
@@ -89,7 +89,7 @@ export default async function WachtlijstPagina(props: { searchParams: Promise<Zo
           <a href="/privacy" className="hover:underline">{w.privacy}</a>
         </div>
       </footer>
-      <Analytics />
+      <WebStatistiek />
     </div>
   )
 }
