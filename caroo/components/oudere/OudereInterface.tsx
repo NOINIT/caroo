@@ -107,7 +107,7 @@ export function OudereInterface({
           <TabFotos fotos={fotos} />
         )}
         {actieveTab === 'mijn_verhaal' && (
-          <MijnVerhaal groepId={groepId} />
+          <MijnVerhaal groepId={groepId} userId={userId} />
         )}
         {actieveTab === 'vrienden' && (
           <Vrienden vrienden={vrienden} status={vriendenStatus} groepId={groepId} familie={familie} />

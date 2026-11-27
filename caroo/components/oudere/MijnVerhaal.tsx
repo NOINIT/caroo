@@ -8,6 +8,7 @@ import Link from 'next/link'
 
 interface Props {
   groepId: string
+  userId: string
 }
 
 interface DagboekEntry {
@@ -17,7 +18,7 @@ interface DagboekEntry {
   aangemaakt_op: string
 }
 
-export function MijnVerhaal({ groepId }: Props) {
+export function MijnVerhaal({ groepId, userId }: Props) {
   const [tekst, setTekst] = useState('')
   const [luistert, setLuistert] = useState(false)
   const [geslagenOp, setGeslagenOp] = useState(false)
@@ -41,6 +42,8 @@ export function MijnVerhaal({ groepId }: Props) {
       .from('dagboek')
       .select('id, inhoud, gesproken, aangemaakt_op')
       .eq('groep_id', groepId)
+      // Alleen de eigen verhalen: het dagboek van de familie hoort hier niet tussen
+      .eq('auteur_id', userId)
       .order('aangemaakt_op', { ascending: false })
       .limit(10)
 
