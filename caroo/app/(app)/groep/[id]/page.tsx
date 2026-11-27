@@ -48,10 +48,12 @@ export default async function GroepPage(
   // Haal lid info op voor de huidige gebruiker
   const { data: mijnLidschap } = await supabase
     .from('groepsleden')
-    .select('rol')
+    .select('rol, beheerder, verborgen')
     .eq('groep_id', params.id)
     .eq('user_id', user.id)
     .single()
+  // Onderdelen die deze persoon niet mag zien (beheerders zien alles; de database dwingt dit ook af)
+  const verborgen: string[] = mijnLidschap?.rol === 'groepsbeheerder' || mijnLidschap?.beheerder ? [] : (mijnLidschap?.verborgen || [])
 
   // Als oudere: redirect naar oudereninterface
   if (mijnLidschap?.rol === 'oudere') {
@@ -249,7 +251,7 @@ export default async function GroepPage(
             ...(isBeheerder
               ? [{ href: `/groep/${params.id}/beheer`, emoji: '⚙️', label: t('groep.tegels.beheer') }]
               : []),
-          ].map((item: { href: string; emoji: string; label: string; altijd?: boolean }) => {
+          ].filter(item => !verborgen.includes(({ agenda: 'agenda', taken: 'taken', boodschappen: 'boodschappen', medicijnen: 'medicijnen', dagboek: 'dagboek', fotos: 'fotos' } as Record<string, string>)[item.href.split('/').pop() || ''] || '')).map((item: { href: string; emoji: string; label: string; altijd?: boolean }) => {
             const open = nazorg.toegang === 'actief' || nazorg.toegang === 'proef' || (item.altijd && nazorg.toegang === 'nazorg')
             return (
             <Link

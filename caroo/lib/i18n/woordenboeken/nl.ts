@@ -42,6 +42,24 @@ export const nl = {
     extra: 'Extra groot',
   },
 
+  relaties: {
+    familie: "Familielid",
+    vriend: "Vriend of kennis",
+    mantelzorger: "Mantelzorger",
+    vriendUitleg: "Een vriend of kennis ziet standaard geen medicijnen, stemming, dagboek en taken. Je kunt dit later aanpassen bij Beheer.",
+    rechtenUitleg: "Wat iemand mag zien, pas je later aan bij Beheer.",
+    titel: "Wat mag {naam} zien?",
+    relatie: "Hoort erbij als",
+    o_medicijnen: "Medicijnen",
+    o_stemming: "Hoe {hp} zich voelt",
+    o_dagboek: "Dagboek",
+    o_agenda: "Agenda",
+    o_taken: "Taken",
+    o_fotos: "Foto's",
+    o_boodschappen: "Boodschappen",
+    alles: "Ziet alles, want beheerder of hoofdpersoon.",
+  },
+
   rollen: {
     groepsbeheerder: 'Groepsbeheerder',
     mantelzorger: 'Mantelzorger',

@@ -7,11 +7,14 @@ import { verwijderLidUitGroep } from './actions'
 import { zetBeheerder } from '@/lib/acties/beheer'
 import { useT } from '@/lib/i18n/client'
 import { categorieTekst } from '@/lib/i18n/vertaal'
+import { RechtenPerLid } from '@/components/familie/RechtenPerLid'
 
 interface Lid {
   id: string
   rol: string
   beheerder?: boolean
+  relatie?: string | null
+  verborgen?: string[] | null
   toegevoegd_op: string
   users: { id: string; naam: string; email: string } | null
 }
@@ -27,11 +30,12 @@ interface Props {
   groepId: string
   huidigGebruikerId: string
   eigenaarId: string
+  hoofdpersoonNaam?: string
   leden: Lid[]
   categorieen: Categorie[]
 }
 
-export function BeheerClient({ groepId, huidigGebruikerId, eigenaarId, leden: initieelLeden, categorieen: initieelCat }: Props) {
+export function BeheerClient({ groepId, huidigGebruikerId, eigenaarId, hoofdpersoonNaam = '', leden: initieelLeden, categorieen: initieelCat }: Props) {
   const [leden, setLeden] = useVolg(initieelLeden)
   const [categorieen, setCategorieen] = useState(initieelCat)
   const [bewerkCat, setBewerkCat] = useState<string | null>(null)
@@ -137,6 +141,12 @@ export function BeheerClient({ groepId, huidigGebruikerId, eigenaarId, leden: in
                       {lid.rol === 'groepsbeheerder' || lid.beheerder ? t('beheer.geenBeheerderMeer') : t('beheer.maakBeheerder')}
                     </button>
                   )}
+                  {lid.rol === 'mantelzorger' && !lid.beheerder ? (
+                    <RechtenPerLid groepId={groepId} lidId={lid.id} naam={lid.users?.naam || ''} hoofdpersoon={hoofdpersoonNaam}
+                      relatie={lid.relatie ?? null} verborgen={lid.verborgen || []} />
+                  ) : lid.rol !== 'oudere' || lid.beheerder ? (
+                    <p className="text-xs text-gray-500 mt-1">{t('relaties.alles')}</p>
+                  ) : null}
                 </div>
                 {!isZijzelf && (
                   <button

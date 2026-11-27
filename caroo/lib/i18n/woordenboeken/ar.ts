@@ -45,6 +45,24 @@ export const ar: Woordenboek = {
     extra: 'كبير جدًا',
   },
 
+  relaties: {
+    familie: "فرد من العائلة",
+    vriend: "صديق أو معارف",
+    mantelzorger: "مقدّم رعاية",
+    vriendUitleg: "لا يرى الصديق أو المعارف الأدوية والمزاج واليوميات والمهام افتراضيًا. يمكنك تغيير ذلك لاحقًا في الإدارة.",
+    rechtenUitleg: "يمكنك لاحقًا تغيير ما يراه كل شخص في الإدارة.",
+    titel: "ماذا يمكن أن يرى {naam}؟",
+    relatie: "ينتمي بصفة",
+    o_medicijnen: "الأدوية",
+    o_stemming: "كيف يشعر {hp}",
+    o_dagboek: "اليوميات",
+    o_agenda: "المفكرة",
+    o_taken: "المهام",
+    o_fotos: "الصور",
+    o_boodschappen: "المشتريات",
+    alles: "يرى كل شيء لأنه مسؤول أو الشخص الرئيسي.",
+  },
+
   rollen: {
     groepsbeheerder: 'مدير المجموعة',
     mantelzorger: 'مقدّم رعاية',

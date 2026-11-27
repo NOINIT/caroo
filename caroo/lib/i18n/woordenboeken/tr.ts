@@ -41,6 +41,24 @@ export const tr: Woordenboek = {
     extra: 'Çok büyük',
   },
 
+  relaties: {
+    familie: "Aile üyesi",
+    vriend: "Arkadaş veya tanıdık",
+    mantelzorger: "Bakım veren",
+    vriendUitleg: "Arkadaş veya tanıdık varsayılan olarak ilaçları, ruh halini, günlüğü ve görevleri görmez. Bunu daha sonra Yönetim'de değiştirebilirsin.",
+    rechtenUitleg: "Kimin neyi göreceğini daha sonra Yönetim'de değiştirebilirsin.",
+    titel: "{naam} neleri görebilir?",
+    relatie: "Şu olarak",
+    o_medicijnen: "İlaçlar",
+    o_stemming: "{hp} nasıl hissediyor",
+    o_dagboek: "Günlük",
+    o_agenda: "Ajanda",
+    o_taken: "Görevler",
+    o_fotos: "Fotoğraflar",
+    o_boodschappen: "Alışveriş",
+    alles: "Yönetici veya ana kişi olduğu için her şeyi görür.",
+  },
+
   rollen: {
     groepsbeheerder: 'Grup yöneticisi',
     mantelzorger: 'Bakım veren',

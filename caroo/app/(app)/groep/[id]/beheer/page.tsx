@@ -26,7 +26,7 @@ export default async function BeheerPage(props: { params: Promise<{ id: string }
   const [{ data: leden }, { data: categorieen }] = await Promise.all([
     supabase
       .from('groepsleden')
-      .select('id, rol, beheerder, toegevoegd_op, users (id, naam, email)')
+      .select('id, rol, beheerder, relatie, verborgen, toegevoegd_op, users (id, naam, email)')
       .eq('groep_id', params.id)
       .order('toegevoegd_op', { ascending: true }),
 
@@ -50,6 +50,7 @@ export default async function BeheerPage(props: { params: Promise<{ id: string }
         groepId={params.id}
         huidigGebruikerId={user.id}
         eigenaarId={groep.eigenaar_id}
+        hoofdpersoonNaam={((leden || []) as any[]).find(l => l.rol === 'oudere')?.users?.naam?.split(' ')[0] || ''}
         leden={(leden || []) as any}
         categorieen={(categorieen || []) as any}
       />

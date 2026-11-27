@@ -23,7 +23,7 @@ interface Props {
 export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initieel }: Props) {
   const [uitnodigingen, setUitnodigingen] = useState(initieel)
   const [email, setEmail] = useState('')
-  const [rol, setRol] = useState('mantelzorger')
+  const [rol, setRol] = useState('familie')
   const [laden, setLaden] = useState(false)
   const [fout, setFout] = useState('')
   const [link, setLink] = useState('')
@@ -38,7 +38,7 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
     const res = await fetch('/api/uitnodiging', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ groepId, email, rol }),
+      body: JSON.stringify({ groepId, email, soort: rol }),
     })
 
     const data = await res.json()
@@ -89,10 +89,13 @@ export function UitnodigingFormulier({ groepId, groepNaam, uitnodigingen: initie
             onChange={e => setRol(e.target.value)}
             className="input-field"
           >
-            <option value="mantelzorger">{t('rollen.mantelzorger')}</option>
-            <option value="oudere">{t('uitnodigen.hoofdpersoonOptie')}</option>
+            <option value="familie">{t('relaties.familie')}</option>
+            <option value="vriend">{t('relaties.vriend')}</option>
+            <option value="mantelzorger">{t('relaties.mantelzorger')}</option>
             <option value="groepsbeheerder">{t('rollen.groepsbeheerder')}</option>
+            <option value="oudere">{t('uitnodigen.hoofdpersoonOptie')}</option>
           </select>
+          <p className="text-xs text-gray-600 mt-1">{rol === 'vriend' ? t('relaties.vriendUitleg') : t('relaties.rechtenUitleg')}</p>
         </div>
 
         {fout && <p className="error-text">{fout}</p>}

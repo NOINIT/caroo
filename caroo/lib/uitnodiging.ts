@@ -48,8 +48,10 @@ export async function maakUitnodiging(params: {
   uitgenodigdDoor: string
   email: string
   rol: Rol
+  relatie?: string | null
+  verborgen?: string[]
 }): Promise<{ token: string; uitnodiging: any } | { error: string }> {
-  const { groepId, uitgenodigdDoor, email, rol } = params
+  const { groepId, uitgenodigdDoor, email, rol, relatie = null, verborgen = [] } = params
   const supabase = createClient()
 
   const { t } = await getT()
@@ -79,6 +81,8 @@ export async function maakUitnodiging(params: {
     uitgenodigd_door: uitgenodigdDoor,
     email,
     rol,
+    relatie,
+    verborgen,
     token,
     verloopt_op: verlooptOp.toISOString(),
   }).select('id, email, rol, gebruikt, verloopt_op, aangemaakt_op').single()
@@ -133,7 +137,7 @@ export async function valideerToken(token: string) {
  * Service client: de token is al gecontroleerd, RLS mag dit niet blokkeren.
  */
 async function voegToeAanGroep(
-  uitnodiging: { id: string; groep_id: string; rol: string },
+  uitnodiging: { id: string; groep_id: string; rol: string; relatie?: string | null; verborgen?: string[] | null },
   userId: string
 ): Promise<'nieuw' | 'al_lid' | 'fout'> {
   const supabase = createServiceClient()
@@ -142,6 +146,8 @@ async function voegToeAanGroep(
     groep_id: uitnodiging.groep_id,
     user_id: userId,
     rol: uitnodiging.rol,
+    relatie: uitnodiging.relatie ?? null,
+    verborgen: uitnodiging.verborgen ?? [],
   })
 
   // 23505 = al lid van deze groep
@@ -169,7 +175,7 @@ export async function accepteerUitnodiging(
 
   const { data: uitnodiging } = await supabase
     .from('uitnodigingen')
-    .select('id, groep_id, rol, gebruikt, verloopt_op, email')
+    .select('id, groep_id, rol, relatie, verborgen, gebruikt, verloopt_op, email')
     .eq('token', token)
     .single()
 
@@ -238,7 +244,7 @@ export async function verwerkOpenUitnodigingen(user: {
   if (user.email) {
     const { data: open } = await supabase
       .from('uitnodigingen')
-      .select('id, groep_id, rol')
+      .select('id, groep_id, rol, relatie, verborgen')
       .ilike('email', letterlijk(user.email))
       .eq('gebruikt', false)
       .gt('verloopt_op', new Date().toISOString())

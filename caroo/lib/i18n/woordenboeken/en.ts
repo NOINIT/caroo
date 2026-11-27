@@ -41,6 +41,24 @@ export const en: Woordenboek = {
     extra: 'Extra large',
   },
 
+  relaties: {
+    familie: "Family member",
+    vriend: "Friend or acquaintance",
+    mantelzorger: "Carer",
+    vriendUitleg: "A friend or acquaintance does not see medicines, mood, diary and tasks by default. You can change this later under Manage.",
+    rechtenUitleg: "You can change what someone can see later under Manage.",
+    titel: "What can {naam} see?",
+    relatie: "Belongs as",
+    o_medicijnen: "Medicines",
+    o_stemming: "How {hp} feels",
+    o_dagboek: "Diary",
+    o_agenda: "Calendar",
+    o_taken: "Tasks",
+    o_fotos: "Photos",
+    o_boodschappen: "Shopping",
+    alles: "Sees everything, as admin or main person.",
+  },
+
   rollen: {
     groepsbeheerder: 'Group admin',
     mantelzorger: 'Carer',
