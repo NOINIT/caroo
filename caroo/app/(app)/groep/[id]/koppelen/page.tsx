@@ -35,8 +35,8 @@ export default async function KoppelenPage(
       <Link href={`/groep/${params.id}`} className="text-sm text-caroo-groen hover:underline">
         <span className="inline-block rtl:rotate-180">←</span> {groep?.naam}
       </Link>
-      <h1 className="text-2xl font-bold text-caroo-donker mt-3 mb-2">{t('koppelen.titel')}</h1>
-      <p className="text-gray-600 mb-6">{t('koppelen.intro')}</p>
+      <h1 className="text-2xl font-bold text-caroo-donker mt-3 mb-2">{hoofdpersonen.length ? t('koppelen.titel') : t('koppelen.nieuwTitel')}</h1>
+      <p className="text-gray-600 mb-6">{hoofdpersonen.length ? t('koppelen.intro') : t('koppelen.introNieuw')}</p>
       <KoppelClient groepId={params.id} hoofdpersonen={hoofdpersonen} terug={uitnodiging ? { url: terug!, naam: uitnodiging.naam.split(' ')[0] } : null} />
     </div>
   )

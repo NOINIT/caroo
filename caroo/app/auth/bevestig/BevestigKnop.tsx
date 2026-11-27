@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { isNativeApp } from '@/lib/app'
 import Link from 'next/link'
 import { bevestigInlog } from './actions'
 import { useT } from '@/lib/i18n/client'
@@ -9,6 +10,8 @@ export function BevestigKnop({ tokenHash, type, next }: { tokenHash: string; typ
   const [laden, setLaden] = useState(false)
   const [fout, setFout] = useState<string | null>(null)
   const { t } = useT()
+  const [inApp, setInApp] = useState(true)
+  useEffect(() => setInApp(isNativeApp()), [])
 
   async function verstuur(formData: FormData) {
     setLaden(true)
@@ -40,6 +43,9 @@ export function BevestigKnop({ tokenHash, type, next }: { tokenHash: string; typ
       <button type="submit" disabled={laden} className="btn-primary w-full text-ou-base py-5">
         {laden ? t('algemeen.evenGeduld') : type === 'recovery' ? t('wachtwoord.kiezenKnop') : t('bevestig.knop')}
       </button>
+      {!inApp && type !== 'recovery' && (
+        <p className="text-ou-sm text-gray-600 mt-5">{t('bevestig.appHint')}</p>
+      )}
     </form>
   )
 }

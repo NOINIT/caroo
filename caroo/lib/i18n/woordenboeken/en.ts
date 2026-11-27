@@ -324,6 +324,7 @@ export const en: Woordenboek = {
     tik: 'Tap the button to continue.',
     knop: 'Log in to Clanoo',
     nieuweLink: 'Request a new login link',
+    appHint: 'Do you have the Clanoo app on your phone? After this step you can simply log in there with your email address and password.',
     ongeldig: 'This link is not valid.',
     gebruikt: 'This link has already been used or has expired. Request a new one below.',
   },
@@ -554,6 +555,9 @@ export const en: Woordenboek = {
 
   aanmaken: {
     voorWie: "Who is Clanoo for?",
+    kiesEen: 'Choose one.',
+    kiesEerst: 'First choose who Clanoo is for.',
+    vulNaam: 'Fill in a name for the care group.',
     voorMezelf: "For myself",
     voorMezelfUitleg: "You get the simple screen with big buttons and decide yourself who may join.",
     voorIemand: "For someone else",
@@ -696,6 +700,8 @@ export const en: Woordenboek = {
   koppelen: {
     titel: 'Connect a tablet',
     intro: 'Set up Clanoo on the main person\'s tablet or phone. No email, no password.',
+    introNieuw: 'How it works: fill in the name of the person Clanoo is for and tick the box. You then get a QR code. Scan it with the camera of that person\'s tablet or phone. Clanoo is then ready, with no email and no password.',
+    vulNaam: 'First fill in a name.',
     knop: 'Connect {naam}\'s tablet',
     nieuwTitel: 'Add the main person',
     naam: 'Name',

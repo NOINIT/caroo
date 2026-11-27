@@ -326,6 +326,7 @@ export const nl = {
     tik: 'Tik op de knop om verder te gaan.',
     knop: 'Inloggen bij Clanoo',
     nieuweLink: 'Nieuwe inloglink aanvragen',
+    appHint: 'Heb je de Clanoo-app op je telefoon? Na deze stap kun je daar gewoon inloggen met je e-mailadres en wachtwoord.',
     ongeldig: 'Deze link is niet geldig.',
     gebruikt: 'Deze link is al gebruikt of verlopen. Vraag hieronder een nieuwe aan.',
   },
@@ -556,6 +557,9 @@ export const nl = {
 
   aanmaken: {
     voorWie: "Voor wie is Clanoo?",
+    kiesEen: 'Kies er één.',
+    kiesEerst: 'Kies eerst voor wie Clanoo is.',
+    vulNaam: 'Vul nog een naam in voor de zorggroep.',
     voorMezelf: "Voor mezelf",
     voorMezelfUitleg: "Je krijgt het eenvoudige scherm met grote knoppen en bepaalt zelf wie erbij mag.",
     voorIemand: "Voor iemand anders",
@@ -698,6 +702,8 @@ export const nl = {
   koppelen: {
     titel: 'Tablet koppelen',
     intro: 'Zet Clanoo klaar op de tablet of telefoon van de hoofdpersoon. Zonder e-mail en zonder wachtwoord.',
+    introNieuw: 'Zo werkt het: vul hieronder de naam in van degene voor wie Clanoo is en zet het vinkje. Je krijgt dan een QR-code. Die scan je met de camera van de tablet of telefoon van die persoon. Clanoo staat daarna klaar, zonder e-mail en zonder wachtwoord.',
+    vulNaam: 'Vul eerst een naam in.',
     knop: 'Tablet van {naam} koppelen',
     nieuwTitel: 'Hoofdpersoon toevoegen',
     naam: 'Naam',

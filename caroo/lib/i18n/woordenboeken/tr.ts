@@ -324,6 +324,7 @@ export const tr: Woordenboek = {
     tik: 'Devam etmek için düğmeye dokunun.',
     knop: "Clanoo'ya giriş yap",
     nieuweLink: 'Yeni giriş bağlantısı iste',
+    appHint: 'Telefonunda Clanoo uygulaması var mı? Bu adımdan sonra orada e-posta adresin ve şifrenle giriş yapabilirsin.',
     ongeldig: 'Bu bağlantı geçerli değil.',
     gebruikt: 'Bu bağlantı zaten kullanılmış ya da süresi dolmuş. Aşağıdan yenisini isteyin.',
   },
@@ -554,6 +555,9 @@ export const tr: Woordenboek = {
 
   aanmaken: {
     voorWie: "Clanoo kimin için?",
+    kiesEen: 'Birini seç.',
+    kiesEerst: 'Önce Clanoo\'nun kimin için olduğunu seç.',
+    vulNaam: 'Bakım grubu için bir ad yaz.',
     voorMezelf: "Kendim için",
     voorMezelfUitleg: "Büyük düğmeli basit ekranı alırsın ve kimin katılacağına kendin karar verirsin.",
     voorIemand: "Başka biri için",
@@ -696,6 +700,8 @@ export const tr: Woordenboek = {
   koppelen: {
     titel: 'Tablet bağla',
     intro: 'Clanoo\'yu ana kişinin tabletine veya telefonuna kurun. E-posta ve şifre gerekmez.',
+    introNieuw: 'Nasıl çalışır: aşağıya Clanoo\'nun kimin için olduğunu yaz ve kutuyu işaretle. Sonra bir QR kodu alırsın. Bu kodu o kişinin tabletinin veya telefonunun kamerasıyla tara. Clanoo hazır olur, e-posta ve şifre gerekmez.',
+    vulNaam: 'Önce bir ad yaz.',
     knop: '{naam} adlı kişinin tabletini bağla',
     nieuwTitel: 'Ana kişiyi ekle',
     naam: 'Ad',

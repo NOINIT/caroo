@@ -40,7 +40,7 @@ export default function GroepAanmakenPage() {
       router.push(`/groep/${r.id}/koppelen?terug=${encodeURIComponent(terug)}`)
       return
     }
-    router.push(`/groep/${r.id}`)
+    router.push(`/groep/${r.id}/koppelen`)
   }
 
   return (
@@ -56,7 +56,8 @@ export default function GroepAanmakenPage() {
 
       <form onSubmit={handleAanmaken} className="space-y-6">
         <fieldset>
-          <legend className="input-label mb-2">{t('aanmaken.voorWie')}</legend>
+          <legend className="text-lg font-bold text-caroo-donker">{t('aanmaken.voorWie')}</legend>
+          <p className="text-sm text-gray-600 mb-3">{t('aanmaken.kiesEen')}</p>
           <div className="grid gap-3">
             {[
               { waarde: false, kop: t('aanmaken.voorIemand'), uitleg: t('aanmaken.voorIemandUitleg') },
@@ -67,10 +68,15 @@ export default function GroepAanmakenPage() {
                 type="button"
                 aria-pressed={voorMezelf === k.waarde}
                 onClick={() => setVoorMezelf(k.waarde)}
-                className={`text-start rounded-caroo border-2 p-4 transition-colors ${voorMezelf === k.waarde ? 'border-caroo-groen bg-caroo-groen-licht' : 'border-gray-200 bg-white'}`}
+                className={`flex gap-3 items-start text-start rounded-caroo border-2 p-4 transition-colors ${voorMezelf === k.waarde ? 'border-caroo-groen bg-caroo-groen-licht' : voorMezelf === null ? 'border-caroo-oranje bg-white' : 'border-gray-200 bg-white'}`}
               >
+                <span aria-hidden="true" className={`mt-0.5 w-6 h-6 flex-shrink-0 rounded-full border-2 flex items-center justify-center ${voorMezelf === k.waarde ? 'border-caroo-groen bg-caroo-groen' : 'border-gray-400 bg-white'}`}>
+                  {voorMezelf === k.waarde && <span className="w-2.5 h-2.5 rounded-full bg-white" />}
+                </span>
+                <span>
                 <span className="block font-semibold text-caroo-donker">{k.kop}</span>
                 <span className="block text-sm text-gray-600 mt-1">{k.uitleg}</span>
+                </span>
               </button>
             ))}
           </div>
@@ -133,6 +139,11 @@ export default function GroepAanmakenPage() {
         >
           {laden ? t('login.evenWachten') : t('aanmaken.verder')}
         </button>
+        {!laden && (voorMezelf === null || !naam.trim() || (voorMezelf && !toestemming)) && (
+          <p className="text-sm text-caroo-oranje-donker text-center -mt-3" role="status">
+            {voorMezelf === null ? t('aanmaken.kiesEerst') : !naam.trim() ? t('aanmaken.vulNaam') : t('toestemming.nodig')}
+          </p>
+        )}
       </form>
     </div>
   )

@@ -142,8 +142,8 @@ export function KoppelClient({ groepId, hoofdpersonen: start, terug }: { groepId
           <input id="hp-email" type="email" className="input-field" value={email} onChange={e => setEmail(e.target.value)} dir="ltr" />
           <p className="text-xs text-gray-600 mt-1">{t('koppelen.geenEmailUitleg')}</p>
         </div>
-        <label className="flex gap-3 items-start text-sm text-caroo-donker cursor-pointer">
-          <input type="checkbox" checked={toestemming} onChange={e => setToestemming(e.target.checked)} className="mt-0.5 w-5 h-5 accent-caroo-groen flex-shrink-0" />
+        <label className={`flex gap-3 items-start text-sm text-caroo-donker cursor-pointer rounded-caroo border-2 p-3 ${toestemming ? 'border-caroo-groen bg-caroo-groen-licht' : 'border-caroo-oranje bg-white'}`}>
+          <input type="checkbox" checked={toestemming} onChange={e => setToestemming(e.target.checked)} className="mt-0.5 w-6 h-6 accent-caroo-groen flex-shrink-0" />
           <span>
             {t('toestemming.familieVink', { naam: naam.trim().split(' ')[0] || t('algemeen.deHoofdpersoon') })}
             <span className="block text-xs text-gray-600 mt-1">{t('toestemming.vertegenwoordiger', { naam: naam.trim().split(' ')[0] || t('algemeen.deHoofdpersoon') })}</span>
@@ -152,6 +152,11 @@ export function KoppelClient({ groepId, hoofdpersonen: start, terug }: { groepId
         <button type="submit" disabled={bezig || !naam.trim() || !toestemming} className="btn-primary w-full">
           {bezig ? t('koppelen.bezig') : t('koppelen.toevoegen')}
         </button>
+        {!bezig && (!naam.trim() || !toestemming) && (
+          <p className="text-sm text-caroo-oranje-donker text-center" role="status">
+            {!naam.trim() ? t('koppelen.vulNaam') : t('toestemming.nodig')}
+          </p>
+        )}
       </form>
     </div>
   )

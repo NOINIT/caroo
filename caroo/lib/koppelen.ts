@@ -167,7 +167,9 @@ export async function voegHoofdpersoonToe(groepId: string, naam: string, email: 
   if (error || !aangemaakt.user) return { error: error && /already|registered|exists/i.test(error.message) ? 'bestaat' as const : 'mislukt' as const }
 
   const userId = aangemaakt.user.id
-  const { error: profielFout } = await service.from('users').insert({ id: userId, email: adres, naam: schoneNaam, rol: 'oudere', taal })
+  // De database maakt bij een nieuw account zelf al een rij in users aan (trigger on_auth_user_created,
+  // als mantelzorger). Daarom bijwerken in plaats van een tweede keer aanmaken.
+  const { error: profielFout } = await service.from('users').upsert({ id: userId, email: adres, naam: schoneNaam, rol: 'oudere', taal }, { onConflict: 'id' })
   if (profielFout) {
     await service.auth.admin.deleteUser(userId).catch(() => {})
     return { error: 'mislukt' as const }
