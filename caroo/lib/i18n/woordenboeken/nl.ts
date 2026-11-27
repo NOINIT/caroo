@@ -60,6 +60,15 @@ export const nl = {
     alles: "Ziet alles, want beheerder of hoofdpersoon.",
   },
 
+  scan: {
+    knop: "Ik heb een QR-code",
+    titel: "QR-code scannen",
+    uitleg: "Houd de QR-code van je familie voor de camera. Clanoo gaat daarna vanzelf verder.",
+    geenCamera: "De camera kan niet open. Geef Clanoo toestemming voor de camera in de instellingen van je telefoon, of open de QR-code met de camera-app.",
+    gevonden: "Gevonden, even geduld",
+    verkeerdeCode: "Dit is geen koppelcode van Clanoo. Probeer de QR-code die je familie in Clanoo heeft gemaakt.",
+  },
+
   rollen: {
     groepsbeheerder: 'Groepsbeheerder',
     mantelzorger: 'Mantelzorger',
@@ -750,7 +759,7 @@ export const nl = {
     geenEmailUitleg: 'Geen e-mail? Laat het leeg. Vul je een adres in, dan krijgt de hoofdpersoon een mail om het te bevestigen. Daarna kan die ook zelf inloggen.',
     toevoegen: 'Toevoegen en QR-code maken',
     bezig: 'Even geduld...',
-    stap1: "Open de camera op de tablet of telefoon van {naam}.",
+    stap1: "Open de Clanoo-app op de tablet of telefoon van {naam} en tik op \"Ik heb een QR-code\". Heeft {naam} de app niet? Open dan de camera.",
     stap2: 'Richt de camera op deze code en tik op de link die verschijnt.',
     stap3: 'Tik op de grote knop Start. {naam} is ingelogd en blijft ingelogd.',
     geldig: 'Deze code werkt één keer, tot {tijd}.',

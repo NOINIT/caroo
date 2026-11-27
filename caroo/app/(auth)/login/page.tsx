@@ -93,6 +93,13 @@ function LoginForm() {
         </p>
       </div>
 
+      {/* Hoofdpersoon met een koppelcode: scannen in de app zelf */}
+      {!viaUitnodiging && (
+        <Link href="/koppel/scan" className="block w-full text-center rounded-caroo border-2 border-caroo-groen text-caroo-groen font-bold py-4 mb-6">
+          📷 {t('scan.knop')}
+        </Link>
+      )}
+
       <div className="flex bg-caroo-grijs-licht rounded-caroo p-1 mb-6">
         <button
           onClick={() => setTabblad('wachtwoord')}

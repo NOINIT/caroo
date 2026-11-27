@@ -59,6 +59,15 @@ export const tr: Woordenboek = {
     alles: "Yönetici veya ana kişi olduğu için her şeyi görür.",
   },
 
+  scan: {
+    knop: "QR kodum var",
+    titel: "QR kodu tara",
+    uitleg: "Ailenin QR kodunu kameraya tut. Clanoo kendiliğinden devam eder.",
+    geenCamera: "Kamera açılamıyor. Telefonunun ayarlarından Clanoo'ya kamera izni ver veya QR kodunu kamera uygulamasıyla aç.",
+    gevonden: "Bulundu, bir saniye",
+    verkeerdeCode: "Bu bir Clanoo bağlantı kodu değil. Ailenin Clanoo'da oluşturduğu QR kodunu dene.",
+  },
+
   rollen: {
     groepsbeheerder: 'Grup yöneticisi',
     mantelzorger: 'Bakım veren',
@@ -748,7 +757,7 @@ export const tr: Woordenboek = {
     geenEmailUitleg: 'E-posta yok mu? Boş bırakın. Bir adres girerseniz, ana kişi onaylamak için bir e-posta alır. Sonra kendisi de giriş yapabilir.',
     toevoegen: 'Ekle ve QR kodu oluştur',
     bezig: 'Lütfen bekleyin...',
-    stap1: "{naam} adlı kişinin tabletinde veya telefonunda kamerayı açın.",
+    stap1: "{naam} adlı kişinin tabletinde veya telefonunda Clanoo uygulamasını aç ve \"QR kodum var\"a dokun. Uygulama yok mu? O zaman kamerayı aç.",
     stap2: 'Kamerayı bu koda tutun ve çıkan bağlantıya dokunun.',
     stap3: 'Büyük Başla düğmesine dokunun. {naam} giriş yapmıştır ve girişli kalır.',
     geldig: 'Bu kod bir kez çalışır, saat {tijd} kadar.',

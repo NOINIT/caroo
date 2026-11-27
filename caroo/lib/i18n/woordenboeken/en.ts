@@ -59,6 +59,15 @@ export const en: Woordenboek = {
     alles: "Sees everything, as admin or main person.",
   },
 
+  scan: {
+    knop: "I have a QR code",
+    titel: "Scan QR code",
+    uitleg: "Hold your family's QR code in front of the camera. Clanoo will continue by itself.",
+    geenCamera: "The camera cannot open. Allow Clanoo to use the camera in your phone's settings, or open the QR code with the camera app.",
+    gevonden: "Found it, one moment",
+    verkeerdeCode: "This is not a Clanoo connection code. Try the QR code your family made in Clanoo.",
+  },
+
   rollen: {
     groepsbeheerder: 'Group admin',
     mantelzorger: 'Carer',
@@ -748,7 +757,7 @@ export const en: Woordenboek = {
     geenEmailUitleg: 'No email? Leave it empty. If you fill in an address, the main person gets an email to confirm it. After that they can also sign in themselves.',
     toevoegen: 'Add and create QR code',
     bezig: 'One moment...',
-    stap1: "Open the camera on {naam}'s tablet or phone.",
+    stap1: "Open the Clanoo app on {naam}'s tablet or phone and tap \"I have a QR code\". No app? Then open the camera.",
     stap2: 'Point the camera at this code and tap the link that appears.',
     stap3: 'Tap the big Start button. {naam} is signed in and stays signed in.',
     geldig: 'This code works once, until {tijd}.',
