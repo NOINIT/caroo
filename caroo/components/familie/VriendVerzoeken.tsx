@@ -1,5 +1,6 @@
 'use client'
 
+import { useVolg } from '@/lib/useVolg'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -12,7 +13,7 @@ import type { VriendVerzoek } from '@/lib/vrienden'
 export function VriendVerzoeken({ groepId, mijnId, verzoeken: start }: { groepId: string; mijnId: string; verzoeken: VriendVerzoek[] }) {
   const { t } = useT()
   const router = useRouter()
-  const [verzoeken, setVerzoeken] = useState(start)
+  const [verzoeken, setVerzoeken] = useVolg(start)
   const [alGeregeld, setAlGeregeld] = useState<string | null>(null)
   if (!verzoeken.length) return null
 

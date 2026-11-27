@@ -60,7 +60,7 @@ export default async function OuderePage(
       .maybeSingle(),
     supabase
       .from('bezoekverzoeken')
-      .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer')
+      .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer, bezoek_reacties (user_id, naam, wanneer, aangemaakt_op)')
       .eq('groep_id', params.id)
       .eq('aangevraagd_door', user.id)
       .eq('soort', 'bezoek')

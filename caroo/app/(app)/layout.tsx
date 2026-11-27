@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { VoorkeurenToepasser } from '@/components/VoorkeurenToepasser'
+import { AutoVerversen } from '@/components/AutoVerversen'
 
 export default async function AppLayout({
   children,
@@ -26,6 +27,7 @@ export default async function AppLayout({
         lettergrootte={voorkeuren?.lettergrootte || 'normaal'}
         geluid={voorkeuren?.geluid ?? true}
       />
+      <AutoVerversen />
       {children}
     </div>
   )

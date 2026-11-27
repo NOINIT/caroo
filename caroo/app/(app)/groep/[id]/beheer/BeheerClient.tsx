@@ -1,5 +1,6 @@
 'use client'
 
+import { useVolg } from '@/lib/useVolg'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { verwijderLidUitGroep } from './actions'
@@ -31,7 +32,7 @@ interface Props {
 }
 
 export function BeheerClient({ groepId, huidigGebruikerId, eigenaarId, leden: initieelLeden, categorieen: initieelCat }: Props) {
-  const [leden, setLeden] = useState(initieelLeden)
+  const [leden, setLeden] = useVolg(initieelLeden)
   const [categorieen, setCategorieen] = useState(initieelCat)
   const [bewerkCat, setBewerkCat] = useState<string | null>(null)
   const [catNaam, setCatNaam] = useState('')

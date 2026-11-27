@@ -1,5 +1,6 @@
 'use client'
 
+import { useVolg } from '@/lib/useVolg'
 import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { verwijderFoto } from './actions'
@@ -24,7 +25,7 @@ interface Props {
 }
 
 export function FotosClient({ groepId, fotos: initieel, mijnId, isBeheerder }: Props) {
-  const [fotos, setFotos] = useState(initieel)
+  const [fotos, setFotos] = useVolg(initieel)
   const [uploaden, setUploaden] = useState(false)
   const [beschrijving, setBeschrijving] = useState('')
   const [geselecteerd, setGeselecteerd] = useState<File | null>(null)

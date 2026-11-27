@@ -1,5 +1,6 @@
 'use client'
 
+import { useVolg } from '@/lib/useVolg'
 import { useState } from 'react'
 import { DatumTijdKiezer } from '@/components/ui/TijdKiezer'
 import { createClient } from '@/lib/supabase/client'
@@ -30,7 +31,7 @@ interface Props {
 }
 
 export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Props) {
-  const [afspraken, setAfspraken] = useState(initieel)
+  const [afspraken, setAfspraken] = useVolg(initieel)
   const [toonFormulier, setToonFormulier] = useState(false)
   const [laden, setLaden] = useState(false)
   const { t, datum, tijd } = useT()

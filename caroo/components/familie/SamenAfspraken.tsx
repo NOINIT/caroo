@@ -1,5 +1,6 @@
 'use client'
 
+import { useVolg } from '@/lib/useVolg'
 import { useState } from 'react'
 import { useT } from '@/lib/i18n/client'
 import { speelGeluid } from '@/lib/geluid'
@@ -8,7 +9,7 @@ import type { SamenAfspraak } from '@/lib/vrienden'
 
 export function SamenAfspraken({ groepId, afspraken: start }: { groepId: string; afspraken: SamenAfspraak[] }) {
   const { t, datum } = useT()
-  const [afspraken, setAfspraken] = useState(start)
+  const [afspraken, setAfspraken] = useVolg(start)
   const [alGeregeld, setAlGeregeld] = useState<string | null>(null)
   if (!afspraken.length) return null
 

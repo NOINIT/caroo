@@ -1,5 +1,6 @@
 'use client'
 
+import { useVolg } from '@/lib/useVolg'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useT } from '@/lib/i18n/client'
@@ -27,7 +28,7 @@ interface Props {
 }
 
 export function TakenClient({ groepId, taken: initieel, leden }: Props) {
-  const [taken, setTaken] = useState(initieel)
+  const [taken, setTaken] = useVolg(initieel)
   const [toonFormulier, setToonFormulier] = useState(false)
   const [laden, setLaden] = useState(false)
   const [filter, setFilter] = useState<'open' | 'voltooid'>('open')

@@ -1,5 +1,6 @@
 'use client'
 
+import { useVolg } from '@/lib/useVolg'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useT } from '@/lib/i18n/client'
@@ -20,7 +21,7 @@ interface Props {
 
 
 export function DagboekClient({ groepId, entries: initieel }: Props) {
-  const [entries, setEntries] = useState(initieel)
+  const [entries, setEntries] = useVolg(initieel)
   const [toonFormulier, setToonFormulier] = useState(false)
   const [inhoud, setInhoud] = useState('')
   const [laden, setLaden] = useState(false)

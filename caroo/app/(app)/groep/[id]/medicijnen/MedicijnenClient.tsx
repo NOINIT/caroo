@@ -1,5 +1,6 @@
 'use client'
 
+import { useVolg } from '@/lib/useVolg'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useT } from '@/lib/i18n/client'
@@ -27,8 +28,8 @@ interface Props {
 }
 
 export function MedicijnenClient({ groepId, medicijnen: initieel, registratiesVandaag: initieelReg, vandaag }: Props) {
-  const [medicijnen, setMedicijnen] = useState(initieel)
-  const [registraties, setRegistraties] = useState(initieelReg)
+  const [medicijnen, setMedicijnen] = useVolg(initieel)
+  const [registraties, setRegistraties] = useVolg(initieelReg)
   const [toonFormulier, setToonFormulier] = useState(false)
   const [laden, setLaden] = useState(false)
   const { t, datum } = useT()

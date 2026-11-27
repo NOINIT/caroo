@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useVolg } from '@/lib/useVolg'
 import { stemmingInfo } from '@/lib/stemming'
 import { speelGeluid } from '@/lib/geluid'
-import { reageerOpBezoek } from '@/lib/acties/bezoek'
+import { reageerOpBezoek, trekReactieIn } from '@/lib/acties/bezoek'
 import { TijdKiezer } from '@/components/ui/TijdKiezer'
 import { useT } from '@/lib/i18n/client'
 import { WANNEER_CODES, wanneerTekst, hoofdletter, stemmingLabel, type TFunctie } from '@/lib/i18n/vertaal'
@@ -17,7 +19,9 @@ interface Verzoek {
   reactie_naam: string | null
   reactie_wanneer: string | null
   soort?: string | null
+  bezoek_reacties?: Reactie[] | null
 }
+interface Reactie { user_id: string; naam: string; wanneer: string | null; aangemaakt_op?: string }
 
 interface Props {
   mijnNaam: string
@@ -41,26 +45,41 @@ function hoeLangGeleden(t: TFunctie, datum: (d: Date, o: Intl.DateTimeFormatOpti
 
 export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start }: Props) {
   // Belverzoeken tellen maar een paar uur; daarna is het moment voorbij
-  const [verzoeken, setVerzoeken] = useState(start.filter(v =>
-    v.soort !== 'bellen' || Date.now() - new Date(v.aangemaakt_op).getTime() < BEL_GELDIG_UUR * 3600 * 1000))
+  // Volgt de server: na elke verversing de nieuwste stand
+  const [alle, setAlle] = useVolg(start)
+  // Belverzoeken tellen maar een paar uur; daarna is het moment voorbij
+  const verzoeken = alle.filter(v =>
+    v.soort !== 'bellen' || Date.now() - new Date(v.aangemaakt_op).getTime() < BEL_GELDIG_UUR * 3600 * 1000)
   const [alGeregeld, setAlGeregeld] = useState<string | null>(null)
   const [kiesVoor, setKiesVoor] = useState<string | null>(null)
   const [tijd, setTijd] = useState('')
   const { t, datum } = useT()
+  const router = useRouter()
 
   async function ikKom(id: string, wanneer: string) {
     speelGeluid('succes')
     setKiesVoor(null)
     setTijd('')
-    setVerzoeken(prev => prev.map(v => (v.id === id ? { ...v, reactie_naam: mijnNaam, reactie_wanneer: wanneer } : v)))
+    // Meteen laten zien, daarna de server laten bevestigen
+    setAlle(prev => prev.map(v => {
+      if (v.id !== id) return v
+      if (v.soort === 'bellen') return { ...v, reactie_naam: mijnNaam, reactie_wanneer: wanneer }
+      const andere = (v.bezoek_reacties || []).filter(r => r.user_id !== mijnId)
+      return { ...v, reactie_naam: v.reactie_naam || mijnNaam, bezoek_reacties: [...andere, { user_id: mijnId, naam: mijnNaam, wanneer }] }
+    }))
     const r = await reageerOpBezoek(id, wanneer)
     if ('alGeregeld' in r && r.alGeregeld) {
-      // Iemand anders was net eerder: dan is het geregeld, geen foutmelding
+      // Bij bellen was iemand anders net eerder: dan is het geregeld, geen foutmelding
       setAlGeregeld(id)
-      setVerzoeken(prev => prev.map(v => (v.id === id ? { ...v, reactie_naam: r.naam, reactie_wanneer: r.wanneer } : v)))
-    } else if ('error' in r && r.error) {
-      setVerzoeken(prev => prev.map(v => (v.id === id ? { ...v, reactie_naam: null, reactie_wanneer: null } : v)))
+      setAlle(prev => prev.map(v => (v.id === id ? { ...v, reactie_naam: r.naam, reactie_wanneer: r.wanneer } : v)))
     }
+    router.refresh()
+  }
+
+  async function komTochNiet(id: string) {
+    setAlle(prev => prev.map(v => (v.id === id ? { ...v, bezoek_reacties: (v.bezoek_reacties || []).filter(r => r.user_id !== mijnId) } : v)))
+    await trekReactieIn(id)
+    router.refresh()
   }
 
   if (stemmingen.length === 0 && verzoeken.length === 0) return null
@@ -75,16 +94,29 @@ export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start
               : t('signalen.wilBezoek', { naam: v.aangevraagd_naam || t('algemeen.deHoofdpersoon') })}
           </p>
           <p className="text-sm text-gray-600 mb-3">{hoeLangGeleden(t, datum, v.aangemaakt_op)}</p>
-          {v.reactie_naam ? (
+          {v.soort !== 'bellen' && (v.bezoek_reacties || []).length > 0 && (
+            <ul className="mb-3 space-y-1">
+              {(v.bezoek_reacties || []).map(r => (
+                <li key={r.user_id} className="text-sm font-medium text-caroo-groen flex items-start justify-between gap-2">
+                  <span>
+                    {r.user_id === mijnId
+                      ? (r.wanneer ? t('signalen.jijGaatLangsWanneer', { wanneer: wanneerTekst(t, r.wanneer) }) : t('signalen.jijGaatLangs'))
+                      : (r.wanneer ? t('signalen.gaatLangsWanneer', { naam: r.naam, wanneer: wanneerTekst(t, r.wanneer) }) : t('signalen.gaatLangs', { naam: r.naam }))}
+                  </span>
+                  {r.user_id === mijnId && (
+                    <button onClick={() => komTochNiet(v.id)} className="text-xs text-gray-600 underline flex-shrink-0">{t('signalen.tochNietKomen')}</button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+          {v.soort === 'bellen' && v.reactie_naam ? (
             <p className="text-sm font-medium text-caroo-groen">
-              {v.soort === 'bellen'
-                ? t('signalen.belt', { naam: v.reactie_naam })
-                : v.reactie_wanneer
-                  ? t('signalen.gaatLangsWanneer', { naam: v.reactie_naam, wanneer: wanneerTekst(t, v.reactie_wanneer) })
-                  : t('signalen.gaatLangs', { naam: v.reactie_naam })}
+              {t('signalen.belt', { naam: v.reactie_naam })}
               {alGeregeld === v.id && <span className="block text-gray-600 font-normal mt-1">{t('signalen.wasEerder')}</span>}
             </p>
-          ) : v.soort === 'bellen' ? (
+          ) : v.soort !== 'bellen' && (v.bezoek_reacties || []).some(r => r.user_id === mijnId) ? null
+          : v.soort === 'bellen' ? (
             <div className="space-y-2">
               <p className="text-sm text-caroo-donker">{t('signalen.ikBelUitleg')}</p>
               <button onClick={() => ikKom(v.id, '')} className="btn-primary w-full">
@@ -123,7 +155,7 @@ export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start
             </div>
           ) : (
             <button onClick={() => setKiesVoor(v.id)} className="btn-primary w-full">
-              {t('signalen.ikKomLangs')}
+              {(v.bezoek_reacties || []).length > 0 ? t('signalen.ikKomOok') : t('signalen.ikKomLangs')}
             </button>
           )}
         </div>

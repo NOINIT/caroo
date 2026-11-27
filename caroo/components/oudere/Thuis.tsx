@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { STEMMINGEN, stemmingInfo, vandaagNL, BEZOEK_GELDIG_UUR, BEL_GELDIG_UUR } from '@/lib/stemming'
 import { speelGeluid } from '@/lib/geluid'
+import { useVolg } from '@/lib/useVolg'
 import { vraagBezoekAan, vraagBelAan, trekVerzoekIn } from '@/lib/acties/bezoek'
 import { useT } from '@/lib/i18n/client'
 import { wanneerTekst, hoofdletter, stemmingLabel } from '@/lib/i18n/vertaal'
@@ -14,6 +15,7 @@ export interface Bezoekverzoek {
   reactie_naam: string | null
   reactie_op: string | null
   reactie_wanneer: string | null
+  bezoek_reacties?: { user_id: string; naam: string; wanneer: string | null; aangemaakt_op?: string }[] | null
 }
 
 interface Props {
@@ -37,12 +39,12 @@ export function Thuis({
 }: Props) {
   const [stemming, setStemming] = useState<number | null>(stemmingVandaag)
   const [kiest, setKiest] = useState(stemmingVandaag === null)
-  const [bezoek, setBezoek] = useState<Bezoekverzoek | null>(startBezoek)
+  const [bezoek, setBezoek] = useVolg<Bezoekverzoek | null>(startBezoek)
   const [bezig, setBezig] = useState(false)
   // Belverzoek na een sombere smiley
   const [bel, setBel] = useState<Bezoekverzoek | null>(null)
   const [belVraagWeg, setBelVraagWeg] = useState(false)
-  const { t, datum, tijd } = useT()
+  const { t, datum, tijd, info } = useT()
   const belSleutel = `clanoo-belvraag-${vandaagNL()}`
   useEffect(() => {
     try { if (localStorage.getItem(belSleutel)) setBelVraagWeg(true) } catch { /* geen opslag */ }
@@ -60,7 +62,7 @@ export function Thuis({
     const sinds = new Date(Date.now() - BEZOEK_GELDIG_UUR * 3600 * 1000).toISOString()
     const { data } = await supabase
       .from('bezoekverzoeken')
-      .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer')
+      .select('id, aangemaakt_op, reactie_naam, reactie_op, reactie_wanneer, bezoek_reacties (user_id, naam, wanneer, aangemaakt_op)')
       .eq('groep_id', groepId)
       .eq('aangevraagd_door', userId)
       .eq('soort', 'bezoek')
@@ -90,7 +92,7 @@ export function Thuis({
   useEffect(() => {
     const timer = setInterval(() => {
       if (document.visibilityState === 'visible') ververs()
-    }, 30000)
+    }, 10000)
     return () => clearInterval(timer)
   }, [ververs])
 
@@ -146,6 +148,12 @@ export function Thuis({
   }
 
   const gekozen = stemmingInfo(stemming)
+  // Wie komen er langs? Nieuwe reacties staan in bezoek_reacties; oudere alleen in reactie_naam
+  const komers = bezoek
+    ? (bezoek.bezoek_reacties && bezoek.bezoek_reacties.length > 0
+        ? [...bezoek.bezoek_reacties].sort((a, b) => (a.aangemaakt_op || '').localeCompare(b.aangemaakt_op || ''))
+        : bezoek.reactie_naam ? [{ user_id: 'eerste', naam: bezoek.reactie_naam, wanneer: bezoek.reactie_wanneer }] : [])
+    : []
 
   return (
     <div className="px-4 py-5 space-y-5 md:px-8 md:py-7 md:space-y-6">
@@ -205,15 +213,19 @@ export function Thuis({
           <span className="block text-ou-2xl md:text-4xl font-bold">{t('thuis.ikWilBezoek')}</span>
           <span className="block text-ou-sm md:text-ou-lg text-white mt-1">{t('thuis.familieZietMeteen')}</span>
         </button>
-      ) : bezoek.reactie_naam ? (
+      ) : komers.length > 0 ? (
         <section className="rounded-caroo-lg bg-caroo-oranje-licht border-2 border-caroo-oranje p-5 text-center md:flex md:flex-col md:justify-center">
           <p className="text-5xl mb-2">🎉</p>
-          <p className="text-ou-xl font-bold text-caroo-donker">{t('thuis.komtLangs', { naam: bezoek.reactie_naam })}</p>
-          {bezoek.reactie_wanneer && (
-            <p className="text-ou-lg text-caroo-donker mt-1">
-              🕒 <span className="font-semibold">{hoofdletter(wanneerTekst(t, bezoek.reactie_wanneer))}</span>
+          <p className="text-ou-xl font-bold text-caroo-donker">
+            {komers.length === 1
+              ? t('thuis.komtLangs', { naam: komers[0].naam })
+              : t('thuis.komenLangs', { namen: new Intl.ListFormat(info.locale, { type: 'conjunction' }).format(komers.map(k => k.naam)) })}
+          </p>
+          {komers.map(k => k.wanneer ? (
+            <p key={k.user_id} className="text-ou-lg text-caroo-donker mt-1">
+              🕒 {komers.length > 1 && <span>{k.naam}: </span>}<span className="font-semibold">{hoofdletter(wanneerTekst(t, k.wanneer))}</span>
             </p>
-          )}
+          ) : null)}
           <button onClick={trekIn} className="text-ou-sm text-gray-600 underline mt-3">
             {t('thuis.klaarNieuw')}
           </button>

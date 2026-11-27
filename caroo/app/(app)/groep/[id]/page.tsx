@@ -76,7 +76,7 @@ export default async function GroepPage(
       .eq('datum', vandaagNL()),
     supabase
       .from('bezoekverzoeken')
-      .select('id, aangevraagd_naam, aangemaakt_op, reactie_naam, reactie_wanneer, soort')
+      .select('id, aangevraagd_naam, aangemaakt_op, reactie_naam, reactie_wanneer, soort, bezoek_reacties (user_id, naam, wanneer, aangemaakt_op)')
       .eq('groep_id', params.id)
       .is('ingetrokken_op', null)
       .gt('aangemaakt_op', new Date(Date.now() - BEZOEK_GELDIG_UUR * 3600 * 1000).toISOString())

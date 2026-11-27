@@ -101,66 +101,102 @@ export async function reageerOpBezoek(verzoekId: string, wanneer: string) {
   const { data: zichtbaar } = await supabase.from('bezoekverzoeken').select('id').eq('id', verzoekId).maybeSingle()
   if (!zichtbaar) return { error: t('algemeen.lukteNiet') }
 
-  // Alleen als nog niemand heeft gereageerd
-  const { data, error } = await createServiceClient()
+  const service = createServiceClient()
+  const { data: verzoek } = await service
     .from('bezoekverzoeken')
-    .update({ reactie_door: user.id, reactie_naam: naam, reactie_wanneer: schoon, reactie_op: new Date().toISOString() })
-    .eq('id', verzoekId)
-    .is('reactie_door', null)
-    .is('ingetrokken_op', null)
-    .select('groep_id, aangevraagd_door, aangevraagd_naam, soort')
-    .maybeSingle()
+    .select('groep_id, aangevraagd_door, aangevraagd_naam, soort, reactie_door, reactie_naam, reactie_wanneer, ingetrokken_op')
+    .eq('id', verzoekId).maybeSingle()
+  if (!verzoek || verzoek.ingetrokken_op) return { error: t('algemeen.lukteNiet') }
+  const bellen = verzoek.soort === 'bellen'
+  const hoofdpersoon = verzoek.aangevraagd_naam || t('algemeen.deHoofdpersoon')
 
-  if (error) return { error: t('algemeen.lukteNiet') }
-  if (!data) {
-    // Iemand anders was net eerder: laat zien wie
-    const { data: al } = await supabase.from('bezoekverzoeken').select('reactie_naam, reactie_wanneer').eq('id', verzoekId).maybeSingle()
-    return { alGeregeld: true, naam: al?.reactie_naam ?? null, wanneer: al?.reactie_wanneer ?? null }
+  if (bellen) {
+    // Bellen: één persoon is genoeg
+    const { data } = await service
+      .from('bezoekverzoeken')
+      .update({ reactie_door: user.id, reactie_naam: naam, reactie_wanneer: schoon, reactie_op: new Date().toISOString() })
+      .eq('id', verzoekId).is('reactie_door', null).is('ingetrokken_op', null)
+      .select('id').maybeSingle()
+    if (!data) {
+      if (verzoek.reactie_door === user.id) return { succes: true, naam }
+      return { alGeregeld: true, naam: verzoek.reactie_naam ?? null, wanneer: verzoek.reactie_wanneer ?? null }
+    }
+  } else {
+    // Bezoek: iedereen mag laten weten dat hij langskomt, elk met een eigen moment
+    const { error } = await service
+      .from('bezoek_reacties')
+      .upsert({ verzoek_id: verzoekId, user_id: user.id, naam, wanneer: schoon || null, aangemaakt_op: new Date().toISOString() }, { onConflict: 'verzoek_id,user_id' })
+    if (error) return { error: t('algemeen.lukteNiet') }
+    // De eerste reactie ook op het verzoek zelf zetten (oudere schermen en meldingen)
+    if (!verzoek.reactie_door) {
+      await service.from('bezoekverzoeken')
+        .update({ reactie_door: user.id, reactie_naam: naam, reactie_wanneer: schoon, reactie_op: new Date().toISOString() })
+        .eq('id', verzoekId).is('reactie_door', null)
+    }
   }
-  const bellen = data.soort === 'bellen'
-  const hoofdpersoon = data.aangevraagd_naam || t('algemeen.deHoofdpersoon')
 
-  // De rest van de familie: het is geregeld. Zelfde tag, dus dit vervangt het eerdere verzoek op hun telefoon.
-  const anderen = (await groepsledenBehalve(data.groep_id, user.id)).filter(id => id !== data.aangevraagd_door)
+  // De rest van de familie: zelfde tag, dus dit vervangt het eerdere bericht op hun telefoon.
+  const anderen = (await groepsledenBehalve(verzoek.groep_id, user.id)).filter(id => id !== verzoek.aangevraagd_door)
   await stuurMelding(anderen, tt => ({
     titel: bellen
       ? tt('bezoek.belGeregeldTitel', { naam, hoofdpersoon })
       : tt('bezoek.geregeldTitel', { naam, hoofdpersoon }),
-    tekst: bellen || !schoon ? tt('bezoek.geregeldTekst') : `${hoofdletter(wanneerTekst(tt, schoon))}. ${tt('bezoek.geregeldTekst')}`,
-    url: `/groep/${data.groep_id}`,
+    tekst: bellen ? tt('bezoek.geregeldTekst') : schoon ? hoofdletter(wanneerTekst(tt, schoon)) : tt('wanneer.binnenkort'),
+    url: `/groep/${verzoek.groep_id}`,
     tag: `bezoek-${verzoekId}`,
   }))
 
-  if (bellen && data.aangevraagd_door) {
-    await stuurMelding([data.aangevraagd_door], tt => ({
+  if (verzoek.aangevraagd_door) {
+    await stuurMelding([verzoek.aangevraagd_door], tt => bellen ? {
       titel: tt('bezoek.belKomtTitel', { naam }),
       tekst: tt('bezoek.belKomtTekst'),
-      url: `/oudere/${data.groep_id}`,
-      tag: `bezoek-${verzoekId}`,
-    }))
-  } else if (data.aangevraagd_door) {
-    await stuurMelding([data.aangevraagd_door], tt => ({
+      url: `/oudere/${verzoek.groep_id}`,
+      tag: `bel-${verzoekId}`,
+    } : {
       titel: tt('bezoek.komtLangsTitel', { naam }),
       tekst: schoon ? hoofdletter(wanneerTekst(tt, schoon)) : tt('wanneer.binnenkort'),
-      url: `/oudere/${data.groep_id}`,
-      tag: `bezoek-${verzoekId}`,
-    }))
+      url: `/oudere/${verzoek.groep_id}`,
+      tag: `bezoek-${verzoekId}-${user.id}`,
+    })
   }
 
   return { succes: true, naam }
 }
 
-/** Heeft deze persoon de afgelopen 24 uur al zo'n verzoek gedaan (ook als het is ingetrokken)? */
+/** Een familielid komt toch niet: eigen reactie op een bezoekverzoek weghalen */
+export async function trekReactieIn(verzoekId: string) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: true }
+  const service = createServiceClient()
+  await service.from('bezoek_reacties').delete().eq('verzoek_id', verzoekId).eq('user_id', user.id)
+  // Was jij de eerste? Dan de volgende reactie (of niemand) op het verzoek zetten
+  const { data: verzoek } = await service.from('bezoekverzoeken').select('reactie_door').eq('id', verzoekId).maybeSingle()
+  if (verzoek?.reactie_door === user.id) {
+    const { data: volgende } = await service.from('bezoek_reacties')
+      .select('user_id, naam, wanneer, aangemaakt_op').eq('verzoek_id', verzoekId)
+      .order('aangemaakt_op', { ascending: true }).limit(1).maybeSingle()
+    await service.from('bezoekverzoeken').update(volgende
+      ? { reactie_door: volgende.user_id, reactie_naam: volgende.naam, reactie_wanneer: volgende.wanneer || '', reactie_op: volgende.aangemaakt_op }
+      : { reactie_door: null, reactie_naam: null, reactie_wanneer: null, reactie_op: null }).eq('id', verzoekId)
+  }
+  return { ok: true }
+}
+
+/** Heeft deze persoon net al zo'n verzoek gedaan dat nog open stond (ook als het is ingetrokken)? */
 async function vandaagAlGemeld(groepId: string, userId: string, soort: 'bezoek' | 'bellen') {
+  // Alleen een verzoek van het afgelopen half uur waar nog niemand op reageerde telt:
+  // wie per ongeluk intrekt en opnieuw tikt, stoort niet twee keer. Een echt nieuw verzoek geeft wel een melding.
   const { count } = await createClient()
     .from('bezoekverzoeken')
     .select('id', { count: 'exact', head: true })
     .eq('groep_id', groepId).eq('aangevraagd_door', userId).eq('soort', soort)
-    .gt('aangemaakt_op', new Date(Date.now() - 24 * 3600 * 1000).toISOString())
+    .is('reactie_door', null)
+    .gt('aangemaakt_op', new Date(Date.now() - 30 * 60 * 1000).toISOString())
   return (count || 0) > 0
 }
 
-/** Verzoek intrekken. Het blijft bewaard met een tijdstip, zodat opnieuw vragen niet weer iedereen stoort. */
+/** Verzoek intrekken of afronden (ook als er al iemand reageerde). Het blijft bewaard met een tijdstip, zodat opnieuw vragen niet weer iedereen stoort. */
 export async function trekVerzoekIn(verzoekId: string) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -168,6 +204,6 @@ export async function trekVerzoekIn(verzoekId: string) {
   const { error } = await createServiceClient()
     .from('bezoekverzoeken')
     .update({ ingetrokken_op: new Date().toISOString() })
-    .eq('id', verzoekId).eq('aangevraagd_door', user.id).is('reactie_door', null)
+    .eq('id', verzoekId).eq('aangevraagd_door', user.id)
   return error ? { error: true } : { ok: true }
 }
