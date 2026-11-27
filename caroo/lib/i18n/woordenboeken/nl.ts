@@ -666,7 +666,7 @@ export const nl = {
   },
 
   meta: {
-    titel: 'Clanoo — Zorg voor elkaar',
+    titel: 'Clanoo · Zorg voor elkaar',
     omschrijving: 'De app voor mantelzorgers en ouderen. Coördineer zorg, houd medicijnen bij en deel herinneringen.',
   },
 
@@ -737,7 +737,10 @@ export const nl = {
     start: 'Start',
     ongeldigTitel: 'Deze code werkt niet meer',
     ongeldigTekst: 'Een code werkt één keer en maar 15 minuten. Vraag je familie om een nieuwe.',
-    beginschermTip: 'Zet Clanoo op het beginscherm. iPad: tik op Delen en dan op "Zet op beginscherm". Android: tik op ⋮ en dan op "Toevoegen aan startscherm".',
+    tipTitel: "Zet Clanoo op het beginscherm, dan open je het met één tik.",
+    tipKnop: "Zet op beginscherm",
+    tipAndroid: "Tik in Chrome rechtsboven op de drie puntjes ⋮. Kies \"Toevoegen aan startscherm\" of \"App installeren\". Zie je dat niet? Scrol in dat menu naar beneden.",
+    tipIos: "Tik in Safari op het deelknopje (vierkantje met een pijl omhoog). Kies \"Zet op beginscherm\".",
     sluiten: 'Sluiten',
     afmeldLink: "Tablet of telefoon van {naam} kwijt? Meld hem af",
     afmeldVraag: "{naam} wordt afgemeld op alle tablets en telefoons. Binnen een uur is Clanoo daar dicht. Daarna koppel je opnieuw met een nieuwe QR-code. Er gaat niets verloren.",

@@ -664,7 +664,7 @@ export const en: Woordenboek = {
   },
 
   meta: {
-    titel: 'Clanoo — Caring for each other',
+    titel: 'Clanoo · Caring for each other',
     omschrijving: 'The app for family carers and older people. Coordinate care, keep track of medicines and share memories.',
   },
 
@@ -735,7 +735,10 @@ export const en: Woordenboek = {
     start: 'Start',
     ongeldigTitel: 'This code no longer works',
     ongeldigTekst: 'A code works once and only for 15 minutes. Ask your family for a new one.',
-    beginschermTip: 'Put Clanoo on the home screen. iPad: tap Share, then "Add to Home Screen". Android: tap ⋮, then "Add to Home screen".',
+    tipTitel: "Put Clanoo on the home screen, so it opens with one tap.",
+    tipKnop: "Add to home screen",
+    tipAndroid: "In Chrome, tap the three dots ⋮ at the top right. Choose \"Add to home screen\" or \"Install app\". Can't see it? Scroll down in that menu.",
+    tipIos: "In Safari, tap the share button (square with an arrow pointing up). Choose \"Add to Home Screen\".",
     sluiten: 'Close',
     afmeldLink: "Lost {naam}'s tablet or phone? Sign it out",
     afmeldVraag: "{naam} will be signed out on all tablets and phones. Within an hour Clanoo will be closed there. Then connect again with a new QR code. Nothing is lost.",

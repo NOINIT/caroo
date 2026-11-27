@@ -6,6 +6,7 @@ import { MijnVerhaal } from './MijnVerhaal'
 import { BoodschappenLijst } from '@/components/boodschappen/BoodschappenLijst'
 import { Thuis, type Bezoekverzoek } from './Thuis'
 import { Vrienden } from './Vrienden'
+import { BeginschermTip } from './BeginschermTip'
 import { TabletBeheer, type BeheerGegevens } from './TabletBeheer'
 import type { VriendKaart, VriendenStatus, FamilieSpeler } from '@/lib/vrienden'
 import { InstellingenFormulier } from '@/components/instellingen/InstellingenFormulier'
@@ -74,12 +75,7 @@ export function OudereInterface({
       </header>
 
       {/* Na het koppelen: tip voor de familie die de tablet klaarzet */}
-      {tipZichtbaar && (
-        <div className="bg-caroo-oranje-licht border-b border-caroo-oranje px-4 py-3 md:px-8 flex items-start gap-3">
-          <p className="flex-1 text-ou-sm text-caroo-donker">📲 {t('koppelen.beginschermTip')}</p>
-          <button onClick={() => setTipZichtbaar(false)} className="text-ou-sm font-bold text-caroo-donker underline">{t('koppelen.sluiten')}</button>
-        </div>
-      )}
+      {tipZichtbaar && <BeginschermTip onSluit={() => setTipZichtbaar(false)} />}
 
       {/* Content */}
       <main className="flex-1 overflow-y-auto pb-28 md:pb-36">
