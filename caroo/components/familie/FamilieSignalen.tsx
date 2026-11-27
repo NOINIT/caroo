@@ -84,9 +84,12 @@ export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start
               {alGeregeld === v.id && <span className="block text-gray-600 font-normal mt-1">{t('signalen.wasEerder')}</span>}
             </p>
           ) : v.soort === 'bellen' ? (
-            <button onClick={() => ikKom(v.id, '')} className="btn-primary w-full">
-              📞 {t('signalen.ikBel')}
-            </button>
+            <div className="space-y-2">
+              <p className="text-sm text-caroo-donker">{t('signalen.ikBelUitleg')}</p>
+              <button onClick={() => ikKom(v.id, '')} className="btn-primary w-full">
+                📞 {t('signalen.ikBel')}
+              </button>
+            </div>
           ) : kiesVoor === v.id ? (
             <div className="space-y-2">
               <p className="text-sm font-medium text-caroo-donker">{t('signalen.wanneer')}</p>

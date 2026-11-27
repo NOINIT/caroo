@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "nl.noinit.clanoo",
+      "sha256_cert_fingerprints": [
+        "49:69:5B:4F:7D:6F:E0:29:49:76:19:BD:A7:01:F2:86:66:13:7A:DB:42:98:36:28:2D:B8:E7:F9:A8:24:60:CC",
+        "CB:64:7B:BB:5B:D6:E5:D0:DD:1D:3D:A8:EE:93:FA:B4:91:6F:AD:01:42:AC:DF:C4:92:41:4C:22:0E:FD:50:75"
+      ]
+    }
+  }
+]
