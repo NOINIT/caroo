@@ -111,7 +111,7 @@ export async function stuurMelding(userIds: string[], invoer: MeldingInvoer) {
         if (!webKlaar || !a.p256dh || !a.auth) continue
         taken.push(
           webpush
-            .sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, JSON.stringify(m), { TTL: 60 * 60 * 12 })
+            .sendNotification({ endpoint: a.endpoint, keys: { p256dh: a.p256dh, auth: a.auth } }, JSON.stringify(m), { TTL: 60 * 60 * 12, urgency: 'high' })
             .catch(async (err: any) => {
               // Telefoon heeft meldingen ingetrokken of de app verwijderd: opruimen
               if (err?.statusCode === 404 || err?.statusCode === 410) {

@@ -60,7 +60,7 @@ export async function stuurFcm(apparaat: string, m: { titel: string; tekst: stri
           notification: { title: m.titel, body: m.tekst },
           data: { url: m.url },
           android: { priority: 'high', ttl: '43200s', notification: { channel_id: 'clanoo', tag: m.tag || undefined } },
-          apns: { headers: { 'apns-expiration': String(Math.floor(Date.now() / 1000) + 43200) }, payload: { aps: { sound: 'default', 'thread-id': m.tag || undefined } } },
+          apns: { headers: { 'apns-priority': '10', 'apns-push-type': 'alert', 'apns-expiration': String(Math.floor(Date.now() / 1000) + 43200) }, payload: { aps: { sound: 'default', 'thread-id': m.tag || undefined } } },
         },
       }),
     })
