@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { DatumTijdKiezer } from '@/components/ui/TijdKiezer'
 import { createClient } from '@/lib/supabase/client'
 import { useT } from '@/lib/i18n/client'
 import { categorieTekst } from '@/lib/i18n/vertaal'
@@ -119,24 +120,19 @@ export function AgendaClient({ groepId, afspraken: initieel, categorieen }: Prop
               placeholder={t('agenda.voorbeeldTitel')}
             />
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="input-label">{t('agenda.begin')}</label>
-              <input
-                type="datetime-local"
+              <DatumTijdKiezer
                 value={nieuw.start_tijd}
-                onChange={e => setNieuw(p => ({ ...p, start_tijd: e.target.value }))}
-                required
-                className="input-field text-sm"
+                onChange={v => setNieuw(p => ({ ...p, start_tijd: v }))} verplicht
               />
             </div>
             <div>
               <label className="input-label">{t('agenda.eind')}</label>
-              <input
-                type="datetime-local"
+              <DatumTijdKiezer
                 value={nieuw.eind_tijd}
-                onChange={e => setNieuw(p => ({ ...p, eind_tijd: e.target.value }))}
-                className="input-field text-sm"
+                onChange={v => setNieuw(p => ({ ...p, eind_tijd: v }))}
               />
             </div>
           </div>

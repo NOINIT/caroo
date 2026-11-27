@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { stemmingInfo } from '@/lib/stemming'
 import { speelGeluid } from '@/lib/geluid'
 import { reageerOpBezoek } from '@/lib/acties/bezoek'
+import { TijdKiezer } from '@/components/ui/TijdKiezer'
 import { useT } from '@/lib/i18n/client'
 import { WANNEER_CODES, wanneerTekst, hoofdletter, stemmingLabel, type TFunctie } from '@/lib/i18n/vertaal'
 import { BEL_GELDIG_UUR } from '@/lib/stemming'
@@ -105,13 +106,9 @@ export function FamilieSignalen({ mijnNaam, mijnId, stemmingen, verzoeken: start
                 ))}
               </div>
               <div className="flex gap-2">
-                <input
-                  type="time"
-                  value={tijd}
-                  onChange={e => setTijd(e.target.value)}
-                  className="input-field flex-1 text-sm"
-                  aria-label={t('signalen.tijdVandaag')}
-                />
+                <div className="flex-1">
+                  <TijdKiezer value={tijd} onChange={setTijd} label={t('signalen.tijdVandaag')} />
+                </div>
                 <button
                   onClick={() => ikKom(v.id, `tijd:${tijd}`)}
                   disabled={!tijd}
