@@ -39,7 +39,7 @@ export default async function UitnodigingPage(props: { params: Promise<{ id: str
       <header className="bg-white border-b sticky top-0 z-10">
         <div className="flex items-center gap-3 px-4 py-3">
           <Link href={`/groep/${params.id}`} className="text-gray-600 inline-block rtl:rotate-180">←</Link>
-          <h1 className="font-bold text-caroo-donker">{t('uitnodigen.titel')} — {groep.naam}</h1>
+          <h1 className="font-bold text-caroo-donker">{t('uitnodigen.titel')} · {groep.naam}</h1>
         </div>
       </header>
       <UitnodigingFormulier

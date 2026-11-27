@@ -35,7 +35,7 @@ export default async function BoodschappenPage(props: { params: Promise<{ id: st
       <header className="bg-white border-b sticky top-0 z-10">
         <div className="flex items-center gap-3 px-4 py-3">
           <Link href={`/groep/${params.id}`} className="text-gray-600 inline-block rtl:rotate-180">←</Link>
-          <h1 className="font-bold text-caroo-donker">{t('boodschappen.paginaTitel')} — {groep.naam}</h1>
+          <h1 className="font-bold text-caroo-donker">{t('boodschappen.paginaTitel')} · {groep.naam}</h1>
         </div>
       </header>
       <div className="px-4 py-4">

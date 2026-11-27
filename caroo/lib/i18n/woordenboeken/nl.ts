@@ -695,7 +695,7 @@ export const nl = {
   },
 
   home: {
-    usp1: 'Mijn verhaal — herinneringen met spraak',
+    usp1: 'Mijn verhaal: herinneringen met spraak',
     usp2: 'Medicijnenagenda voor de hele groep',
     usp3: 'Kleurenagenda met eigen categorieën',
     usp4: 'Tips van opa/oma doorgeven',
