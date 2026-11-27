@@ -63,12 +63,16 @@ export const tr: Woordenboek = {
     mijnDag: {
       titel: 'Günüm',
       geenAfspraken: 'Bugün randevu yok',
+      binnenkort: "Yakında",
       afspraak: 'Randevu',
       tijdUur: 'Saat {tijd}',
     },
     boodschappenTitel: 'Alışveriş',
     fotos: {
       geen: 'Henüz fotoğraf yok',
+      stuur: "Fotoğraf gönder",
+      gestuurd: "Fotoğraf aileye gönderildi",
+      bewaar: "Kaydet",
       familieKan: 'Aileniz fotoğraf ekleyebilir',
       titel: 'Fotoğraflarımız',
       foto: 'Fotoğraf',
@@ -106,6 +110,7 @@ export const tr: Woordenboek = {
     geenFotos: 'Henüz fotoğraf yok',
     medicijnenVandaag: '💊 Bugünkü ilaçlar',
     tijdenUur: 'Saat {tijden}',
+    medicijnUitleg: "İlacı aldığında saate dokun. Ailen bunu görür.",
     belVraag: 'Birinin sizi aramasını ister misiniz?',
     belJa: 'Evet, lütfen',
     belNee: 'Hayır, iyiyim',
@@ -242,6 +247,8 @@ export const tr: Woordenboek = {
     rol: 'Rol: {rol}',
     inloggenAccepteren: 'Giriş yap ve kabul et',
     nieuwAccount: 'Yeni hesap oluştur',
+    nogGeenAccount: "Henüz hesabın yok. Bu davetin gönderildiği e-posta adresiyle bir hesap oluştur.",
+    ikHebAlAccount: "Zaten bir hesabım var",
   },
 
   oudereUitnodiging: {
@@ -473,6 +480,10 @@ export const tr: Woordenboek = {
     nietsAfgerond: 'Henüz tamamlanan bir şey yok',
     markeerOpen: 'Açık olarak işaretle',
     markeerGedaan: 'Yapıldı olarak işaretle',
+    gedaanDoor: "{naam} yaptı",
+    alleTaken: "Tüm görevler",
+    inAgenda: "📅 Ajandaya ekle",
+    inAgendaKlaar: "✓ Ajandada",
   },
 
   medicijnen: {

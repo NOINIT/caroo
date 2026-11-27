@@ -4,6 +4,7 @@ import { useVolg } from '@/lib/useVolg'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useT } from '@/lib/i18n/client'
+import { zetTaakGedaan, zetTaakInAgenda, netGedaan } from '@/lib/taken-client'
 
 interface Lid {
   id: string
@@ -19,6 +20,8 @@ interface Taak {
   aangemaakt_op: string
   toegewezen_aan: string | null
   toegewezen: { naam: string } | null
+  voltooid_op?: string | null
+  voltooider?: { naam: string } | null
 }
 
 interface Props {
@@ -40,7 +43,9 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
     toegewezen_aan: '',
   })
 
-  const gefilterd = taken.filter(tk => filter === 'open' ? !tk.voltooid : tk.voltooid)
+  // Bij open: ook wat net is afgevinkt, doorgestreept met wie het deed. Zo verdwijnt een taak niet ineens.
+  const gefilterd = taken.filter(tk => filter === 'open' ? (!tk.voltooid || netGedaan(tk.voltooid_op)) : tk.voltooid)
+  const [inAgenda, setInAgenda] = useState<string[]>([])
 
   async function voegToe(e: React.FormEvent) {
     e.preventDefault()
@@ -57,8 +62,9 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
       toegewezen_aan: nieuw.toegewezen_aan || null,
       aangemaakt_door: user.id,
     }).select(`
-      id, titel, beschrijving, deadline, voltooid, aangemaakt_op, toegewezen_aan,
-      toegewezen:users!taken_toegewezen_aan_fkey (naam)
+      id, titel, beschrijving, deadline, voltooid, voltooid_op, aangemaakt_op, toegewezen_aan,
+      toegewezen:users!taken_toegewezen_aan_fkey (naam),
+      voltooider:users!taken_voltooid_door_fkey (naam)
     `).single()
 
     if (data) {
@@ -71,9 +77,18 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
   }
 
   async function toggleVoltooid(taakId: string, huidig: boolean) {
+    const gedaan = !huidig
     const supabase = createClient()
-    await supabase.from('taken').update({ voltooid: !huidig }).eq('id', taakId)
-    setTaken(prev => prev.map(tk => tk.id === taakId ? { ...tk, voltooid: !huidig } : tk))
+    const { data: { user } } = await supabase.auth.getUser()
+    const mijnNaam = leden.find(l => l.id === user?.id)?.naam || ''
+    setTaken(prev => prev.map(tk => tk.id === taakId
+      ? { ...tk, voltooid: gedaan, voltooid_op: gedaan ? new Date().toISOString() : null, voltooider: gedaan ? { naam: mijnNaam } : null }
+      : tk))
+    await zetTaakGedaan(taakId, gedaan)
+  }
+
+  async function naarAgenda(taak: Taak) {
+    if (await zetTaakInAgenda(groepId, taak.titel, taak.deadline)) setInAgenda(prev => [...prev, taak.id])
   }
 
   async function verwijder(taakId: string) {
@@ -217,7 +232,17 @@ export function TakenClient({ groepId, taken: initieel, leden }: Props) {
                         👤 {taak.toegewezen.naam}
                       </span>
                     )}
+                    {taak.voltooid && taak.voltooider?.naam && (
+                      <span className="text-xs px-1.5 py-0.5 rounded bg-caroo-groen-licht text-caroo-groen">
+                        {t('taken.gedaanDoor', { naam: taak.voltooider.naam })}
+                      </span>
+                    )}
                   </div>
+                  {!taak.voltooid && (
+                    inAgenda.includes(taak.id)
+                      ? <p className="text-xs text-caroo-groen mt-1">{t('taken.inAgendaKlaar')}</p>
+                      : <button onClick={() => naarAgenda(taak)} className="text-xs text-caroo-groen underline mt-1">{t('taken.inAgenda')}</button>
+                  )}
                 </div>
                 <button
                   onClick={() => verwijder(taak.id)}

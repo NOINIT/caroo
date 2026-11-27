@@ -30,6 +30,7 @@ export default async function OuderePage(
     { data: groep },
     { data: dagAfspraken },
     { data: medicijnen },
+    { data: komendeAfspraken },
     { data: fotos },
     { data: stemming },
     { data: bezoek },
@@ -44,7 +45,16 @@ export default async function OuderePage(
       .gte('start_tijd', vandaag.toISOString())
       .lt('start_tijd', morgen.toISOString())
       .order('start_tijd', { ascending: true }),
-    supabase.from('medicijnen').select('id, naam, dosering, tijdstippen').eq('groep_id', params.id).eq('actief', true),
+    supabase.from('medicijnen').select('id, naam, dosering, tijdstippen, medicijn_registraties (tijdstip, ingenomen, datum)').eq('groep_id', params.id).eq('actief', true).eq('medicijn_registraties.datum', vandaagNL()),
+    // Komende afspraken (na vandaag, twee weken vooruit)
+    supabase
+      .from('afspraken')
+      .select('id, titel, start_tijd, beschrijving, agenda_categorieen (naam, kleur)')
+      .eq('groep_id', params.id)
+      .gte('start_tijd', morgen.toISOString())
+      .lt('start_tijd', new Date(morgen.getTime() + 14 * 86400000).toISOString())
+      .order('start_tijd', { ascending: true })
+      .limit(10),
     supabase
       .from('fotos')
       .select('id, opslag_pad, onderschrift, aangemaakt_op, auteur_naam, users (naam)')
@@ -124,6 +134,7 @@ export default async function OuderePage(
       toestemming={!!(groep as any)?.toestemming_gezondheid_op}
       dagAfspraken={dagAfspraken || []}
       medicijnen={medicijnen || []}
+      komendeAfspraken={komendeAfspraken || []}
       fotos={fotosMetUrl}
       stemmingVandaag={stemming?.stemming ?? null}
       bezoek={bezoek ?? null}

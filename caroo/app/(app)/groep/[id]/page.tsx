@@ -16,6 +16,7 @@ import { toegangVan } from '@/lib/opzeggen'
 import { samenAfsprakenVanGroep, vakerBezoekGevraagd, vriendVerzoekenVanGroep, spelBeurtenVoorFamilie } from '@/lib/vrienden'
 import { VriendVerzoeken } from '@/components/familie/VriendVerzoeken'
 import { SamenAfspraken } from '@/components/familie/SamenAfspraken'
+import { TakenOpHoofdscherm } from '@/components/familie/TakenOpHoofdscherm'
 
 export default async function GroepPage(
   props: {
@@ -95,11 +96,13 @@ export default async function GroepPage(
   // Haal aankomende taken op
   const { data: openTaken } = await supabase
     .from('taken')
-    .select('id, titel, deadline, voltooid')
+    .select('id, titel, deadline, voltooid, voltooid_op, voltooider:users!taken_voltooid_door_fkey (naam)')
     .eq('groep_id', params.id)
-    .eq('voltooid', false)
-    .order('deadline', { ascending: true })
-    .limit(5)
+    // Open taken, plus wat de afgelopen dag is afgevinkt (blijft doorgestreept staan)
+    .or(`voltooid.eq.false,voltooid_op.gt.${new Date(Date.now() - 24 * 3600 * 1000).toISOString()}`)
+    .order('voltooid', { ascending: true })
+    .order('deadline', { ascending: true, nullsFirst: false })
+    .limit(8)
 
   // Haal aankomende afspraken op
   const { data: afspraken } = await supabase
@@ -282,29 +285,8 @@ export default async function GroepPage(
           </div>
         )}
 
-        {/* Aankomende taken */}
-        {openTaken && openTaken.length > 0 && (
-          <div>
-            <h2 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">
-              {t('groep.openTaken')}
-            </h2>
-            <div className="space-y-2">
-              {openTaken.map((taak: any) => (
-                <div key={taak.id} className="caroo-card flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium">{taak.titel}</p>
-                    {taak.deadline && (
-                      <p className="text-xs text-gray-600">
-                        {datum(taal, taak.deadline, { day: 'numeric', month: 'numeric', year: 'numeric' })}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Aankomende taken, met een echt vinkje */}
+        <TakenOpHoofdscherm groepId={params.id} taken={(openTaken || []) as any} mijnNaam={mijnProfiel?.naam || t('algemeen.iemand')} />
 
         {/* Aankomende afspraken */}
         {afspraken && afspraken.length > 0 && (

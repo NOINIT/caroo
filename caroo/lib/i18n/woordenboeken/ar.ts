@@ -67,12 +67,16 @@ export const ar: Woordenboek = {
     mijnDag: {
       titel: 'يومي',
       geenAfspraken: 'لا مواعيد اليوم',
+      binnenkort: "قريبًا",
       afspraak: 'موعد',
       tijdUur: 'الساعة {tijd}',
     },
     boodschappenTitel: 'المشتريات',
     fotos: {
       geen: 'لا توجد صور بعد',
+      stuur: "أرسل صورة",
+      gestuurd: "أُرسلت الصورة إلى العائلة",
+      bewaar: "احفظ",
       familieKan: 'يمكن للعائلة إضافة صور',
       titel: 'صورنا',
       foto: 'صورة',
@@ -110,6 +114,7 @@ export const ar: Woordenboek = {
     geenFotos: 'لا توجد صور بعد',
     medicijnenVandaag: '💊 أدوية اليوم',
     tijdenUur: 'الساعة {tijden}',
+    medicijnUitleg: "اضغط على الوقت عندما تتناول الدواء. ستراه عائلتك.",
     belVraag: 'هل تريد أن يتصل بك أحد؟',
     belJa: 'نعم، من فضلك',
     belNee: 'لا، أنا بخير',
@@ -246,6 +251,8 @@ export const ar: Woordenboek = {
     rol: 'الدور: {rol}',
     inloggenAccepteren: 'تسجيل الدخول وقبول الدعوة',
     nieuwAccount: 'إنشاء حساب جديد',
+    nogGeenAccount: "ليس لديك حساب بعد. أنشئ حسابًا بالبريد الإلكتروني الذي وصلتك عليه هذه الدعوة.",
+    ikHebAlAccount: "لدي حساب بالفعل",
   },
 
   oudereUitnodiging: {
@@ -477,6 +484,10 @@ export const ar: Woordenboek = {
     nietsAfgerond: 'لم يُنجز شيء بعد',
     markeerOpen: 'تحديد كمفتوحة',
     markeerGedaan: 'تحديد كمنجزة',
+    gedaanDoor: "أنجزها {naam}",
+    alleTaken: "كل المهام",
+    inAgenda: "📅 أضف إلى المفكرة",
+    inAgendaKlaar: "✓ في المفكرة",
   },
 
   medicijnen: {

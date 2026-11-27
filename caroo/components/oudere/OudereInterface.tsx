@@ -7,6 +7,7 @@ import { BoodschappenLijst } from '@/components/boodschappen/BoodschappenLijst'
 import { Thuis, type Bezoekverzoek } from './Thuis'
 import { Vrienden } from './Vrienden'
 import { BeginschermTip } from './BeginschermTip'
+import { OudereFotos } from './OudereFotos'
 import { TabletBeheer, type BeheerGegevens } from './TabletBeheer'
 import type { VriendKaart, VriendenStatus, FamilieSpeler } from '@/lib/vrienden'
 import { InstellingenFormulier } from '@/components/instellingen/InstellingenFormulier'
@@ -26,6 +27,7 @@ interface Props {
   groepNaam: string
   dagAfspraken: any[]
   medicijnen: any[]
+  komendeAfspraken?: any[]
   fotos: any[]
   stemmingVandaag: number | null
   bezoek: Bezoekverzoek | null
@@ -42,7 +44,7 @@ interface Props {
 }
 
 export function OudereInterface({
-  groepId, userId, email, naam, groepNaam, dagAfspraken, medicijnen, fotos,
+  groepId, userId, email, naam, groepNaam, dagAfspraken, medicijnen, komendeAfspraken = [], fotos,
   stemmingVandaag, bezoek, aantalBoodschappen, lettergrootte, geluid, meldingEmail, net_gekoppeld, vrienden, vriendenStatus, familie, beheer, toestemming,
 }: Props) {
   const [tipZichtbaar, setTipZichtbaar] = useState(!!net_gekoppeld)
@@ -95,7 +97,7 @@ export function OudereInterface({
           />
         )}
         {actieveTab === 'mijn_dag' && (
-          <TabMijnDag dagAfspraken={dagAfspraken} />
+          <TabMijnDag dagAfspraken={dagAfspraken} komendeAfspraken={komendeAfspraken} />
         )}
         {actieveTab === 'boodschappen' && (
           <div className="px-4 py-6 md:px-8">
@@ -104,7 +106,7 @@ export function OudereInterface({
           </div>
         )}
         {actieveTab === 'fotos' && (
-          <TabFotos fotos={fotos} />
+          <OudereFotos groepId={groepId} fotos={fotos} />
         )}
         {actieveTab === 'mijn_verhaal' && (
           <MijnVerhaal groepId={groepId} userId={userId} />
@@ -158,8 +160,8 @@ export function OudereInterface({
   )
 }
 
-function TabMijnDag({ dagAfspraken }: any) {
-  const { t, tijd } = useT()
+function TabMijnDag({ dagAfspraken, komendeAfspraken = [] }: any) {
+  const { t, tijd, datum } = useT()
   return (
     <div className="px-4 py-6 md:px-8">
       <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">{t('oudere.mijnDag.titel')}</h2>
@@ -189,39 +191,23 @@ function TabMijnDag({ dagAfspraken }: any) {
           ))}
         </div>
       )}
-    </div>
-  )
-}
 
-function TabFotos({ fotos }: any) {
-  const { t } = useT()
-  if (fotos.length === 0) {
-    return (
-      <div className="px-4 py-8 md:px-8 text-center">
-        <p className="text-5xl mb-3">📸</p>
-        <p className="text-ou-lg text-gray-600">{t('oudere.fotos.geen')}</p>
-        <p className="text-ou-sm text-gray-600 mt-1">{t('oudere.fotos.familieKan')}</p>
-      </div>
-    )
-  }
-
-  return (
-    <div className="px-4 py-4 md:px-8 md:py-6">
-      <h2 className="text-ou-xl font-bold text-caroo-donker mb-4">{t('oudere.fotos.titel')}</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-        {fotos.map((foto: any) => (
-          <div key={foto.id} className="aspect-square rounded-caroo overflow-hidden bg-gray-100">
-            <img
-              src={foto.url}
-              alt={foto.onderschrift || t('oudere.fotos.foto')}
-              className="w-full h-full object-cover"
-            />
-            {foto.onderschrift && (
-              <p className="text-ou-sm text-gray-700 px-2 py-1 truncate">{foto.onderschrift}</p>
-            )}
+      {komendeAfspraken.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-ou-lg font-bold text-caroo-donker mb-3">{t('oudere.mijnDag.binnenkort')}</h3>
+          <div className="space-y-3">
+            {komendeAfspraken.map((af: any) => (
+              <div key={af.id} className="caroo-card">
+                <p className="text-ou-base font-semibold text-caroo-groen">
+                  {datum(af.start_tijd, { weekday: 'long', day: 'numeric', month: 'long' })}, {t('oudere.mijnDag.tijdUur', { tijd: tijd(af.start_tijd) })}
+                </p>
+                <p className="text-ou-lg font-bold text-caroo-donker">{af.titel}</p>
+                {af.beschrijving && <p className="text-ou-sm text-gray-600 mt-1">{af.beschrijving}</p>}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

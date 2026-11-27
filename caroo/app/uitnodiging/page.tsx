@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { valideerToken, accepteerUitnodiging } from '@/lib/uitnodiging'
 import Link from 'next/link'
 import { CarooLogo } from '@/components/ui/CarooLogo'
@@ -71,7 +71,12 @@ export default async function UitnodigingPage(
     )
   }
 
-  // Niet ingelogd: toon uitnodigingspagina met login/registreer opties
+  // Niet ingelogd: heeft dit adres al een account? Dan inloggen voorop, anders account aanmaken voorop
+  const { data: bestaand } = uitnodiging.email
+    ? await createServiceClient().from('users').select('id').eq('email', String(uitnodiging.email).toLowerCase()).maybeSingle()
+    : { data: null }
+  const heeftAccount = !!bestaand
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-caroo-groen-licht to-white flex flex-col">
       <header className="px-6 pt-8 pb-4 flex items-center justify-between gap-3">
@@ -94,20 +99,26 @@ export default async function UitnodigingPage(
               {t('uitnodiging.rol', { rol: t(`rollen.${uitnodiging.rol as 'oudere' | 'mantelzorger' | 'groepsbeheerder'}`) })}
             </p>
 
-            <div className="space-y-3">
-              <Link
-                href={`/login?redirect=/uitnodiging&token=${token}`}
-                className="btn-primary w-full block text-center"
-              >
-                {t('uitnodiging.inloggenAccepteren')}
-              </Link>
-              <Link
-                href={`/registreer?redirect=/uitnodiging&token=${token}`}
-                className="btn-secondary w-full block text-center"
-              >
-                {t('uitnodiging.nieuwAccount')}
-              </Link>
-            </div>
+            {heeftAccount ? (
+              <div className="space-y-3">
+                <Link href={`/login?redirect=/uitnodiging&token=${token}`} className="btn-primary w-full block text-center">
+                  {t('uitnodiging.inloggenAccepteren')}
+                </Link>
+                <Link href={`/registreer?redirect=/uitnodiging&token=${token}`} className="text-sm text-caroo-groen underline block">
+                  {t('uitnodiging.nieuwAccount')}
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-sm text-caroo-donker">{t('uitnodiging.nogGeenAccount')}</p>
+                <Link href={`/registreer?redirect=/uitnodiging&token=${token}`} className="btn-primary w-full block text-center">
+                  {t('uitnodiging.nieuwAccount')}
+                </Link>
+                <Link href={`/login?redirect=/uitnodiging&token=${token}`} className="text-sm text-caroo-groen underline block">
+                  {t('uitnodiging.ikHebAlAccount')}
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </main>

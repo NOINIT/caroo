@@ -147,6 +147,23 @@ export function Thuis({
     setBezoek(null)
   }
 
+  // Medicijnen afvinken: wat vandaag is ingenomen (direct tonen, daarna bewaren)
+  const [genomenLokaal, setGenomenLokaal] = useState<Record<string, boolean>>({})
+  function isGenomen(med: any, tijdstip: string) {
+    const sleutel = `${med.id}|${tijdstip}`
+    if (sleutel in genomenLokaal) return genomenLokaal[sleutel]
+    return (med.medicijn_registraties || []).some((r: any) => r.datum === vandaagNL() && r.tijdstip === tijdstip && r.ingenomen)
+  }
+  async function vinkMedicijn(medicijnId: string, tijdstip: string, nu: boolean) {
+    if (!nu) speelGeluid('succes')
+    setGenomenLokaal(prev => ({ ...prev, [`${medicijnId}|${tijdstip}`]: !nu }))
+    const supabase = createClient()
+    await supabase.from('medicijn_registraties').upsert({
+      medicijn_id: medicijnId, groep_id: groepId, datum: vandaagNL(), tijdstip,
+      ingenomen: !nu, geregistreerd_door: userId, geregistreerd_op: new Date().toISOString(),
+    }, { onConflict: 'medicijn_id,datum,tijdstip' })
+  }
+
   const gekozen = stemmingInfo(stemming)
   // Wie komen er langs? Nieuwe reacties staan in bezoek_reacties; oudere alleen in reactie_naam
   const komers = bezoek
@@ -326,11 +343,26 @@ export function Thuis({
         <section className="caroo-card border-s-4 border-caroo-oranje">
           <h2 className="text-ou-lg font-bold text-caroo-donker mb-2">{t('thuis.medicijnenVandaag')}</h2>
           {medicijnen.map((med: any) => (
-            <div key={med.id} className="mb-1.5">
+            <div key={med.id} className="mb-3">
               <p className="text-ou-base text-gray-800">{med.naam}, {med.dosering}</p>
-              <p className="text-ou-sm md:text-ou-base text-gray-600">{t('thuis.tijdenUur', { tijden: (med.tijdstippen || []).join(', ') })}</p>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {(med.tijdstippen || []).map((tijdstip: string) => {
+                  const genomen = isGenomen(med, tijdstip)
+                  return (
+                    <button
+                      key={tijdstip}
+                      onClick={() => vinkMedicijn(med.id, tijdstip, genomen)}
+                      className={`rounded-caroo border-2 px-4 py-2 text-ou-base font-semibold ${genomen ? 'bg-caroo-groen border-caroo-groen text-white' : 'bg-white border-caroo-oranje text-caroo-donker'}`}
+                      aria-pressed={genomen}
+                    >
+                      {genomen ? '✓ ' : '○ '}{tijdstip}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
           ))}
+          <p className="text-ou-sm text-gray-600">{t('thuis.medicijnUitleg')}</p>
         </section>
       )}
     </div>

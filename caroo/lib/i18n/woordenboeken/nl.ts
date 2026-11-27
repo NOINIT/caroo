@@ -64,12 +64,16 @@ export const nl = {
     mijnDag: {
       titel: 'Mijn dag',
       geenAfspraken: 'Vandaag geen afspraken',
+      binnenkort: "Binnenkort",
       afspraak: 'Afspraak',
       tijdUur: '{tijd} uur',
     },
     boodschappenTitel: 'Boodschappen',
     fotos: {
       geen: "Nog geen foto's",
+      stuur: "Foto sturen",
+      gestuurd: "Foto gestuurd naar de familie",
+      bewaar: "Bewaren",
       familieKan: "Familie kan foto's toevoegen",
       titel: "Onze foto's",
       foto: 'Foto',
@@ -107,6 +111,7 @@ export const nl = {
     geenFotos: "Nog geen foto's",
     medicijnenVandaag: '💊 Medicijnen vandaag',
     tijdenUur: '{tijden} uur',
+    medicijnUitleg: "Tik op een tijd als je het medicijn hebt ingenomen. Je familie ziet het.",
     belVraag: 'Wil je dat iemand je belt?',
     belJa: 'Ja, graag',
     belNee: 'Nee, het gaat wel',
@@ -244,6 +249,8 @@ export const nl = {
     rol: 'Rol: {rol}',
     inloggenAccepteren: 'Inloggen en accepteren',
     nieuwAccount: 'Nieuw account aanmaken',
+    nogGeenAccount: "Je hebt nog geen account. Maak er een aan met het e-mailadres waarop je deze uitnodiging kreeg.",
+    ikHebAlAccount: "Ik heb al een account",
   },
 
   oudereUitnodiging: {
@@ -475,6 +482,10 @@ export const nl = {
     nietsAfgerond: 'Nog niets afgerond',
     markeerOpen: 'Markeer als open',
     markeerGedaan: 'Markeer als gedaan',
+    gedaanDoor: "Gedaan door {naam}",
+    alleTaken: "Alle taken",
+    inAgenda: "📅 In agenda",
+    inAgendaKlaar: "✓ Staat in de agenda",
   },
 
   medicijnen: {

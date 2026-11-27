@@ -63,12 +63,16 @@ export const en: Woordenboek = {
     mijnDag: {
       titel: 'My day',
       geenAfspraken: 'No appointments today',
+      binnenkort: "Coming up",
       afspraak: 'Appointment',
       tijdUur: '{tijd}',
     },
     boodschappenTitel: 'Shopping',
     fotos: {
       geen: 'No photos yet',
+      stuur: "Send a photo",
+      gestuurd: "Photo sent to the family",
+      bewaar: "Save",
       familieKan: 'Your family can add photos',
       titel: 'Our photos',
       foto: 'Photo',
@@ -106,6 +110,7 @@ export const en: Woordenboek = {
     geenFotos: 'No photos yet',
     medicijnenVandaag: '💊 Medicines today',
     tijdenUur: '{tijden}',
+    medicijnUitleg: "Tap a time when you have taken the medicine. Your family will see it.",
     belVraag: 'Would you like someone to call you?',
     belJa: 'Yes, please',
     belNee: 'No, I\'m fine',
@@ -242,6 +247,8 @@ export const en: Woordenboek = {
     rol: 'Role: {rol}',
     inloggenAccepteren: 'Log in and accept',
     nieuwAccount: 'Create a new account',
+    nogGeenAccount: "You don't have an account yet. Create one with the email address this invitation was sent to.",
+    ikHebAlAccount: "I already have an account",
   },
 
   oudereUitnodiging: {
@@ -473,6 +480,10 @@ export const en: Woordenboek = {
     nietsAfgerond: 'Nothing completed yet',
     markeerOpen: 'Mark as open',
     markeerGedaan: 'Mark as done',
+    gedaanDoor: "Done by {naam}",
+    alleTaken: "All tasks",
+    inAgenda: "📅 Add to calendar",
+    inAgendaKlaar: "✓ In the calendar",
   },
 
   medicijnen: {

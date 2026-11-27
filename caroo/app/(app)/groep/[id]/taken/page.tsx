@@ -27,8 +27,9 @@ export default async function TakenPage(props: { params: Promise<{ id: string }>
     supabase
       .from('taken')
       .select(`
-        id, titel, beschrijving, deadline, voltooid, aangemaakt_op, toegewezen_aan,
-        toegewezen:users!taken_toegewezen_aan_fkey (naam)
+        id, titel, beschrijving, deadline, voltooid, voltooid_op, aangemaakt_op, toegewezen_aan,
+        toegewezen:users!taken_toegewezen_aan_fkey (naam),
+        voltooider:users!taken_voltooid_door_fkey (naam)
       `)
       .eq('groep_id', params.id)
       .order('aangemaakt_op', { ascending: false }),
