@@ -532,6 +532,11 @@ export const nl = {
   },
 
   dagboek: {
+    dringend: "Dringend",
+    dringendUitleg: "De familie krijgt meteen een melding, en het staat bovenaan het groepsscherm.",
+    dringendMeldingTitel: "Dringend bericht in Clanoo",
+    dringendMeldingTekst: "Er staat een dringend bericht in het dagboek.",
+    kop: "Dringend in het dagboek",
     nieuw: '✏️ Nieuwe aantekening',
     aantekening: 'Aantekening',
     placeholder: 'Schrijf hier hoe het gaat, bijzonderheden of gedachten...',
@@ -641,6 +646,7 @@ export const nl = {
     niets: "Doe je niets, dan stopt de groep na de gratis maand. Er wordt niets afgeschreven.",
   },
   meldingNeutraal: {
+    dringend: "Er is een dringend bericht in Clanoo.",
     algemeen: "Er is iets nieuws voor je in Clanoo.",
     bezoek: "Er is nieuws over een bezoek.",
     samen: "Er is nieuws over een uitje.",

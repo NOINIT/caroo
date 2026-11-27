@@ -29,7 +29,7 @@ export default async function DagboekPage(props: { params: Promise<{ id: string 
 
   const { data: entries } = await supabase
     .from('dagboek')
-    .select('id, inhoud, gesproken, aangemaakt_op, auteur_naam, users (naam)')
+    .select('id, inhoud, gesproken, aangemaakt_op, auteur_naam, dringend, users (naam)')
     .eq('groep_id', params.id)
     // De verhalen van de hoofdpersoon staan in het verhalenboekje, niet in het dagboek van de familie
     .not('auteur_id', 'in', `(${hoofdpersoonIds.length ? hoofdpersoonIds.join(',') : '00000000-0000-0000-0000-000000000000'})`)

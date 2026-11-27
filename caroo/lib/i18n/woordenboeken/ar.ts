@@ -534,6 +534,11 @@ export const ar: Woordenboek = {
   },
 
   dagboek: {
+    dringend: "عاجل",
+    dringendUitleg: "تتلقى العائلة إشعارًا فورًا، ويظهر في أعلى شاشة المجموعة.",
+    dringendMeldingTitel: "رسالة عاجلة في Clanoo",
+    dringendMeldingTekst: "توجد رسالة عاجلة في اليوميات.",
+    kop: "عاجل في اليوميات",
     nieuw: '✏️ ملاحظة جديدة',
     aantekening: 'الملاحظة',
     placeholder: 'اكتب هنا كيف تسير الأمور، أو أي ملاحظات أو أفكار...',
@@ -643,6 +648,7 @@ export const ar: Woordenboek = {
     niets: "إذا لم تفعل شيئًا، تتوقف المجموعة بعد الشهر المجاني. لن يُخصم أي مبلغ.",
   },
   meldingNeutraal: {
+    dringend: "توجد رسالة عاجلة في Clanoo.",
     algemeen: "هناك شيء جديد لك في Clanoo.",
     bezoek: "هناك أخبار عن زيارة.",
     samen: "هناك أخبار عن نزهة.",

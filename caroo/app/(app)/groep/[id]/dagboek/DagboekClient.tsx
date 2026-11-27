@@ -4,6 +4,7 @@ import { useVolg } from '@/lib/useVolg'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useT } from '@/lib/i18n/client'
+import { meldDringend } from '@/lib/acties/dagboek'
 
 interface Entry {
   id: string
@@ -12,6 +13,7 @@ interface Entry {
   aangemaakt_op: string
   users: { naam: string } | null
   auteur_naam?: string | null
+  dringend?: boolean
 }
 
 interface Props {
@@ -24,6 +26,7 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
   const [entries, setEntries] = useVolg(initieel)
   const [toonFormulier, setToonFormulier] = useState(false)
   const [inhoud, setInhoud] = useState('')
+  const [dringend, setDringend] = useState(false)
   const [laden, setLaden] = useState(false)
   const [uitgebreid, setUitgebreid] = useState<string | null>(null)
   const { t, datum, tijd } = useT()
@@ -40,13 +43,16 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
       inhoud,
       gesproken: false,
       auteur_id: user.id,
-    }).select('id, inhoud, gesproken, aangemaakt_op, auteur_naam, users (naam)').single()
+      dringend,
+    }).select('id, inhoud, gesproken, aangemaakt_op, auteur_naam, dringend, users (naam)').single()
 
     if (data) {
       setEntries(prev => [data as any, ...prev])
+      if (dringend) await meldDringend((data as any).id)
     }
 
     setInhoud('')
+    setDringend(false)
     setToonFormulier(false)
     setLaden(false)
   }
@@ -80,6 +86,13 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
               placeholder={t('dagboek.placeholder')}
             />
           </div>
+          <label className={`flex gap-3 items-start text-sm cursor-pointer rounded-caroo border-2 p-3 ${dringend ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white'}`}>
+            <input type="checkbox" checked={dringend} onChange={e => setDringend(e.target.checked)} className="mt-0.5 w-6 h-6 accent-red-600 flex-shrink-0" />
+            <span>
+              <span className="block font-bold text-caroo-donker">🚨 {t('dagboek.dringend')}</span>
+              <span className="block text-xs text-gray-600 mt-0.5">{t('dagboek.dringendUitleg')}</span>
+            </span>
+          </label>
           <button type="submit" disabled={laden} className="btn-primary w-full">
             {laden ? t('algemeen.opslaanBezig') : t('algemeen.opslaan')}
           </button>
@@ -108,9 +121,10 @@ export function DagboekClient({ groepId, entries: initieel }: Props) {
                 return (
                   <div
                     key={entry.id}
-                    className="caroo-card cursor-pointer"
+                    className={`caroo-card cursor-pointer ${entry.dringend ? 'border-2 border-red-500' : ''}`}
                     onClick={() => setUitgebreid(isUitgebreid ? null : entry.id)}
                   >
+                    {entry.dringend && <p className="text-xs font-bold text-red-700 mb-1">🚨 {t('dagboek.dringend')}</p>}
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <div>
                         <p className="text-xs text-gray-600">

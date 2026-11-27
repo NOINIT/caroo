@@ -530,6 +530,11 @@ export const tr: Woordenboek = {
   },
 
   dagboek: {
+    dringend: "Acil",
+    dringendUitleg: "Aile hemen bir bildirim alır ve mesaj grup ekranının en üstünde görünür.",
+    dringendMeldingTitel: "Clanoo'da acil mesaj",
+    dringendMeldingTekst: "Günlükte acil bir mesaj var.",
+    kop: "Günlükte acil",
     nieuw: '✏️ Yeni not',
     aantekening: 'Not',
     placeholder: 'Nasıl gittiğini, dikkat çeken şeyleri ya da düşüncelerinizi buraya yazın...',
@@ -639,6 +644,7 @@ export const tr: Woordenboek = {
     niets: "Hiçbir şey yapmazsanız grup ücretsiz aydan sonra durur. Hiçbir ücret alınmaz.",
   },
   meldingNeutraal: {
+    dringend: "Clanoo'da acil bir mesaj var.",
     algemeen: "Clanoo'da sizin için yeni bir şey var.",
     bezoek: "Bir ziyaretle ilgili haber var.",
     samen: "Bir gezintiyle ilgili haber var.",

@@ -38,7 +38,8 @@ function pushBeschikbaar() {
  */
 function neutraal(m: Melding, t: TFunctie): Melding {
   const tag = m.tag || ''
-  const soort = tag.startsWith('bezoek') ? 'bezoek'
+  const soort = tag.startsWith('dringend') ? 'dringend'
+    : tag.startsWith('bezoek') ? 'bezoek'
     : tag.startsWith('samen') ? 'samen'
     : tag.startsWith('spel') || tag.startsWith('potje') ? 'spel'
     : tag.startsWith('vriend') || tag.startsWith('verzoek') || m.url.includes('/vrienden') ? 'vriend'

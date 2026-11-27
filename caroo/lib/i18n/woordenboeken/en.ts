@@ -530,6 +530,11 @@ export const en: Woordenboek = {
   },
 
   dagboek: {
+    dringend: "Urgent",
+    dringendUitleg: "The family gets a notification right away, and it shows at the top of the group screen.",
+    dringendMeldingTitel: "Urgent message in Clanoo",
+    dringendMeldingTekst: "There is an urgent message in the diary.",
+    kop: "Urgent in the diary",
     nieuw: '✏️ New entry',
     aantekening: 'Entry',
     placeholder: 'Write how things are going, anything notable or your thoughts...',
@@ -639,6 +644,7 @@ export const en: Woordenboek = {
     niets: "If you do nothing, the group stops after the free month. Nothing will be charged.",
   },
   meldingNeutraal: {
+    dringend: "There is an urgent message in Clanoo.",
     algemeen: "There is something new for you in Clanoo.",
     bezoek: "There is news about a visit.",
     samen: "There is news about an outing.",

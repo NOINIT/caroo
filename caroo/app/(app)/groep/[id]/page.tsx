@@ -95,6 +95,16 @@ export default async function GroepPage(
     .order('aangemaakt_op', { ascending: false })
     .limit(5)
 
+  // Dringende aantekeningen uit het dagboek van de afgelopen twee dagen (de database toont ze alleen aan wie het dagboek mag zien)
+  const { data: dringend } = await supabase
+    .from('dagboek')
+    .select('id, inhoud, aangemaakt_op, auteur_naam, users (naam)')
+    .eq('groep_id', params.id)
+    .eq('dringend', true)
+    .gt('aangemaakt_op', new Date(Date.now() - 48 * 3600 * 1000).toISOString())
+    .order('aangemaakt_op', { ascending: false })
+    .limit(3)
+
   // Haal aankomende taken op
   const { data: openTaken } = await supabase
     .from('taken')
@@ -204,6 +214,18 @@ export default async function GroepPage(
       <div className="px-4 py-4 space-y-4">
         {vraagToestemming && <ToestemmingKaart groepId={groep.id} naam={hoofdpersoon?.users?.naam} />}
         {isBeheerder && !!groep.toestemming_gezondheid_op && <div className="px-1"><ToestemmingIntrekken groepId={groep.id} /></div>}
+
+        {dringend && dringend.length > 0 && (
+          <Link href={`/groep/${params.id}/dagboek`} className="block rounded-caroo border-2 border-red-500 bg-red-50 p-4 space-y-2">
+            <p className="font-bold text-red-700">🚨 {t('dagboek.kop')}</p>
+            {dringend.map((d: any) => (
+              <div key={d.id}>
+                <p className="text-sm text-caroo-donker whitespace-pre-wrap">{d.inhoud}</p>
+                <p className="text-xs text-gray-600">{d.users?.naam || d.auteur_naam} · {datum(taal, d.aangemaakt_op, { weekday: 'long', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })}</p>
+              </div>
+            ))}
+          </Link>
+        )}
 
         <FamilieSignalen
           mijnNaam={mijnProfiel?.naam || t('algemeen.iemand')}
