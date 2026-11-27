@@ -702,7 +702,11 @@ export const nl = {
   koppelen: {
     titel: 'Tablet koppelen',
     intro: 'Zet Clanoo klaar op de tablet of telefoon van de hoofdpersoon. Zonder e-mail en zonder wachtwoord.',
-    introNieuw: 'Zo werkt het: vul hieronder de naam in van degene voor wie Clanoo is en zet het vinkje. Je krijgt dan een QR-code. Die scan je met de camera van de tablet of telefoon van die persoon. Clanoo staat daarna klaar, zonder e-mail en zonder wachtwoord.',
+    introNieuw: 'Zo zet je Clanoo klaar:',
+    nieuwStap1: 'Vul hieronder de naam in van degene voor wie Clanoo is.',
+    nieuwStap2: 'Zet het vinkje voor toestemming.',
+    nieuwStap3: 'Tik op Toevoegen en QR-code maken.',
+    nieuwStap4: 'Scan de QR-code met de camera van de tablet of telefoon van die persoon. Klaar, zonder e-mail en zonder wachtwoord.',
     vulNaam: 'Vul eerst een naam in.',
     knop: 'Tablet van {naam} koppelen',
     nieuwTitel: 'Hoofdpersoon toevoegen',

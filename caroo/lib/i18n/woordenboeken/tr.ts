@@ -700,7 +700,11 @@ export const tr: Woordenboek = {
   koppelen: {
     titel: 'Tablet bağla',
     intro: 'Clanoo\'yu ana kişinin tabletine veya telefonuna kurun. E-posta ve şifre gerekmez.',
-    introNieuw: 'Nasıl çalışır: aşağıya Clanoo\'nun kimin için olduğunu yaz ve kutuyu işaretle. Sonra bir QR kodu alırsın. Bu kodu o kişinin tabletinin veya telefonunun kamerasıyla tara. Clanoo hazır olur, e-posta ve şifre gerekmez.',
+    introNieuw: 'Clanoo\'yu şöyle hazırlarsın:',
+    nieuwStap1: 'Aşağıya Clanoo\'nun kimin için olduğunu yaz.',
+    nieuwStap2: 'İzin kutusunu işaretle.',
+    nieuwStap3: 'Ekle ve QR kodu oluştur\'a dokun.',
+    nieuwStap4: 'QR kodunu o kişinin tabletinin veya telefonunun kamerasıyla tara. Hazır, e-posta ve şifre gerekmez.',
     vulNaam: 'Önce bir ad yaz.',
     knop: '{naam} adlı kişinin tabletini bağla',
     nieuwTitel: 'Ana kişiyi ekle',

@@ -700,7 +700,11 @@ export const en: Woordenboek = {
   koppelen: {
     titel: 'Connect a tablet',
     intro: 'Set up Clanoo on the main person\'s tablet or phone. No email, no password.',
-    introNieuw: 'How it works: fill in the name of the person Clanoo is for and tick the box. You then get a QR code. Scan it with the camera of that person\'s tablet or phone. Clanoo is then ready, with no email and no password.',
+    introNieuw: 'How to set up Clanoo:',
+    nieuwStap1: 'Fill in the name of the person Clanoo is for.',
+    nieuwStap2: 'Tick the consent box.',
+    nieuwStap3: 'Tap Add and create QR code.',
+    nieuwStap4: 'Scan the QR code with the camera of that person\'s tablet or phone. Done, no email and no password.',
     vulNaam: 'First fill in a name.',
     knop: 'Connect {naam}\'s tablet',
     nieuwTitel: 'Add the main person',
